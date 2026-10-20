@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PHOT 3A">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -229,7 +229,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 <div id="viewer" hidden><div class="vbar"><button class="btn sm" id="vBack">← Cours</button><b id="vTitle"></b><a class="btn sm" id="vExt" target="_blank" rel="noopener">↗</a></div><iframe id="vFrame" title="Page de cours"></iframe></div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="vendor/supabase.js"></script>
+<script src="supabase.js"></script>
 <script>
 (function(){
 "use strict";
@@ -249,11 +249,11 @@ const MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code
 const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
 const ADE_MAP=[["electronique analogique 1","f1o1-1"],["systemes numeriques","f1o1-2"],["informatique & algorithmique","f1o1-3"],["informatique et algorithmique","f1o1-3"],["algorithmique et programmation","f1o1-3"],["langage oriente objet","f1o1-4"],["optique geometrique","f1o2-1"],["optique ondulatoire","f1o2-2"],["optique instrumentale","f1o2-3"],["economie generale et d'entreprise","f1c2-1"],["economie d'entreprise et generale","f1c2-1"],["economie d'entreprise","f1c2-2"],["economie generale","f1c2-1"],["periode en entreprise","f2c9-1"],["solidworks","f1c8-1"],["algebre","f1c3-2"],["remise a niveau","f1c3-3"],["analyse","f1c3-1"],["anglais","f1c1-1"],["communication professionnelle","f1c1-2"],["certification en langue francaise","f1c1-3"],["economie","f1c2-1"],["droit social","f1c2-3"],["developpement durable","f1c4-1"],["energie","f1c4-2"]];
 const REV={
- "f1o2-2":[["Optique ondulatoire","pages/optique-ondulatoire.html","pages/optique-ondulatoire.html"]],
- "f1o2-1":[["Optique géométrique","pages/optique-geometrique.html","pages/optique-geometrique.html"],["Optique matricielle","pages/optique-matricielle.html","pages/optique-matricielle.html"]],
- "f1o1-2":[["Systèmes numériques","pages/systemes-numeriques.html","pages/systemes-numeriques.html"]],
- "f1c3-1":[["Séries de Fourier","pages/series-de-fourier.html","pages/series-de-fourier.html"]],
- "f1c2-1":[["Économie : gérer la rareté","pages/economie.html","pages/economie.html"]]
+ "f1o2-2":[["Optique ondulatoire","optique-ondulatoire.html","optique-ondulatoire.html"]],
+ "f1o2-1":[["Optique géométrique","optique-geometrique.html","optique-geometrique.html"],["Optique matricielle","optique-matricielle.html","optique-matricielle.html"]],
+ "f1o1-2":[["Systèmes numériques","systemes-numeriques.html","systemes-numeriques.html"]],
+ "f1c3-1":[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]],
+ "f1c2-1":[["Économie : gérer la rareté","economie.html","economie.html"]]
 };
 const RES={aise:"à l'aise",moyen:"moyen",pas:"pas à l'aise"};
 const TYPES={DS:"DS / examen",TP:"TP noté",DM:"Devoir"};

@@ -1,8 +1,8 @@
 // Service worker : l'appli s'ouvre même hors ligne.
-const VERSION = "phot3a-v1";
-const CORE = ["./", "index.html", "vendor/supabase.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png",
-  "pages/optique-ondulatoire.html", "pages/optique-geometrique.html", "pages/optique-matricielle.html",
-  "pages/systemes-numeriques.html", "pages/series-de-fourier.html", "pages/economie.html"];
+const VERSION = "phot3a-v2";
+const CORE = ["./", "index.html", "supabase.js", "manifest.webmanifest", "icon-192.png", "icon-512.png",
+  "optique-ondulatoire.html", "optique-geometrique.html", "optique-matricielle.html",
+  "systemes-numeriques.html", "series-de-fourier.html", "economie.html"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
