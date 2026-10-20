@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Optique matricielle – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF1; --surface:#F8F9FA; --ink:#1A2230; --muted:#5A6576; --line:#CBD2DB; --soft:#DFE4EA;
+  --odd:#2F6FB3; --even:#C2571A; --ca:#6B4FA0; --cb:#B07A0A; --pos:#1F8A70; --neg:#B03A5B; --ray:#D9480F; --img:#2F6FB3; --medium:#2F6FB3; --nod:#7A4FB0;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+    --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5; --nod:#C3A3F0;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+  --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5; --nod:#C3A3F0;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+canvas{display:block;width:100%;max-width:100%}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+header.hero{padding:40px 0 18px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.hero .heroplot{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.hero-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-row label{font-weight:600}
+.hero-row input{flex:1;min-width:200px;accent-color:var(--ink)}
+.hero-row .v{font-family:var(--mono);min-width:12ch}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:66ch}
+
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept.focus{border:2px solid var(--even)}
+.focus-tag{display:inline-block;font-size:.82rem;font-weight:600;color:var(--even);border:1px solid var(--even);border-radius:4px;padding:1px 8px;margin-bottom:10px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.92rem;background:var(--soft);padding:1px 6px;border-radius:4px}
+.fblock{font-family:var(--mono);font-size:.93rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.trap b{display:block;margin-bottom:2px;color:var(--even)}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Widgets */
+.wg{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0 18px;background:var(--bg);font-family:var(--ui)}
+.wg h4{margin:0 0 4px;font-size:1.02rem;font-weight:600}
+.wg .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem;max-width:66ch}
+.cv{background:var(--surface);border-radius:6px;margin-top:8px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:500;margin-bottom:4px;gap:8px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.ctl select{width:100%}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;font-size:.9rem}
+.readout b{font-family:var(--mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.82rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict-ok{color:var(--good);font-weight:600} .verdict-no{color:var(--bad);font-weight:600}
+.steps{margin:10px 0 0;padding:0;list-style:none;font-size:.92rem}
+.steps li{padding:6px 0;border-top:1px solid var(--line)}
+.steps li b{font-family:var(--mono);font-weight:500;margin-right:6px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.93rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+.cardzone{display:flex;flex-direction:column;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.15rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.02rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.ex{padding:18px 14px}.wg{padding:14px 12px}}
+
+.hero .stage{margin-top:22px;background:#0b0e14;border-radius:8px;overflow:hidden}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.presets .btn{padding:6px 12px;font-size:.9rem}
+
+/* matrices */
+.eqn{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:12px 0 4px;font-family:var(--mono);font-size:.9rem}
+.term{display:inline-flex;flex-direction:column;align-items:center;gap:3px}
+.term small{font-family:var(--ui);font-size:.75rem;color:var(--muted)}
+.mat{display:inline-grid;grid-template-columns:auto auto;gap:3px 14px;padding:5px 11px;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:9px;background:var(--surface)}
+.mat.vec{grid-template-columns:auto}
+.mat > span{text-align:right;min-width:4.5ch;padding:1px 3px;border-radius:4px}
+.mat > span.hx{color:var(--odd)} .mat > span.hn{color:var(--ca)}
+.mat > span.hot{background:var(--soft);outline:1px solid var(--line)}
+.mat > span.k{color:var(--pos);font-weight:600}
+.op{font-family:var(--ui);color:var(--muted);font-size:1.05rem}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:12px}
+.mcard{border:1px solid var(--line);border-radius:8px;padding:7px 9px 8px;background:var(--surface);display:flex;flex-direction:column;gap:5px;align-items:center;cursor:default;transition:border-color .15s}
+.mcard .t{font-family:var(--ui);font-size:.8rem;font-weight:600}
+.mcard .s{font-family:var(--ui);font-size:.74rem;color:var(--muted);text-align:center;max-width:16ch}
+.mcard.on{border-color:var(--ray);box-shadow:0 0 0 2px color-mix(in srgb, var(--ray) 25%, transparent)}
+.mcard.res{border-color:var(--ink)}
+.chain .op{align-self:center}
+.dirnote{font-size:.82rem;color:var(--muted);margin-top:6px}
+.steps2{list-style:none;margin:10px 0 0;padding:0;font-size:.88rem}
+.steps2 li{display:flex;gap:10px;flex-wrap:wrap;padding:5px 0;border-top:1px solid var(--line);align-items:center}
+.steps2 li b{font-weight:500;min-width:13ch}
+.steps2 li code{font-family:var(--mono)}
+.tagc{display:inline-block;font-size:.72rem;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:4px}
+.ctl label span.pl{color:var(--muted)}
+.hero .stage{margin-top:22px;background:#0b0e14;border-radius:8px;overflow:hidden;position:relative}
+.hero .hm{position:absolute;right:12px;top:10px;color:#cdd5e0;font-family:var(--mono);font-size:.85rem;display:flex;align-items:center;gap:8px}
+.hero .hm .mat{background:rgba(255,255,255,.04);border-color:#cdd5e0}
+.hero .hm .mat>span{color:#cdd5e0}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.presets .btn{padding:6px 12px;font-size:.9rem}
+.cgroup{font-size:.8rem;font-weight:600;color:var(--muted);grid-column:1/-1;margin-top:4px;border-top:1px solid var(--line);padding-top:8px}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:10px}
+@media (max-width:700px){.two{grid-template-columns:1fr}.hero .hm{position:static;padding:8px 12px}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Études matricielles</h1>
+  <p class="sub">Un rayon devient deux nombres, chaque élément optique une matrice 2 × 2, et un système entier un produit de matrices. Chaque formule du cours a ici son schéma : tu règles les indices, les rayons de courbure, les épaisseurs et les positions, et les matrices se recalculent sous tes yeux.</p>
+  <div class="stage"><canvas id="heroCv" style="height:210px"></canvas><div class="hm"><span>T(ES) =</span><span class="mat" id="heroM"></span></div></div>
+  <div class="hero-row"><label for="heroE">Épaisseur de la lentille</label><input type="range" id="heroE" min="0" max="45" step="0.5" value="12"><span class="v" id="heroV"></span></div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Sept blocs dans l'ordre de ton cours. Le schéma interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées. Distances en mm, la lumière va de gauche à droite, x est la hauteur du rayon au-dessus de l'axe et α son inclinaison (en radians dans les calculs, en degrés sur les curseurs). Dans les matrices, ce qui agit sur x est en bleu, ce qui agit sur nα en violet.</p>
+  <div class="progress-line"><span id="seenCount">0 / 7 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<!-- 1 VECTEUR RAYON -->
+<article class="concept" data-id="c1">
+  <h3><span class="n">1</span>Système centré et vecteur rayon</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Avec dix lentilles, appliquer Snell-Descartes surface par surface devient vite ingérable. L'idée du chapitre : coder un rayon par deux nombres seulement, et chaque élément optique par un tableau 2 × 2 qui transforme ces deux nombres. Un système entier se réduit alors à une multiplication de matrices, que l'on peut faire à la main ou en trois lignes de Python.</p></div>
+  <div class="wg" data-w="rayvec">
+    <h4>🔬 Deux nombres pour un rayon, et pourquoi le second est nα</h4>
+    <p class="hint">Un rayon traverse un dioptre plan. Sa hauteur x ne change pas au passage, son angle α change, mais le produit n × α, lui, reste le même des deux côtés. C'est pour cela que le cours code le rayon par (x ; nα) et non par (x ; α) : avec ce choix, le dioptre plan ne fait rien, sa matrice est l'identité.</p>
+    <div class="controls">
+      <div class="ctl"><label>Hauteur x <span data-o="x"></span></label><input type="range" data-k="x" min="-10" max="10" step="0.5" value="4"></div>
+      <div class="ctl"><label>Inclinaison α1 <span data-o="a"></span></label><input type="range" data-k="a" min="-15" max="15" step="0.5" value="8"></div>
+      <div class="ctl"><label>Indice n1 (gauche) <span data-o="n1"></span></label><input type="range" data-k="n1" min="1" max="2" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice n2 (droite) <span data-o="n2"></span></label><input type="range" data-k="n2" min="1" max="2" step="0.01" value="1.5"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:260px"></canvas>
+    <div class="eqn" data-o="eq"></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Pour dire à un ami où passe une voiture sur une route droite, il te suffit de deux informations : à quelle distance du bord elle roule, et dans quelle direction elle va. Le rayon, c'est pareil : sa hauteur au-dessus de l'axe et son inclinaison. Chaque morceau du trajet (une ligne droite, un virage) est une petite règle qui transforme ces deux nombres en deux nouveaux nombres.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Système centré</b>Ensemble de dioptres (et de miroirs) possédant une symétrie de révolution autour d'un même axe, l'axe optique Oz.</div>
+    <div class="def"><b>Plan méridien</b>Plan contenant l'axe optique, ici le plan Ozx. Par symétrie, un rayon qui y entre y reste : on peut tout décrire en deux dimensions.</div>
+    <div class="def"><b>Vecteur rayon</b>Matrice colonne X = (x ; nα) attachée à un rayon dans un plan de front donné : x est la hauteur du point d'intersection, α l'angle avec l'axe, n l'indice du milieu où l'on se trouve.</div>
+    <div class="def"><b>Plan de front</b>Plan perpendiculaire à l'axe optique, repéré par son point A sur l'axe (plan Axy).</div>
+    <div class="fblock">X = (x ; n × α)        conditions de Gauss : tan(α) ≈ sin(α) ≈ α
+Dioptre plan :  n1 × α1 = n2 × α2   →   X après = X avant   →   matrice identité</div>
+    <p>Le choix de nα plutôt que α fait disparaître les indices des matrices de réfraction : ils ne restent que dans la vergence V et dans les translations, sous la forme d'une distance divisée par n.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi deux nombres suffisent-ils à décrire un rayon dans un système centré, alors qu'un rayon dans l'espace en demande quatre ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un rayon quelconque a une position (2 coordonnées dans un plan de front) et une direction (2 angles). Dans un système à symétrie de révolution, un rayon méridien reste dans son plan méridien : la seconde position et le second angle restent nuls. Le cours se limite à ces rayons ; un rayon hors du plan méridien (rayon gauche) demanderait deux vecteurs (x ; nα) et (y ; nβ), traités par les mêmes matrices dans l'approximation de Gauss.</div></details></div>
+    <div class="q"><p>Que gagne-t-on concrètement à coder nα plutôt que α ? Qu'est-ce qui deviendrait plus compliqué dans les matrices sinon ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">À une réfraction paraxiale, c'est nα qui varie simplement (de −V × x) ; α, lui, est en plus multiplié par n1/n2. Avec α, la matrice de réfraction contiendrait n1/n2 sur la diagonale et son déterminant vaudrait n1/n2 au lieu de 1. Avec nα, toutes les matrices élémentaires ont un déterminant égal à 1, ce qui donne directement la relation de Lagrange-Helmholtz.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 2 TRANSLATION -->
+<article class="concept" data-id="c2">
+  <h3><span class="n">2</span>Matrice de translation</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Entre deux surfaces, la lumière se propage en ligne droite dans un milieu homogène. Il faut une matrice pour ce « voyage » : c'est la brique la plus simple, et elle revient entre chaque paire de surfaces d'un système.</p></div>
+  <div class="wg" data-w="trans">
+    <h4>🔬 Propagation entre deux plans de front</h4>
+    <p class="hint">Le rayon part de B1 (plan A1) et arrive en B2 (plan A2), dans un milieu d'indice n. Règle la distance A1A2 et l'indice : la matrice change, mais si tu gardes le même angle α, x2 ne bouge pas, car (A1A2 / n) × nα = A1A2 × α. Une distance négative revient en arrière : la matrice obtenue est l'inverse de la précédente.</p>
+    <div class="controls">
+      <div class="ctl"><label>Hauteur x1 <span data-o="x"></span></label><input type="range" data-k="x" min="-10" max="10" step="0.5" value="2"></div>
+      <div class="ctl"><label>Inclinaison α1 <span data-o="a"></span></label><input type="range" data-k="a" min="-12" max="12" step="0.5" value="5"></div>
+      <div class="ctl"><label>Indice n du milieu <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="2" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Distance A1A2 <span data-o="d"></span></label><input type="range" data-k="d" min="-60" max="100" step="1" value="60"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:260px"></canvas>
+    <div class="eqn" data-o="eq"></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un skateur roule tout droit en diagonale sur un parking. Plus il roule loin, plus il s'écarte de la ligne blanche, et toujours du même pas, puisqu'il ne tourne pas. Sa direction ne change jamais pendant le trajet : seule sa distance à la ligne augmente.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">x2 = x1 + A1A2 × tan(α1)  ≈  x1 + A1A2 × α1        α2 = α1
+x2 = x1 + (A1A2 / n) × (nα)1          (nα)2 = (nα)1
+
+(x ; nα)2 = | 1   A1A2/n |  (x ; nα)1        X2 = T(A1A2) × X1
+            | 0     1    |
+det(T) = 1        T(−A1A2) = T(A1A2)^(−1)</div>
+    <div class="def"><b>Distance réduite</b>A1A2 / n : distance algébrique divisée par l'indice du milieu traversé. C'est elle qui apparaît dans la matrice, à cause du choix de nα comme seconde composante.</div>
+    <div class="def"><b>Matrice de translation</b>T(A1A2) transforme le vecteur rayon d'un plan de front A1 en celui du plan A2, dans un même milieu homogène.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Le déterminant de T vaut 1 quelle que soit la distance. Que signifie cette propriété pour le trajet de la lumière, et comment le relies-tu au principe du retour inverse ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une matrice de déterminant non nul est inversible : connaissant le rayon en A2, on retrouve sans ambiguïté le rayon en A1, et l'inverse est simplement la translation de la distance opposée. C'est la traduction matricielle du retour inverse. Le fait que le déterminant vaille exactement 1 dit en plus qu'un faisceau de rayons ne « perd » ni ne « gagne » d'étendue (produit hauteur × ouverture) en se propageant.</div></details></div>
+    <div class="q"><p>Pourquoi la matrice de translation ne contient-elle rien sur sa seconde ligne, à part le 1 de la diagonale ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La seconde ligne donne la nouvelle inclinaison. Dans un milieu homogène, la lumière va en ligne droite : la direction ne dépend ni de la hauteur du rayon ni de la distance parcourue. (nα)2 = 0 × x1 + 1 × (nα)1.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 3 REFRACTION -->
+<article class="concept" data-id="c3">
+  <h3><span class="n">3</span>Matrice de réfraction du dioptre sphérique</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>C'est à la traversée d'une surface courbe que la lumière est déviée, d'autant plus qu'elle frappe loin de l'axe. Toute la « puissance » d'un système vient de ses surfaces. La matrice de réfraction résume cette déviation en un seul nombre : la vergence V.</p></div>
+  <div class="wg" data-w="refr">
+    <h4>🔬 Réfraction exacte et réfraction matricielle</h4>
+    <p class="hint">Trait plein : le rayon calculé par la matrice R(S), qui réfracte au plan du sommet S (approximation de Gauss). Pointillés : le vrai rayon, réfracté par Snell-Descartes au point réel I de la sphère, avec la normale passant par C. Monte la hauteur x ou l'inclinaison pour voir les deux se séparer. Le petit schéma de droite montre la démonstration de ton cours : n1 × u1 − n2 × u2 est toujours parallèle à la normale N.</p>
+    <div class="controls">
+      <div class="ctl"><label>Indice n1 <span data-o="n1"></span></label><input type="range" data-k="n1" min="1" max="2" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice n2 <span data-o="n2"></span></label><input type="range" data-k="n2" min="1" max="2" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Rayon de courbure R = SC <span data-o="R"></span></label><input type="range" data-k="R" min="-60" max="60" step="1" value="25"></div>
+      <div class="ctl"><label>Hauteur x <span data-o="x"></span></label><input type="range" data-k="x" min="-20" max="20" step="0.5" value="8"></div>
+      <div class="ctl"><label>Inclinaison α1 <span data-o="a"></span></label><input type="range" data-k="a" min="-15" max="15" step="0.5" value="0"></div>
+      <div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="exact" checked> Afficher le rayon exact</label></div>
+    </div>
+    <div class="two">
+      <canvas class="cv" data-c="scene" style="height:300px"></canvas>
+      <canvas class="cv" data-c="vec" style="height:300px"></canvas>
+    </div>
+    <div class="legend"><span><i style="background:var(--ray)"></i>rayon matriciel (Gauss)</span><span><i style="background:var(--img)"></i>rayon exact</span><span><i style="background:var(--odd)"></i>n1 × u1</span><span><i style="background:var(--even)"></i>n2 × u2</span><span><i style="background:var(--ink)"></i>n1 u1 − n2 u2 = a × N</span></div>
+    <canvas class="cv" data-c="graph" style="height:170px"></canvas>
+    <div class="legend"><span><i style="background:var(--ray)"></i>variation de nα prévue par la matrice : −V × x</span><span><i style="background:var(--img)"></i>variation réelle</span></div>
+    <div class="eqn" data-o="eq"></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une loupe, c'est comme un toboggan en creux : une bille lâchée tout au bord est fortement renvoyée vers le milieu, une bille lâchée près du centre l'est à peine, et une bille pile au centre file tout droit. Plus on part loin du centre, plus on est dévié, et toujours en proportion : c'est ce « coefficient de renvoi » que l'on appelle la vergence.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Démonstration du cours, en I, avec u1 et u2 les vecteurs unitaires des rayons et N la normale unitaire :</p>
+    <div class="fblock">Snell vectorielle :  n1 × u1 − n2 × u2 = a × N
+Produit scalaire par N (N·N = 1) :  a = n1 cos(i1) − n2 cos(i2)
+Gauss (cos ≈ 1) :  a = n1 − n2
+N = IC / R,  avec IC ≈ (−x ; R) dans le plan (x, z)
+Projection sur x :  n1 α1 − n2 α2 = (n1 − n2) × (−x / R)
+→  (nα)2 = (nα)1 − V × x1        x2 = x1</div>
+    <div class="def"><b>Vergence du dioptre</b>V = (n2 − n1) / R, avec R = SC algébrique. En mm⁻¹ si R est en mm ; multipliée par 1000, elle s'exprime en dioptries (δ, m⁻¹). V &gt; 0 : dioptre convergent.</div>
+    <div class="fblock">(x ; nα)2 = |  1   0 | (x ; nα)1        X2 = R(S) × X1        det(R(S)) = 1
+            | −V   1 |</div>
+    <div class="def"><b>Matrice de réfraction</b>R(S) relie le vecteur rayon juste avant et juste après le dioptre de sommet S. Elle ne modifie pas x et diminue nα de V × x.</div>
+    <div class="trap"><b>Où se fait la réfraction ?</b>Dans les conditions de Gauss, le point d'incidence I est assimilé au sommet S : la matrice réfracte tous les rayons dans le plan de front de S. C'est pour cela que le rayon matriciel du schéma se brise sur la droite verticale passant par S, pas sur la courbe.</div>
+    <p>Cas particulier : un dioptre plan a R infini, donc V = 0 et R(S) = identité. On retrouve le schéma du concept 1.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la hauteur x ne change-t-elle pas dans la matrice de réfraction, alors que la direction change brutalement ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La réfraction est instantanée : le rayon change de direction au point d'incidence, sans avoir parcouru de distance. Juste avant et juste après, il est au même point, donc à la même hauteur. C'est la translation suivante qui transformera ce changement de direction en changement de hauteur.</div></details></div>
+    <div class="q"><p>Sur le graphique du bas, la courbe réelle s'écarte de la droite pour les grandes hauteurs. Que représente physiquement cet écart pour l'image d'un point ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les rayons marginaux sont déviés plus (ou moins) que ne le prévoit la loi linéaire. Ils ne recoupent donc pas l'axe au même point que les rayons proches de l'axe : c'est l'aberration sphérique. La matrice, linéaire par construction, ne peut pas la représenter : elle décrit seulement le comportement au voisinage de l'axe.</div></details></div>
+    <div class="q"><p>Dans la démonstration, que représente géométriquement le fait que n1 u1 − n2 u2 soit parallèle à N ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est la forme vectorielle de Snell-Descartes : les composantes tangentielles à la surface de n1 u1 et n2 u2 sont égales (n1 sin i1 = n2 sin i2), donc leur différence n'a plus de composante tangentielle. Elle contient aussi la coplanarité : u1, u2 et N sont dans le même plan.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+<!-- 4 TRANSFERT -->
+<article class="concept" data-id="c4">
+  <h3><span class="n">4</span>Matrice de transfert d'un système centré</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un objectif, un oculaire ou une lentille épaisse se résument tous à une seule matrice 2 × 2, quel que soit le nombre de surfaces. Une fois cette matrice connue, on n'a plus besoin de regarder l'intérieur du système pour savoir ce qu'il fait à un rayon.</p></div>
+  <div class="wg" data-w="sys">
+    <h4>🔬 Construire un système et suivre le produit</h4>
+    <p class="hint">Choisis un système ou règle chaque surface. Sous le schéma, les matrices élémentaires sont écrites dans l'ordre du produit : la première rencontrée par la lumière est à droite. Survole une matrice pour voir l'élément qu'elle représente, et suis le vecteur rayon étape par étape dans la liste du bas. Ici E est confondu avec S1 et S avec la dernière surface, donc T(ES1) et T(SpS) valent l'identité.</p>
+    <div class="presets">
+      <button class="btn" type="button" data-pre="thick">Lentille épaisse</button>
+      <button class="btn" type="button" data-pre="ball">Lentille boule</button>
+      <button class="btn" type="button" data-pre="men">Ménisque divergent</button>
+      <button class="btn" type="button" data-pre="plate">Lame à faces parallèles</button>
+      <button class="btn" type="button" data-pre="doublet">Doublet collé (3 surfaces)</button>
+      <button class="btn" type="button" data-pre="thin">Lentille presque mince</button>
+    </div>
+    <div class="controls">
+      <div class="cgroup">Surfaces et milieux, de gauche à droite</div>
+      <div class="ctl"><label>Indice n0 (espace objet) <span data-o="n0"></span></label><input type="range" data-k="n0" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="ctl"><label>R1 = S1C1 <span data-o="R1"></span></label><input type="range" data-k="R1" min="-120" max="120" step="1" value="40"></div>
+      <div class="ctl"><label>Épaisseur S1S2 <span data-o="e1"></span></label><input type="range" data-k="e1" min="0" max="40" step="0.5" value="12"></div>
+      <div class="ctl"><label>Indice entre S1 et S2 <span data-o="nA"></span></label><input type="range" data-k="nA" min="1" max="1.9" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>R2 = S2C2 <span data-o="R2"></span></label><input type="range" data-k="R2" min="-120" max="120" step="1" value="-40"></div>
+      <div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="use3"> Ajouter une 3e surface</label></div>
+      <div class="ctl" data-show3><label>Épaisseur S2S3 <span data-o="e2"></span></label><input type="range" data-k="e2" min="0" max="30" step="0.5" value="4"></div>
+      <div class="ctl" data-show3><label>Indice entre S2 et S3 <span data-o="nB"></span></label><input type="range" data-k="nB" min="1" max="1.9" step="0.01" value="1.65"></div>
+      <div class="ctl" data-show3><label>R3 = S3C3 <span data-o="R3"></span></label><input type="range" data-k="R3" min="-120" max="120" step="1" value="-120"></div>
+      <div class="ctl"><label>Indice ni (espace image) <span data-o="ni"></span></label><input type="range" data-k="ni" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="cgroup">Rayon d'entrée, dans le plan E</div>
+      <div class="ctl"><label>Hauteur xE <span data-o="xE"></span></label><input type="range" data-k="xE" min="-12" max="12" step="0.5" value="7"></div>
+      <div class="ctl"><label>Inclinaison αE <span data-o="aE"></span></label><input type="range" data-k="aE" min="-10" max="10" step="0.5" value="0"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:300px"></canvas>
+    <div class="chain" data-o="chain"></div>
+    <div class="dirnote">← sens du produit (de droite à gauche) · sens de la lumière (de gauche à droite) →</div>
+    <ol class="steps2" data-o="steps"></ol>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu enfiles des chaussettes, puis des chaussures. Pour décrire « ce qui arrive à ton pied », on écrit chaussures(chaussettes(pied)) : la dernière action se lit à gauche, alors que c'est la première que tu fais qui est collée au pied. Les matrices d'un système s'écrivent de la même façon : la première surface traversée est la plus à droite, juste à côté du rayon d'entrée.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">X1e = T(ES1) XE        X1s = R(S1) X1e
+X2e = T(S1S2) X1s      X2s = R(S2) X2e     …     XS = T(SpS) Xps
+
+XS = T(ES) × XE
+T(ES) = T(SpS) R(Sp) T(Sp−1Sp) … T(S1S2) R(S1) T(ES1)
+
+T(ES) = | a  b |          xS = a xE + b (nα)E
+        | c  d |          (nα)S = c xE + d (nα)E
+det(T(ES)) = a d − b c = 1</div>
+    <div class="def"><b>Faces d'entrée et de sortie</b>Plans de front E et S qui délimitent le système : tout ce qui se passe entre eux est résumé par T(ES).</div>
+    <div class="def"><b>Matrice de transfert</b>T(ES), produit de toutes les matrices de translation et de réfraction rencontrées entre E et S, pris de droite à gauche par rapport au sens de propagation.</div>
+    <div class="trap"><b>L'ordre du produit</b>Le produit de matrices n'est pas commutatif. Écrire R(S1) T(S1S2) R(S2) au lieu de R(S2) T(S1S2) R(S1) revient à faire traverser le système à l'envers : le résultat est faux dès que les deux surfaces sont différentes. Essaie le ménisque : ses deux surfaces n'ont pas la même vergence.</div>
+    <p>À retenir en plus du cours, d'après les formules des éléments cardinaux (concept 7) : b = 0 signifie que E et S sont conjugués ; c = 0, que le système est afocal (V = 0) ; a = 0, que S est le plan focal image ; d = 0, que E est le plan focal objet.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi le produit s'écrit-il dans le sens opposé à la propagation de la lumière ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Chaque matrice agit sur le vecteur colonne placé à sa droite. Le premier élément traversé doit agir le premier sur XE, il doit donc être collé à XE, à droite. Le suivant agit sur le résultat, et se place à gauche du précédent, et ainsi de suite.</div></details></div>
+    <div class="q"><p>Pourquoi le déterminant de T(ES) vaut-il toujours 1, même pour un système de cinquante surfaces avec des indices différents à l'entrée et à la sortie ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le déterminant d'un produit est le produit des déterminants. Translations et réfractions ont toutes un déterminant égal à 1, grâce au choix de nα. Le produit vaut donc 1, quel que soit le nombre d'éléments. C'est un excellent contrôle de calcul.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 5 PLANS QUELCONQUES -->
+<article class="concept" data-id="c5">
+  <h3><span class="n">5</span>Vergence et matrice entre deux plans quelconques</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>On ne s'intéresse pas qu'aux faces E et S : on veut savoir ce qui arrive entre un plan objet et un plan d'écran placés n'importe où. En encadrant T(ES) par deux translations, on obtient la matrice entre deux plans quelconques, et l'on découvre qu'un de ses éléments ne dépend jamais de ces plans : c'est la vergence du système.</p></div>
+  <div class="wg" data-w="planes">
+    <h4>🔬 Déplacer les plans A1 et A2 autour d'une lentille épaisse</h4>
+    <p class="hint">Un pinceau de rayons part de B1, dans le plan A1, avec des inclinaisons différentes. Dans le plan A2, ils arrivent étalés : c'est l'élément T12 qui fixe cet étalement. Déplace A2 : T11, T12 et T22 changent, T21 reste fixe. Le bouton place A2 là où T12 s'annule : tous les rayons se rejoignent, A2 est l'image de A1.</p>
+    <div class="controls">
+      <div class="cgroup">Lentille (dans l'air)</div>
+      <div class="ctl"><label>Indice n <span data-o="n"></span></label><input type="range" data-k="n" min="1.3" max="1.9" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>R1 <span data-o="R1"></span></label><input type="range" data-k="R1" min="-120" max="120" step="1" value="50"></div>
+      <div class="ctl"><label>R2 <span data-o="R2"></span></label><input type="range" data-k="R2" min="-120" max="120" step="1" value="-50"></div>
+      <div class="ctl"><label>Épaisseur e <span data-o="e"></span></label><input type="range" data-k="e" min="0" max="30" step="0.5" value="10"></div>
+      <div class="cgroup">Plans de front et pinceau</div>
+      <div class="ctl"><label>Position du plan A1 : z1 = EA1 <span data-o="z1"></span></label><input type="range" data-k="z1" min="-150" max="-5" step="1" value="-90"></div>
+      <div class="ctl"><label>Position du plan A2 : z2 = SA2 <span data-o="z2"></span></label><input type="range" data-k="z2" min="-40" max="200" step="1" value="60"></div>
+      <div class="ctl"><label>Hauteur de B1 <span data-o="x1"></span></label><input type="range" data-k="x1" min="0" max="10" step="0.5" value="5"></div>
+      <div class="ctl"><label>Ouverture du pinceau <span data-o="fan"></span></label><input type="range" data-k="fan" min="0" max="5" step="0.25" value="2.5"></div>
+      <div class="ctl" style="display:flex;align-items:end"><button class="btn" type="button" data-conj>Placer A2 conjugué de A1</button></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:300px"></canvas>
+    <div class="eqn" data-o="eq"></div>
+    <canvas class="cv" data-c="graph" style="height:170px"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>T12 en fonction de la position de A2</span><span><i style="background:var(--ray)"></i>position actuelle</span><span><i style="background:var(--pos)"></i>plan conjugué (T12 = 0)</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une loupe concentre la lumière du soleil. Que tu tiennes ta feuille à 5 cm ou à 20 cm, que tu te places au soleil de midi ou du soir, la loupe garde la même « force » : c'est une propriété de la loupe, pas de l'endroit où tu poses la feuille. Ce qui change avec la position de la feuille, c'est seulement si la tache est nette ou floue.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>A1 est dans l'espace objet d'indice n0, A2 dans l'espace image d'indice ni. On pose z1 = EA1 et z2 = SA2 (algébriques).</p>
+    <div class="fblock">T(A1A2) = T(SA2) × T(ES) × T(A1E)
+       = | 1  z2/ni | | a  b | | 1  −z1/n0 |
+         | 0    1   | | c  d | | 0     1    |
+
+T11 = a + (z2/ni) c
+T12 = −(z1/n0) a + b − (z1 z2 / (n0 ni)) c + (z2/ni) d
+T21 = c
+T22 = −(z1/n0) c + d</div>
+    <p>T21 = c ne dépend ni de z1 ni de z2 : c'est une caractéristique intrinsèque du système.</p>
+    <div class="def"><b>Vergence du système</b>V = −c, opposé de l'élément c de la matrice de transfert. Elle se mesure en m⁻¹ (dioptries). V &gt; 0 : système convergent ; V &lt; 0 : divergent ; V = 0 : afocal.</div>
+    <div class="fblock">T(ES) = |  a  b |        xS = a xE + b (nα)E
+         | −V  d |        (nα)S = −V xE + d (nα)E</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi les translations placées avant et après T(ES) ne peuvent-elles pas modifier l'élément c ? Raisonne sur ce que fait une translation au vecteur rayon.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une translation laisse nα inchangé et ne modifie que x. Or c relie la hauteur d'entrée à l'inclinaison de sortie, (nα) en sortie = c × x + … Multiplier à gauche par une translation ne touche pas la seconde ligne ; multiplier à droite ajoute à la seconde colonne un multiple de la première, sans toucher à la première colonne. L'élément c, à l'intersection de la seconde ligne et de la première colonne, n'est donc jamais modifié.</div></details></div>
+    <div class="q"><p>Que traduit physiquement le fait que T12 soit non nul, en termes de netteté de ce que l'on observe dans le plan A2 ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">x2 = T11 x1 + T12 (nα)1 : la hauteur d'arrivée dépend alors de l'inclinaison de départ. Les rayons issus d'un même point B1 arrivent en des points différents de A2 : on y voit une tache, l'image est floue. T12 = 0 est exactement la condition de netteté.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+<!-- 6 CONJUGAISON -->
+<article class="concept focus" data-id="c6">
+  <span class="focus-tag">Une erreur dans les notes, page 8</span>
+  <h3><span class="n">6</span>Matrice de conjugaison et relation de Lagrange-Helmholtz</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Former une image nette est le travail de la plupart des systèmes optiques. Entre un plan objet et son plan image, la matrice prend une forme très simple qui contient directement les deux grandissements, et le déterminant égal à 1 impose un lien entre eux : on ne peut pas agrandir une image sans réduire les angles.</p></div>
+  <div class="wg" data-w="conj">
+    <h4>🔬 Plans conjugués, grandissements et Lagrange-Helmholtz</h4>
+    <p class="hint">Place l'objet A0B0 : l'image AiBi est calculée par la condition T12 = 0, et tous les rayons issus de B0 se rejoignent en Bi. Le rayon vert part de A0 avec l'angle α0 et arrive en Ai avec l'angle αi : c'est lui qui donne le grandissement angulaire. Change les indices n0 et ni : Gt × (ni/n0) × Ga reste égal à 1.</p>
+    <div class="presets">
+      <button class="btn" type="button" data-pre="conv">Lentille épaisse convergente</button>
+      <button class="btn" type="button" data-pre="div">Lentille épaisse divergente</button>
+      <button class="btn" type="button" data-pre="dio">Dioptre unique air → verre</button>
+      <button class="btn" type="button" data-pre="water">Lentille, image dans l'eau</button>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label>Système</label><select data-k="sys"><option value="conv">Lentille convergente</option><option value="div">Lentille divergente</option><option value="dio">Dioptre unique</option></select></div>
+      <div class="ctl"><label>Indice n0 (objet) <span data-o="n0"></span></label><input type="range" data-k="n0" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice ni (image) <span data-o="ni"></span></label><input type="range" data-k="ni" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="ctl"><label>Position de l'objet EA0 <span data-o="z0"></span></label><input type="range" data-k="z0" min="-200" max="60" step="1" value="-90"></div>
+      <div class="ctl"><label>Taille de l'objet x0 <span data-o="x0"></span></label><input type="range" data-k="x0" min="1" max="10" step="0.5" value="5"></div>
+      <div class="ctl"><label>Angle α0 du rayon issu de A0 <span data-o="a0"></span></label><input type="range" data-k="a0" min="0.5" max="6" step="0.25" value="3"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:320px"></canvas>
+    <div class="eqn" data-o="eq"></div>
+    <canvas class="cv" data-c="graph" style="height:170px"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>Gt en fonction de la position de l'objet</span><span><i style="background:var(--ray)"></i>position actuelle</span><span><i style="background:var(--pos)"></i>foyer objet (Gt infini)</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un projecteur de diapositives : plus tu recules l'écran, plus l'image est grande. Mais la lumière qui arrive sur chaque point de l'écran vient d'un cône de plus en plus fin. Ce que tu gagnes en taille, tu le perds en angle, comme si la lumière disponible devait se répartir sur une surface plus grande. C'est exactement ce que dit Lagrange-Helmholtz.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Plans conjugués</b>Plans de front A0xy et Aixy tels que tout point B0 du plan objet a son image Bi dans le plan image, quel que soit le rayon issu de B0 que l'on considère.</div>
+    <div class="fblock">xi = T11 x0 + T12 n0 α0
+ni αi = T21 x0 + T22 n0 α0
+
+xi indépendant de α0  ⟹  T12(A0Ai) = 0
+T11 = xi / x0 = Gt
+Rayon issu de A0 (x0 = 0) :  T22 = ni αi / (n0 α0) = (ni/n0) × Ga
+det = 1  ⟹  Gt × (ni/n0) × Ga = 1        (Lagrange-Helmholtz)
+
+T(A0Ai) = | Gt    0   |  =  | Gt    0    |
+          | −V  (ni/n0) Ga |    | −V   1/Gt  |</div>
+    <div class="def"><b>Grandissement transversal Gt</b>Rapport algébrique xi / x0 des tailles image et objet.</div>
+    <div class="def"><b>Grandissement angulaire Ga</b>Rapport αi / α0 des angles d'un rayon issu de A0 avec l'axe, à la sortie et à l'entrée.</div>
+    <div class="def"><b>Relation de Lagrange-Helmholtz</b>n0 × x0 × α0 = ni × xi × αi pour un couple de plans conjugués : le produit indice × taille × angle se conserve à travers tout système centré.</div>
+    <div class="trap"><b>Erreur dans tes notes, page 8</b>Tu as écrit « d'où T22(A0Ai) = (xi / x0) × Ga ». C'est (ni / n0) × Ga : la ligne juste au-dessus donne bien T22 = ni αi / (n0 α0), et la matrice finale de la même page est correcte. Avec xi / x0 = Gt, on obtiendrait Gt × Ga, et le déterminant ne vaudrait plus 1.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi l'élément T21 de la matrice de conjugaison vaut-il encore −V, alors que les trois autres ont changé de forme ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La matrice de conjugaison n'est qu'un cas particulier de T(A1A2), pour une position précise des deux plans. Or T21 ne dépend jamais de la position des plans (concept 5). Il reste donc égal à −V, quelles que soient les positions de l'objet et de l'image.</div></details></div>
+    <div class="q"><p>Un microscope donne une image très agrandie. Que dit Lagrange-Helmholtz des angles des rayons qui arrivent sur l'image, et quelle conséquence pratique en tires-tu pour la quantité de lumière reçue par chaque point de l'image ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Si Gt est grand, Ga est petit en proportion : les cônes de lumière qui convergent vers l'image sont très fermés. Chaque point de l'image reçoit la lumière issue d'un point de l'objet, étalée sur une surface Gt² fois plus grande : l'image agrandie est plus sombre. Pour compenser, on augmente l'ouverture côté objet (grande ouverture numérique, objectif à immersion pour augmenter n0).</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 7 ELEMENTS CARDINAUX -->
+<article class="concept" data-id="c7">
+  <h3><span class="n">7</span>Éléments cardinaux : foyers, plans principaux, points nodaux</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Six points sur l'axe suffisent à remplacer tout un système, aussi épais soit-il : une fois Fo, Fi, Ho, Hi, No et Ni connus, on construit n'importe quelle image comme avec une lentille mince. La matrice de transfert donne ces six points en une ligne de calcul chacun.</p></div>
+  <div class="wg" data-w="card">
+    <h4>🔬 Les six points cardinaux d'une lentille épaisse</h4>
+    <p class="hint">Trois rayons caractéristiques : parallèle à l'axe (il ressort vers Fi), passant par Fo (il ressort parallèle), visant No (il ressort de Ni parallèle à lui-même). Les pointillés montrent la construction : prolongés, rayon d'entrée et rayon de sortie se coupent sur les plans principaux, à la même hauteur dans Ho et dans Hi. Mets de l'eau d'un côté (n0 ≠ ni) : les points nodaux se séparent des points principaux.</p>
+    <div class="presets">
+      <button class="btn" type="button" data-pre="bic">Biconvexe épaisse</button>
+      <button class="btn" type="button" data-pre="men">Ménisque convergent</button>
+      <button class="btn" type="button" data-pre="div">Biconcave</button>
+      <button class="btn" type="button" data-pre="eye">Dioptre de l'œil (air → humeur)</button>
+      <button class="btn" type="button" data-pre="water">Lentille, sortie dans l'eau</button>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label>Indice n0 (objet) <span data-o="n0"></span></label><input type="range" data-k="n0" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice n (lentille) <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="1.9" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Indice ni (image) <span data-o="ni"></span></label><input type="range" data-k="ni" min="1" max="1.8" step="0.01" value="1"></div>
+      <div class="ctl"><label>R1 <span data-o="R1"></span></label><input type="range" data-k="R1" min="-120" max="120" step="1" value="40"></div>
+      <div class="ctl"><label>R2 <span data-o="R2"></span></label><input type="range" data-k="R2" min="-120" max="120" step="1" value="-40"></div>
+      <div class="ctl"><label>Épaisseur e <span data-o="e"></span></label><input type="range" data-k="e" min="0" max="40" step="0.5" value="16"></div>
+      <div class="ctl"><label>Hauteur des rayons <span data-o="h"></span></label><input type="range" data-k="h" min="1" max="12" step="0.5" value="7"></div>
+      <div class="ctl"><label>Inclinaison du rayon nodal <span data-o="th"></span></label><input type="range" data-k="th" min="1" max="10" step="0.5" value="5"></div>
+      <div class="ctl" style="display:flex;flex-direction:column;gap:6px;justify-content:end">
+        <label class="chk" style="margin:0"><input type="checkbox" data-k="r1" checked> Rayon parallèle → Fi</label>
+        <label class="chk" style="margin:0"><input type="checkbox" data-k="r2" checked> Rayon par Fo → parallèle</label>
+        <label class="chk" style="margin:0"><input type="checkbox" data-k="r3" checked> Rayon nodal</label>
+        <label class="chk" style="margin:0"><input type="checkbox" data-k="cons" checked> Constructions</label>
+      </div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:340px"></canvas>
+    <div class="legend"><span><i style="background:var(--pos)"></i>foyers et plans principaux</span><span><i style="background:var(--nod)"></i>points nodaux et rayon nodal</span><span><i style="background:var(--ray)"></i>rayon parallèle</span><span><i style="background:var(--cb)"></i>rayon par Fo</span><span><i style="background:var(--muted)"></i>constructions (pointillés)</span></div>
+    <div class="eqn" data-o="eq"></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une boîte noire avec une entrée et une sortie. Tu ne peux pas regarder dedans, mais en envoyant trois rayons bien choisis et en regardant d'où ils ressortent, tu trouves six repères sur l'axe. Avec ces repères, tu sais prédire ce que fera la boîte avec n'importe quel rayon, sans jamais l'ouvrir.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Distances focales</b>fi = ni / V (image) et fo = −n0 / V (objet). Si V &gt; 0 : fi &gt; 0 et fo &lt; 0. Si n0 = ni : fi = −fo.</div>
+    <div class="def"><b>Plans principaux</b>Plans de front conjugués Hoxy et Hixy entre lesquels le grandissement transversal vaut 1.</div>
+    <div class="def"><b>Points nodaux</b>Points conjugués No et Ni de l'axe tels que tout rayon passant par No ressort de Ni parallèle à lui-même (Ga = 1).</div>
+    <div class="def"><b>Foyers</b>Fo : tout rayon issu de Fo ressort parallèle à l'axe. Fi : tout rayon incident parallèle à l'axe ressort en passant par Fi.</div>
+    <div class="fblock">Plans principaux :  Gt = 1      T(HoHi) = |  1  0 |
+                                         | −V  1 |
+SHi = fi × (a − 1)          EHo = fo × (d − 1)
+
+Points nodaux :  Ga = 1, donc Gt = n0/ni      T(NoNi) = | n0/ni    0   |
+                                                      |  −V    ni/n0 |
+SNi = fi × (a − n0/ni)      ENo = fo × (d − ni/n0)
+
+Foyers :  SFi = fi × a      EFo = fo × d
+          HiFi = fi         HoFo = fo</div>
+    <p>Si n0 = ni, n0/ni = 1 et les formules des points nodaux deviennent celles des plans principaux : No et Ni sont confondus avec Ho et Hi. C'est le cas de toutes les lentilles dans l'air.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi peut-on dire qu'une lentille épaisse « se comporte comme une lentille mince », et qu'est-ce qui remplace alors le centre optique O ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Entre Ho et Hi, la matrice vaut [[1, 0], [−V, 1]] : exactement celle d'une lentille mince de vergence V, à ceci près que l'entrée se fait dans le plan Ho et la sortie dans le plan Hi. Tout se passe comme si l'on avait une lentille mince, mais coupée en deux et dont les moitiés seraient séparées de HoHi, sans rien entre elles. Les distances focales se mesurent depuis les plans principaux : HoFo = fo et HiFi = fi.</div></details></div>
+    <div class="q"><p>Dans l'œil, la lumière sort de l'air pour entrer dans un milieu d'indice proche de 1,34. Où se trouvent les points nodaux par rapport aux points principaux, et pourquoi est-ce eux, et pas les points principaux, qui servent à calculer la taille de l'image sur la rétine à partir de l'angle sous lequel on voit un objet ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Avec n0 ≠ ni, les points nodaux sont décalés des points principaux de fi + fo (décalage vers l'espace d'indice le plus élevé quand le système est convergent). Un rayon visant No ressort de Ni avec la même inclinaison : la taille de l'image d'un objet lointain vu sous l'angle θ vaut donc NiFi × θ, directement. C'est pour cela que les modèles d'œil donnent la position du point nodal.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+</div></section>
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours avec les conditions d'usage. Le mode test floute les formules : retrouve-les, puis touche pour vérifier.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites.</p>
+  <div class="row"><label for="fcTheme">Thème</label><select id="fcTheme"></select><button class="btn" id="fcReset">Remettre à zéro</button></div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions"><button class="btn" id="fcFlip">Retourner</button><button class="btn bad" id="fcNo" disabled>Pas su</button><button class="btn good" id="fcYes" disabled>Su</button></div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
+</div></section>
+</main>
+<footer class="wrap">Ta progression (concepts revus, cartes, exercices) est enregistrée dans ce navigateur uniquement.</footer>
+<script>
+(function(){
+"use strict";
+const KEY="optique-matricielle-v1";
+let S={seen:{},cards:{},ex:{},tab:"concepts"};
+try{ const r=localStorage.getItem(KEY); if(r) Object.assign(S,JSON.parse(r)); }catch(e){}
+let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} },150); }
+const $=function(id){ return document.getElementById(id); };
+const fr=function(x,d){ if(!isFinite(x)) return "∞"; if(Math.abs(x)<0.5*Math.pow(10,-d)) x=0; return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const D2R=Math.PI/180, R2D=180/Math.PI;
+function asinS(x){ return (x>1||x<-1)?NaN:Math.asin(x); }
+
+/* ---------- tracé ---------- */
+function fit(c){
+  const r=c.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+  if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){ c.width=Math.round(w*d); c.height=Math.round(h*d); }
+  const ctx=c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+/* monde : repère orthonormé ou non */
+function world(cv, xr, yr, equal){
+  const F=fit(cv), w=F.w, h=F.h, pad=10;
+  let sx=(w-2*pad)/(xr[1]-xr[0]), sy=(h-2*pad)/(yr[1]-yr[0]);
+  let ox=pad, oy=pad;
+  if(equal){ const s=Math.min(sx,sy); ox=(w-s*(xr[1]-xr[0]))/2; oy=(h-s*(yr[1]-yr[0]))/2; sx=sy=s; }
+  const X=function(x){ return ox+(x-xr[0])*sx; }, Y=function(y){ return oy+(yr[1]-y)*sy; };
+  const Xi=function(px){ return xr[0]+(px-ox)/sx; }, Yi=function(py){ return yr[1]-(py-oy)/sy; };
+  return {ctx:F.ctx,w:w,h:h,X:X,Y:Y,Xi:Xi,Yi:Yi,sx:sx,sy:sy,xr:xr,yr:yr};
+}
+function seg(g,x0,y0,x1,y1,color,wd,dash,alpha){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.globalAlpha=alpha===undefined?1:alpha; c.beginPath(); c.moveTo(g.X(x0),g.Y(y0)); c.lineTo(g.X(x1),g.Y(y1)); c.stroke(); c.restore(); }
+function arrowHead(g,x0,y0,x1,y1,color,size){ const c=g.ctx, a=[g.X(x0),g.Y(y0)], b=[g.X(x1),g.Y(y1)], ang=Math.atan2(b[1]-a[1],b[0]-a[0]), s=size||8; c.save(); c.fillStyle=color; c.beginPath(); c.moveTo(b[0],b[1]); c.lineTo(b[0]-s*Math.cos(ang-0.4),b[1]-s*Math.sin(ang-0.4)); c.lineTo(b[0]-s*Math.cos(ang+0.4),b[1]-s*Math.sin(ang+0.4)); c.closePath(); c.fill(); c.restore(); }
+function ray(g,x0,y0,x1,y1,color,wd,dash,alpha){ seg(g,x0,y0,x1,y1,color,wd,dash,alpha); const mx=x0+(x1-x0)*0.55, my=y0+(y1-y0)*0.55; if(!dash) arrowHead(g,x0,y0,mx,my,color,7); }
+function label(g,x,y,t,color,align,dy){ const c=g.ctx; c.save(); c.fillStyle=color||css("--ink"); c.font="12px "+css("--ui"); c.textAlign=align||"left"; c.fillText(t,g.X(x),g.Y(y)+(dy||0)); c.restore(); }
+function pt(g,x,y,color,r){ const c=g.ctx; c.fillStyle=color; c.beginPath(); c.arc(g.X(x),g.Y(y),r||3.5,0,2*Math.PI); c.fill(); }
+function arc(g,cx,cy,r,a0,a1,color){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=1.3; c.beginPath(); c.arc(g.X(cx),g.Y(cy),r,-a0,-a1,a1>a0); c.stroke(); c.restore(); }
+function tint(n){ return Math.max(0,Math.min(0.55,(n-1)/1.6)); }
+/* graphique cartésien simple */
+function fmtTick(v){ return Number.isInteger(v)?String(v).replace('-','−'):v.toLocaleString('fr-FR',{maximumFractionDigits:4}).replace('-','−'); }
+function chart(cv,xr,yr,o){
+  const F=fit(cv), ctx=F.ctx, w=F.w, h=F.h, pl=40, pr=10, pt_=10, pb=24;
+  const X=function(x){ return pl+(x-xr[0])/(xr[1]-xr[0])*(w-pl-pr); }, Y=function(y){ return pt_+(yr[1]-y)/(yr[1]-yr[0])*(h-pt_-pb); };
+  ctx.font="11px "+css("--ui"); ctx.strokeStyle=css("--line"); ctx.fillStyle=css("--muted"); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pl,pt_); ctx.lineTo(pl,h-pb); ctx.lineTo(w-pr,h-pb); ctx.stroke();
+  (o.xt||[]).forEach(function(v){ ctx.textAlign="center"; ctx.fillText(fmtTick(v)+(o.xu||""),X(v),h-pb+14); });
+  (o.yt||[]).forEach(function(v){ ctx.textAlign="right"; ctx.fillText(fmtTick(v)+(o.yu||""),pl-5,Y(v)+4); ctx.save(); ctx.globalAlpha=0.4; ctx.beginPath(); ctx.moveTo(pl,Y(v)); ctx.lineTo(w-pr,Y(v)); ctx.stroke(); ctx.restore(); });
+  if(o.xl){ ctx.textAlign="right"; ctx.fillText(o.xl,w-pr,h-pb-5); }
+  if(o.yl){ ctx.textAlign="left"; ctx.fillText(o.yl,pl+5,pt_+10); }
+  return {ctx:ctx,X:X,Y:Y,w:w,h:h,pl:pl,pr:pr,pt:pt_,pb:pb};
+}
+function curve(g,xs,fn,color,wd,dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.beginPath(); let on=false; xs.forEach(function(x){ const y=fn(x); if(!isFinite(y)){ on=false; return; } if(!on){ c.moveTo(g.X(x),g.Y(y)); on=true; } else c.lineTo(g.X(x),g.Y(y)); }); c.stroke(); c.restore(); }
+function lin(a,b,n){ const o=[]; for(let i=0;i<=n;i++) o.push(a+(b-a)*i/n); return o; }
+function wl2rgb(w){ let r=0,g=0,b=0; if(w<440){r=-(w-440)/60;b=1;} else if(w<490){g=(w-440)/50;b=1;} else if(w<510){g=1;b=-(w-510)/20;} else if(w<580){r=(w-510)/70;g=1;} else if(w<645){r=1;g=-(w-645)/65;} else r=1; return "rgb("+[r,g,b].map(function(c){return Math.round(255*Math.pow(c,0.8));}).join(",")+")"; }
+
+/* ---------- moteur de widgets ---------- */
+const widgets=[], IMPL={};
+function initWidgets(){
+  document.querySelectorAll(".wg[data-w]").forEach(function(root){
+    const W={root:root,type:root.dataset.w,k:{},o:{},c:{}};
+    root.querySelectorAll("[data-k]").forEach(function(el){ W.k[el.dataset.k]=el; el.addEventListener("input",function(){ draw(W); }); el.addEventListener("change",function(){ draw(W); }); });
+    root.querySelectorAll("[data-o]").forEach(function(el){ W.o[el.dataset.o]=el; });
+    root.querySelectorAll("canvas[data-c]").forEach(function(el){ W.c[el.dataset.c]=el; });
+    W.v=function(k){ const el=W.k[k]; if(el.type==="checkbox") return el.checked; if(el.type==="range") return +el.value; return el.value; };
+    W.set=function(o){ Object.keys(o).forEach(function(k){ if(W.k[k].type==="checkbox") W.k[k].checked=o[k]; else W.k[k].value=o[k]; }); draw(W); };
+    const P=IMPL[W.type].presets;
+    if(P) root.querySelectorAll("[data-pre]").forEach(function(b){ b.addEventListener("click",function(){ W.set(P[b.dataset.pre]); }); });
+    if(IMPL[W.type].init) IMPL[W.type].init(W);
+    widgets.push(W);
+  });
+}
+function visible(W){ return W.root.offsetParent!==null; }
+function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
+function drawAll(){ widgets.forEach(draw); drawHero(); }
+function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
+
+/* ---------- calcul matriciel ---------- */
+function mmul(A,B){ return [A[0]*B[0]+A[1]*B[2], A[0]*B[1]+A[1]*B[3], A[2]*B[0]+A[3]*B[2], A[2]*B[1]+A[3]*B[3]]; }
+function mT(d,n){ return [1,d/n,0,1]; }
+function vg(n1,n2,R){ return (!isFinite(R)||R===0)?0:(n2-n1)/R; }
+function mR(V){ return [1,0,-V,1]; }
+function mapp(M,X){ return [M[0]*X[0]+M[1]*X[1], M[2]*X[0]+M[3]*X[1]]; }
+function mdet(M){ return M[0]*M[3]-M[1]*M[2]; }
+function rv(v){ if(v===0) return Infinity; if(Math.abs(v)<5) return v<0?-5:5; return v; }
+function rTxt(v){ return v===0?"plan (∞)":rv(v)+" mm"; }
+function fm(v){ if(!isFinite(v)) return "∞"; const a=Math.abs(v); if(a<1e-9) return "0"; const d= a>=100?1: a>=10?2: a>=1?3: a>=0.01?4:5; return fr(v,d); }
+function chainOf(sy){
+  const el=[]; let n=sy.n0, zp=null;
+  sy.surf.forEach(function(s,k){
+    if(k>0){ const d=s.z-zp; el.push({kind:"T",d:d,n:n,M:mT(d,n),k:k}); }
+    const V=vg(n,s.n,s.R); el.push({kind:"R",V:V,M:mR(V),k:k,n1:n,n2:s.n,R:s.R});
+    n=s.n; zp=s.z;
+  });
+  return el;
+}
+function matOf(sy){ let M=[1,0,0,1]; chainOf(sy).forEach(function(e){ M=mmul(e.M,M); }); return M; }
+function lensSys(n0,n,ni,R1,R2,e){ return {n0:n0, surf:[{z:0,R:R1,n:n},{z:e,R:R2,n:ni}]}; }
+function traceP(sy,z0,x0,a0,zEnd){
+  const pts=[[z0,x0]]; let z=z0, x=x0, a=a0, n=sy.n0;
+  sy.surf.forEach(function(s){ x+=(s.z-z)*a; z=s.z; pts.push([z,x]); const V=vg(n,s.n,s.R); a=(n*a-V*x)/s.n; n=s.n; });
+  x+=(zEnd-z)*a; pts.push([zEnd,x]);
+  return {pts:pts,a:a,x:x,n:n};
+}
+function zLast(sy){ return sy.surf[sy.surf.length-1].z; }
+function exitOf(sy,xE,aE){ const M=matOf(sy), X=mapp(M,[xE,sy.n0*aE]), ni=sy.surf[sy.surf.length-1].n; return {x:X[0],a:X[1]/ni}; }
+
+/* ---------- affichage des matrices ---------- */
+function matH(M,o){ o=o||{}; const cl=["hx","hx","hn","hn"]; return '<span class="mat">'+M.map(function(v,i){ let c=cl[i]; if(o.hot&&o.hot.indexOf(i)>=0) c+=" hot"; if(o.k&&o.k.indexOf(i)>=0) c+=" k"; return '<span class="'+c+'">'+(typeof v==="string"?v:fm(v))+'</span>'; }).join("")+'</span>'; }
+function vecH(X){ return '<span class="mat vec"><span class="hx">'+(typeof X[0]==="string"?X[0]:fm(X[0]))+'</span><span class="hn">'+(typeof X[1]==="string"?X[1]:fm(X[1]))+'</span></span>'; }
+function termH(inner,cap){ return '<span class="term">'+inner+'<small>'+cap+'</small></span>'; }
+function opH(t){ return '<span class="op">'+t+'</span>'; }
+function deg(a){ return fr(a*R2D,2)+"°"; }
+
+/* ---------- dessin ---------- */
+function vis(g){ return {z0:g.Xi(0), z1:g.Xi(g.w), x0:g.Yi(g.h), x1:g.Yi(0)}; }
+function sagOf(R,y){ if(!isFinite(R)) return 0; const r=Math.abs(R), yy=Math.min(Math.abs(y),r*0.999); return R-Math.sign(R)*Math.sqrt(r*r-yy*yy); }
+function apOf(R,ap){ return isFinite(R)?Math.min(ap,Math.abs(R)*0.97):ap; }
+function poly(g,pts,fill,alpha){ const c=g.ctx; c.save(); c.globalAlpha=alpha; c.fillStyle=fill; c.beginPath(); pts.forEach(function(p,i){ if(i===0) c.moveTo(g.X(p[0]),g.Y(p[1])); else c.lineTo(g.X(p[0]),g.Y(p[1])); }); c.closePath(); c.fill(); c.restore(); }
+function pline(g,pts,color,wd,dash,alpha,arrows){
+  const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.globalAlpha=alpha===undefined?1:alpha; c.beginPath();
+  pts.forEach(function(p,i){ if(i===0) c.moveTo(g.X(p[0]),g.Y(p[1])); else c.lineTo(g.X(p[0]),g.Y(p[1])); }); c.stroke(); c.restore();
+  if(arrows&&pts.length>1){ const n=pts.length; [[pts[0],pts[1]],[pts[n-2],pts[n-1]]].forEach(function(s){ const m=[s[0][0]+(s[1][0]-s[0][0])*0.55, s[0][1]+(s[1][1]-s[0][1])*0.55]; if(Math.abs(g.X(s[1][0])-g.X(s[0][0]))>30) arrowHead(g,s[0][0],s[0][1],m[0],m[1],color,7); }); }
+}
+function profile(s,y,lim){ return s.z+sagOf(s.R,Math.min(Math.abs(y),lim)); }
+function drawSys(g,sy,apMax,o){
+  o=o||{}; const c=g.ctx, S=sy.surf, stroke=o.stroke||css("--ink"), fillc=o.fill||css("--medium"), V=vis(g);
+  const ap=S.map(function(s){ return apOf(s.R,apMax); });
+  const apc=[];
+  for(let k=0;k<S.length-1;k++){ let A=Math.min(ap[k],ap[k+1]), it=0; while(A>0.5&&(profile(S[k+1],A,9e9)-profile(S[k],A,9e9))<0&&it<300){ A*=0.97; it++; } apc.push(A); }
+  const sap=S.map(function(s,k){ if(S.length===1) return ap[0]; const l=k>0?apc[k-1]:0, r=k<S.length-1?apc[k]:0; return Math.max(l,r); });
+  const N=40;
+  function side(k,lim,top,bot){ const out=[]; for(let i=0;i<=N;i++){ const y=top+(bot-top)*i/N; out.push([profile(S[k],y,lim),y]); } return out; }
+  // milieux extérieurs
+  const fa=o.fillAlpha||1;
+  const ni=S[S.length-1].n, L=S.length-1, one=S.length===1, A0=sap[0];
+  if(one){
+    if(Math.abs(sy.n0-1)>0.001){ poly(g,[[V.z0,A0]].concat(side(0,A0,A0,-A0)).concat([[V.z0,-A0]]),fillc,tint(sy.n0)*fa); seg(g,V.z0,A0,profile(S[0],A0,A0),A0,stroke,1.4); seg(g,V.z0,-A0,profile(S[0],A0,A0),-A0,stroke,1.4); }
+    if(Math.abs(ni-1)>0.001){ poly(g,[[V.z1,A0]].concat(side(0,A0,A0,-A0)).concat([[V.z1,-A0]]),fillc,tint(ni)*fa); seg(g,profile(S[0],A0,A0),A0,V.z1,A0,stroke,1.4); seg(g,profile(S[0],A0,A0),-A0,V.z1,-A0,stroke,1.4); }
+  } else {
+    if(Math.abs(sy.n0-1)>0.001){ const p=[[V.z0,V.x1]].concat(side(0,sap[0],V.x1,V.x0)).concat([[V.z0,V.x0]]); poly(g,p,fillc,tint(sy.n0)*fa); }
+    if(Math.abs(ni-1)>0.001){ const p=[[V.z1,V.x1]].concat(side(L,sap[L],V.x1,V.x0)).concat([[V.z1,V.x0]]); poly(g,p,fillc,tint(ni)*fa); }
+  }
+  // milieux intérieurs
+  for(let k=0;k<S.length-1;k++){
+    const A=apc[k], p=side(k,A,A,-A).concat(side(k+1,A,-A,A));
+    const hl=o.hl&&o.hl.kind==="T"&&o.hl.k===k+1;
+    poly(g,p,hl?css("--ray"):fillc,hl?0.3:Math.max(0.06,tint(S[k].n))*fa);
+    seg(g,profile(S[k],A,A),A,profile(S[k+1],A,A),A,stroke,1.4); seg(g,profile(S[k],A,A),-A,profile(S[k+1],A,A),-A,stroke,1.4);
+  }
+  // plans des sommets
+  if(o.vplanes!==false) S.forEach(function(s){ seg(g,s.z,V.x0,s.z,V.x1,o.vcolor||css("--line"),1,[3,4]); });
+  // surfaces
+  let lastPx=-1e9;
+  S.forEach(function(s,k){
+    const hl=o.hl&&o.hl.kind==="R"&&o.hl.k===k, A=sap[k];
+    const pts=[]; for(let i=0;i<=N;i++){ const y=A-2*A*i/N; pts.push([profile(s,y,A),y]); }
+    pline(g,pts,hl?css("--ray"):stroke,hl?4:2);
+    if(o.labels!==false){ const px=g.X(s.z), dy=(k>0&&px-lastPx<24)?28:15; label(g,s.z,0,o.names?o.names[k]:("S"+(k+1)),o.lcolor||css("--ink"),"left",dy); lastPx=dy===28?-1e9:px; }
+  });
+  return {apc:apc,sap:sap};
+}
+function angArc(g,z,x,slope,side,color,lbl,r){
+  r=r||36; const c=g.ctx, cx=g.X(z), cy=g.Y(x), phi=Math.atan(slope*g.sy/g.sx);
+  let a0,a1; if(side>0){ a0=0; a1=-phi; } else { a0=Math.PI; a1=Math.PI-phi; }
+  c.save(); c.strokeStyle=color; c.lineWidth=1.5; c.setLineDash([]); c.beginPath(); c.arc(cx,cy,r,a0,a1,a1<a0); c.stroke();
+  const span=Math.abs(a1-a0); let am=(a0+a1)/2;
+  if(span<0.45){ am = span<1e-3 ? a0-0.34 : a1+(a1<a0?-0.34:0.34); }
+  c.fillStyle=color; c.font="12px "+css("--ui"); c.textAlign="center"; c.fillText(lbl,cx+(r+14)*Math.cos(am),cy+(r+14)*Math.sin(am)+4); c.restore();
+}
+function vtick(g,z,txt,color,dy){ const V=vis(g); seg(g,z,V.x0,z,V.x1,color,1.2,[6,4]); label(g,z,V.x1,txt,color,"center",14+(dy||0)); }
+function axis(g,color){ const V=vis(g); seg(g,V.z0,0,V.z1,0,color||css("--muted"),1); }
+/* ---------- 1. vecteur rayon ---------- */
+IMPL.rayvec={draw:function(W){
+  const x=W.v("x"), ad=W.v("a"), a=ad*D2R, n1=W.v("n1"), n2=W.v("n2");
+  W.o.x.textContent=fr(x,1)+" mm"; W.o.a.textContent=fr(ad,1)+"°"; W.o.n1.textContent=fr(n1,2)+medName(n1); W.o.n2.textContent=fr(n2,2)+medName(n2);
+  const a2=n1*a/n2;
+  const g=world(W.c.scene,[-60,60],[-16,16],false), V=vis(g);
+  poly(g,[[V.z0,V.x0],[0,V.x0],[0,V.x1],[V.z0,V.x1]],css("--medium"),tint(n1));
+  poly(g,[[0,V.x0],[V.z1,V.x0],[V.z1,V.x1],[0,V.x1]],css("--medium"),tint(n2));
+  axis(g); seg(g,0,V.x0,0,V.x1,css("--ink"),2);
+  label(g,-58,V.x1,"n1 = "+fr(n1,2),css("--ink"),"left",18); label(g,58,V.x1,"n2 = "+fr(n2,2),css("--ink"),"right",18);
+  label(g,1.5,V.x0,"dioptre plan",css("--muted"),"left",-6);
+  seg(g,-34,x,34,x,css("--muted"),1,[4,4]);
+  ray(g,-60,x-60*a,0,x,css("--ray"),2.6);
+  ray(g,0,x,60,x+60*a2,css("--ray"),2.6);
+  angArc(g,0,x,a,-1,css("--odd"),"α1",44); angArc(g,0,x,a2,1,css("--ca"),"α2",44);
+  seg(g,-1.2,0,-1.2,x,css("--odd"),3,null,0.8); label(g,-2,x/2,"x",css("--odd"),"right",4);
+  pt(g,0,x,css("--ink"),4.5);
+  const X1=[x,n1*a], X2=[x,n2*a2];
+  W.o.eq.innerHTML=termH(vecH(X2),"X juste après")+opH("=")+termH(matH([1,0,0,1]),"dioptre plan (V = 0)")+opH("×")+termH(vecH(X1),"X juste avant");
+  const ex=asinS(n1*Math.sin(a)/n2);
+  W.o.out.innerHTML="<div>α1 = <b>"+fr(a,4)+" rad</b></div><div>n1 α1 = <b>"+fr(n1*a,4)+"</b></div><div>α2 = n1 α1 / n2 = <b>"+fr(a2,4)+" rad</b> ("+deg(a2)+")</div><div>n2 α2 = <b>"+fr(n2*a2,4)+"</b></div><div>Snell exact : α2 = <b>"+(isFinite(ex)?deg(ex):"réflexion totale")+"</b></div><div style='flex-basis:100%'>x et nα sont les mêmes des deux côtés : seul α change, d'un facteur n1/n2. Avec le couple (x ; α), il faudrait une matrice [[1, 0], [0, n1/n2]] de déterminant n1/n2.</div>";
+}};
+
+/* ---------- 2. translation ---------- */
+IMPL.trans={draw:function(W){
+  const x1=W.v("x"), ad=W.v("a"), a=ad*D2R, n=W.v("n"), d=W.v("d");
+  W.o.x.textContent=fr(x1,1)+" mm"; W.o.a.textContent=fr(ad,1)+"°"; W.o.n.textContent=fr(n,2)+medName(n); W.o.d.textContent=d+" mm";
+  const t=Math.tan(a), x2e=x1+d*t, x2=x1+d*a;
+  const xm=Math.max(14,Math.abs(x1),Math.abs(x2e))*1.3;
+  const g=world(W.c.scene,[-75,115],[-xm,xm],false), V=vis(g);
+  poly(g,[[V.z0,V.x0],[V.z1,V.x0],[V.z1,V.x1],[V.z0,V.x1]],css("--medium"),Math.max(0.04,tint(n)));
+  axis(g);
+  seg(g,0,V.x0,0,V.x1,css("--ink"),1.4,[6,4]); seg(g,d,V.x0,d,V.x1,css("--ink"),1.4,[6,4]);
+  label(g,0,0,"A1",css("--ink"),"left",15); label(g,d,0,"A2",css("--ink"),"left",15);
+  label(g,V.z0+2,V.x1,"milieu d'indice n = "+fr(n,2),css("--ink"),"left",18);
+  ray(g,V.z0,x1+V.z0*t,V.z1,x1+V.z1*t,css("--ray"),2.4);
+  seg(g,0,x1,d,x1,css("--muted"),1,[4,4]);
+  seg(g,d,x1,d,x2e,css("--pos"),3.5); label(g,d,(x1+x2e)/2,"Δx",css("--pos"),d>=0?"left":"right",4);
+  pt(g,0,x1,css("--ink"),4.5); pt(g,d,x2e,css("--ink"),4.5);
+  label(g,0,x1,"B1",css("--ink"),"right",-8); label(g,d,x2e,"B2",css("--ink"),"right",-8);
+  angArc(g,0,x1,t,d>=0?1:-1,css("--odd"),"α1",40); angArc(g,d,x2e,t,1,css("--odd"),"α2 = α1",44);
+  const T=[1,d/n,0,1], X1=[x1,n*a], X2=mapp(T,X1);
+  W.o.eq.innerHTML=termH(vecH(X2),"X2 en A2")+opH("=")+termH(matH(T,{hot:[1]}),"T(A1A2)")+opH("×")+termH(vecH(X1),"X1 en A1");
+  let out="<div>T12 = A1A2 / n = <b>"+fm(d/n)+" mm</b> (distance réduite)</div><div>(A1A2/n) × nα1 = <b>"+fm(d/n*n*a)+" mm</b> = A1A2 × α1 : n s'élimine</div><div>Δx (Gauss) = <b>"+fm(d*a)+" mm</b></div><div>Δx exact = A1A2 × tan(α1) = <b>"+fm(d*t)+" mm</b></div><div>det(T) = <b>"+fm(mdet(T))+"</b></div>";
+  if(d<0) out+="<div style='flex-basis:100%'>A1A2 &lt; 0 : on « remonte » le rayon. T(−A1A2) × T(A1A2) = identité : la matrice est l'inverse de la translation aller.</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 3. réfraction ---------- */
+function exactRefr(n1,n2,R,x,a){
+  const dv=[Math.cos(a),Math.sin(a)]; let I=null, N=null;
+  if(!isFinite(R)){ I=[0,x]; N=[1,0]; }
+  else { const r=Math.abs(R), ox=-R, oy=x, b=ox*dv[0]+oy*dv[1], cc=ox*ox+oy*oy-r*r, disc=b*b-cc;
+    if(disc<0) return {miss:true};
+    [-b-Math.sqrt(disc),-b+Math.sqrt(disc)].forEach(function(tt){ const p=[dv[0]*tt,x+dv[1]*tt]; if(I===null||Math.abs(p[0])<Math.abs(I[0])) I=p; });
+    N=[(I[0]-R)/r,I[1]/r]; if(N[0]<0) N=[-N[0],-N[1]]; }
+  const mu=n1/n2, ci=N[0]*dv[0]+N[1]*dv[1], k=1-mu*mu*(1-ci*ci);
+  if(k<0) return {I:I,N:N,u1:dv,tir:true,ci:ci};
+  const f=Math.sqrt(k)-mu*ci, t=[mu*dv[0]+f*N[0],mu*dv[1]+f*N[1]];
+  return {I:I,N:N,u1:dv,u2:t,ci:ci,co:N[0]*t[0]+N[1]*t[1],a2:Math.atan2(t[1],t[0])};
+}
+IMPL.refr={draw:function(W){
+  const n1=W.v("n1"), n2=W.v("n2"), Rv=W.v("R"), x=W.v("x"), ad=W.v("a"), a=ad*D2R, showEx=W.v("exact");
+  let R = Rv===0?Infinity:(Math.abs(Rv)<6?(Rv<0?-6:6):Rv);
+  W.o.n1.textContent=fr(n1,2)+medName(n1); W.o.n2.textContent=fr(n2,2)+medName(n2); W.o.R.textContent=isFinite(R)?R+" mm":"plan (∞)"; W.o.x.textContent=fr(x,1)+" mm"; W.o.a.textContent=fr(ad,1)+"°";
+  const V=vg(n1,n2,R), a2p=(n1*a-V*x)/n2, E=exactRefr(n1,n2,R,x,a);
+  const g=world(W.c.scene,[-45,75],[-26,26],true), Vb=vis(g);
+  drawSys(g,{n0:n1,surf:[{z:0,R:R,n:n2}]},40,{labels:false});
+  axis(g);
+  pt(g,0,0,css("--ink"),3.5); label(g,0,0,"S",css("--ink"),"right",15);
+  if(isFinite(R)&&R<Vb.z1&&R>Vb.z0){ pt(g,R,0,css("--ink"),3.5); label(g,R,0,"C",css("--ink"),"center",15); }
+  label(g,Vb.z0+2,Vb.x1,"n1 = "+fr(n1,2),css("--ink"),"left",16); label(g,Vb.z1-2,Vb.x1,"n2 = "+fr(n2,2),css("--ink"),"right",16);
+  label(g,0.8,Vb.x0,"plan de S (réfraction de Gauss)",css("--muted"),"left",-6);
+  const t1=Math.tan(a);
+  ray(g,Vb.z0,x+Vb.z0*t1,0,x,css("--ray"),2.6);
+  ray(g,0,x,Vb.z1,x+Vb.z1*a2p,css("--ray"),2.6);
+  pt(g,0,x,css("--ray"),4);
+  if(showEx&&!E.miss){
+    const I=E.I; seg(g,0,x,I[0],I[1],css("--img"),2,[6,4]);
+    if(isFinite(R)){ seg(g,I[0]-E.N[0]*14,I[1]-E.N[1]*14,R,0,css("--muted"),1,[3,3]); }
+    if(!E.tir){ const L=200; seg(g,I[0],I[1],I[0]+E.u2[0]*L,I[1]+E.u2[1]*L,css("--img"),2,[6,4]); }
+    pt(g,I[0],I[1],css("--img"),4); label(g,I[0],I[1],"I",css("--img"),"left",-8);
+  }
+  // inset vecteurs
+  const gv=world(W.c.vec,[-0.4,2.3],[-1.35,1.35],true);
+  if(E.miss||E.tir){ label(gv,0.95,0,E.miss?"le rayon manque la sphère":"réflexion totale",css("--bad"),"center",0); }
+  else {
+    const p1=[n1*E.u1[0],n1*E.u1[1]], p2=[n2*E.u2[0],n2*E.u2[1]];
+    seg(gv,-0.3,0,2.2,0,css("--line"),1);
+    seg(gv,p2[0]-E.N[0]*1.2,p2[1]-E.N[1]*1.2,p2[0]+E.N[0]*1.2,p2[1]+E.N[1]*1.2,css("--muted"),1,[5,4]);
+    ray(gv,0,0,p1[0],p1[1],css("--odd"),2.6); arrowHead(gv,0,0,p1[0],p1[1],css("--odd"),9);
+    ray(gv,0,0,p2[0],p2[1],css("--even"),2.6); arrowHead(gv,0,0,p2[0],p2[1],css("--even"),9);
+    if(Math.hypot(p1[0]-p2[0],p1[1]-p2[1])>0.02){ seg(gv,p2[0],p2[1],p1[0],p1[1],css("--ink"),2.6); arrowHead(gv,p2[0],p2[1],p1[0],p1[1],css("--ink"),9); }
+    label(gv,p1[0],p1[1],"n1 u1",css("--odd"),"left",-6); label(gv,p2[0],p2[1],"n2 u2",css("--even"),"left",14);
+    label(gv,p2[0]+E.N[0]*1.1,p2[1]+E.N[1]*1.1,"direction de N",css("--muted"),"right",-4);
+    pt(gv,0,0,css("--ink"),3);
+  }
+  // graphe
+  const lim=isFinite(R)?Math.min(20,Math.abs(R)*0.95):20, xs=lin(-lim,lim,200);
+  const fP=function(xx){ return -V*xx; }, fE=function(xx){ const e=exactRefr(n1,n2,R,xx,a); return (e.miss||e.tir)?NaN:n2*e.a2-n1*a; };
+  let ym=0.02; xs.forEach(function(xx){ const v1=Math.abs(fP(xx)), v2=Math.abs(fE(xx)); if(isFinite(v1)) ym=Math.max(ym,v1); if(isFinite(v2)) ym=Math.max(ym,v2); }); ym*=1.15;
+  const G=chart(W.c.graph,[-lim,lim],[-ym,ym],{xt:[-Math.round(lim),0,Math.round(lim)],yt:[-Number(ym.toPrecision(1)),0,Number(ym.toPrecision(1))],xu:" mm",xl:"x",yl:"n2 α2 − n1 α1"});
+  curve(G,xs,fE,css("--img"),2.2,[6,4]); curve(G,xs,fP,css("--ray"),2.2);
+  const c=G.ctx; c.fillStyle=css("--ray"); c.beginPath(); c.arc(G.X(x),G.Y(fP(x)),5,0,7); c.fill();
+  if(isFinite(fE(x))){ c.fillStyle=css("--img"); c.beginPath(); c.arc(G.X(x),G.Y(fE(x)),4,0,7); c.fill(); }
+  // équation et valeurs
+  const Rm=mR(V), X1=[x,n1*a], X2=mapp(Rm,X1);
+  W.o.eq.innerHTML=termH(vecH(X2),"X juste après S")+opH("=")+termH(matH(Rm,{hot:[2]}),"R(S)")+opH("×")+termH(vecH(X1),"X juste avant S");
+  let out="<div>V = (n2 − n1) / R = <b>"+fm(V)+" mm⁻¹</b> = <b>"+fm(V*1000)+" δ</b> ("+(V>0?"convergent":V<0?"divergent":"sans effet")+")</div><div>α2 matriciel = <b>"+deg(a2p)+"</b></div>";
+  if(E.miss) out+="<div class='verdict-no'>Le rayon ne rencontre pas la sphère : x dépasse |R|.</div>";
+  else if(E.tir) out+="<div class='verdict-no'>Rayon exact : réflexion totale.</div>";
+  else { out+="<div>α2 exact = <b>"+deg(E.a2)+"</b></div><div>Écart : <b>"+fr(Math.abs(E.a2-a2p)*R2D,2)+"°</b></div><div>a exact = n1 cos i1 − n2 cos i2 = <b>"+fr(n1*E.ci-n2*E.co,4)+"</b>, Gauss : n1 − n2 = <b>"+fr(n1-n2,4)+"</b></div><div>Hauteur réelle de I : <b>"+fr(E.I[1],2)+" mm</b> (plan de S : "+fr(x,2)+" mm)</div>"; }
+  W.o.out.innerHTML=out;
+}};
+/* ---------- 4. système centré ---------- */
+function sysFromW(W){
+  const use3=W.v("use3"), n0=W.v("n0"), ni=W.v("ni"), e1=W.v("e1");
+  const surf=[{z:0,R:rv(W.v("R1")),n:W.v("nA")},{z:e1,R:rv(W.v("R2")),n:use3?W.v("nB"):ni}];
+  if(use3) surf.push({z:e1+W.v("e2"),R:rv(W.v("R3")),n:ni});
+  return {n0:n0,surf:surf};
+}
+IMPL.sys={presets:{
+  thick:{n0:1,R1:40,e1:12,nA:1.5,R2:-40,use3:false,ni:1,xE:7,aE:0},
+  ball:{n0:1,R1:10,e1:20,nA:1.5,R2:-10,use3:false,ni:1,xE:5,aE:0},
+  men:{n0:1,R1:30,e1:4,nA:1.5,R2:18,use3:false,ni:1,xE:6,aE:0},
+  plate:{n0:1,R1:0,e1:20,nA:1.5,R2:0,use3:false,ni:1,xE:3,aE:6},
+  doublet:{n0:1,R1:60,e1:9,nA:1.52,R2:-40,use3:true,e2:3,nB:1.67,R3:-150,ni:1,xE:7,aE:0},
+  thin:{n0:1,R1:60,e1:1.5,nA:1.5,R2:-60,use3:false,ni:1,xE:7,aE:0}},
+init:function(W){ W.hl=null; },
+scene:function(W){
+  const sy=W.sy, zl=zLast(sy), xE=W.v("xE"), aE=W.v("aE")*D2R;
+  const g=world(W.c.scene,[-45,zl+110],[-19,19],false);
+  drawSys(g,sy,15,{hl:W.hl});
+  axis(g);
+  const V=vis(g);
+  label(g,0,V.x1,"E",css("--ink"),"center",14); label(g,zl,V.x1,"S",css("--ink"),"center",14);
+  const tr=traceP(sy,V.z0,xE+aE*V.z0,aE,V.z1);
+  pline(g,tr.pts,css("--ray"),2.6,null,1,true);
+  tr.pts.slice(1,-1).forEach(function(p){ pt(g,p[0],p[1],css("--ray"),3.5); });
+  if(Math.abs(tr.a)>1e-6){ const zc=zl-tr.pts[tr.pts.length-2][1]/tr.a; if(zc>zl&&zc<V.z1){ pt(g,zc,0,css("--pos"),4); label(g,zc,0,"croise l'axe",css("--pos"),"center",-8); } }
+},
+draw:function(W){
+  const use3=W.v("use3");
+  W.root.querySelectorAll("[data-show3]").forEach(function(el){ el.style.display=use3?"":"none"; });
+  ["n0","nA","nB","ni"].forEach(function(k){ W.o[k].textContent=fr(W.v(k),2)+medName(W.v(k)); });
+  ["R1","R2","R3"].forEach(function(k){ W.o[k].textContent=rTxt(W.v(k)); });
+  W.o.e1.textContent=fr(W.v("e1"),1)+" mm"; W.o.e2.textContent=fr(W.v("e2"),1)+" mm";
+  W.o.xE.textContent=fr(W.v("xE"),1)+" mm"; W.o.aE.textContent=fr(W.v("aE"),1)+"°";
+  const sy=sysFromW(W); W.sy=sy;
+  const ch=chainOf(sy), M=matOf(sy);
+  IMPL.sys.scene(W);
+  // chaîne
+  let h="";
+  for(let i=ch.length-1;i>=0;i--){
+    const e=ch[i];
+    const t= e.kind==="R" ? "R(S"+(e.k+1)+")" : "T(S"+e.k+"S"+(e.k+1)+")";
+    const s= e.kind==="R" ? "V"+(e.k+1)+" = "+fm(e.V)+" mm⁻¹" : "e / n = "+fm(e.d)+" / "+fr(e.n,2)+" = "+fm(e.d/e.n)+" mm";
+    h+='<div class="mcard" data-i="'+i+'"><span class="t">'+t+'</span>'+matH(e.M,{hot:e.kind==="R"?[2]:[1]})+'<span class="s">'+s+'</span></div>';
+    if(i>0) h+='<span class="op">×</span>';
+  }
+  h+='<span class="op">=</span><div class="mcard res"><span class="t">T(ES)</span>'+matH(M,{k:[2]})+'<span class="s">det = '+fr(mdet(M),6)+'</span></div>';
+  W.o.chain.innerHTML=h;
+  W.o.chain.querySelectorAll(".mcard[data-i]").forEach(function(card){
+    const e=ch[+card.dataset.i];
+    card.addEventListener("mouseenter",function(){ W.hl={kind:e.kind,k:e.kind==="R"?e.k:e.k}; card.classList.add("on"); IMPL.sys.scene(W); });
+    card.addEventListener("mouseleave",function(){ W.hl=null; card.classList.remove("on"); IMPL.sys.scene(W); });
+  });
+  // étapes
+  const xE=W.v("xE"), aE=W.v("aE")*D2R; let X=[xE,sy.n0*aE], n=sy.n0;
+  function li(lbl,X,n){ return "<li><b>"+lbl+"</b><code>X = ("+fm(X[0])+" ; "+fm(X[1])+")</code><span>x = "+fm(X[0])+" mm, α = "+deg(X[1]/n)+"</span></li>"; }
+  let st=li("En E",X,n);
+  ch.forEach(function(e){ X=mapp(e.M,X); if(e.kind==="R") n=e.n2; st+=li(e.kind==="R"?"après R(S"+(e.k+1)+")":"après T(S"+e.k+"S"+(e.k+1)+")",X,n); });
+  W.o.steps.innerHTML=st;
+  const Vv=-M[2], XS=mapp(M,[xE,sy.n0*aE]);
+  W.o.out.innerHTML="<div>a = <b>"+fm(M[0])+"</b>, b = <b>"+fm(M[1])+" mm</b>, c = <b>"+fm(M[2])+" mm⁻¹</b>, d = <b>"+fm(M[3])+"</b></div><div>Vergence V = −c = <b>"+fm(Vv)+" mm⁻¹</b> ("+fm(Vv*1000)+" δ)</div><div>Contrôle : a d − b c = <b>"+fr(mdet(M),6)+"</b></div><div>Directement par T(ES) : XS = ("+fm(XS[0])+" ; "+fm(XS[1])+"), identique à la dernière étape.</div>";
+}};
+
+/* ---------- 5. plans quelconques ---------- */
+IMPL.planes={init:function(W){
+  W.k.z2.step="any";
+  W.root.querySelector("[data-conj]").addEventListener("click",function(){
+    const r=W.st; if(!r) return;
+    if(r.zc!==null&&r.zc>=-40&&r.zc<=200){ W.k.z2.value=r.zc; W.msg=null; } else W.msg=r.zc===null?"Le plan A1 est au foyer objet : son image est à l'infini.":"Le plan conjugué est en SA2 = "+fm(r.zc)+" mm, hors du cadre ("+(r.zc<-40?"image virtuelle, avant S":"trop loin")+").";
+    draw(W);
+  });
+  ["z1","n","R1","R2","e"].forEach(function(k){ W.k[k].addEventListener("input",function(){ W.msg=null; }); });
+},draw:function(W){
+  const n=W.v("n"), e=W.v("e"), z1=W.v("z1"), z2=W.v("z2"), x1=W.v("x1"), fan=W.v("fan")*D2R;
+  W.o.n.textContent=fr(n,2); W.o.R1.textContent=rTxt(W.v("R1")); W.o.R2.textContent=rTxt(W.v("R2")); W.o.e.textContent=fr(e,1)+" mm";
+  W.o.z1.textContent=z1+" mm"; W.o.z2.textContent=fr(z2,1)+" mm"; W.o.x1.textContent=fr(x1,1)+" mm"; W.o.fan.textContent="±"+fr(fan*R2D,2)+"°";
+  const sy=lensSys(1,n,1,rv(W.v("R1")),rv(W.v("R2")),e), M=matOf(sy), a=M[0], b=M[1], c=M[2], d=M[3];
+  const TA=mmul(mT(z2,1),mmul(M,mT(-z1,1)));
+  const den=d-z1*c, zc=Math.abs(den)<1e-9?null:(z1*a-b)/den;
+  W.st={zc:zc};
+  const zA2=e+z2, angs=[]; const K=fan>0?3:0; for(let k=-K;k<=K;k++) angs.push(K?fan*k/K:0);
+  const zr=[z1-15, Math.max(zA2,e+20)+30];
+  const outs=angs.map(function(al){ return {al:al, o:exitOf(sy,x1-al*z1,al)}; });
+  const hits=outs.map(function(r){ return r.o.x+r.o.a*z2; });
+  let xm=Math.max(14,x1); hits.forEach(function(h){ xm=Math.max(xm,Math.abs(h)); }); xm=Math.min(xm*1.25,60);
+  const g=world(W.c.scene,zr,[-xm,xm],false), V=vis(g);
+  drawSys(g,sy,14,{});
+  axis(g);
+  vtick(g,z1,"A1",css("--ink")); vtick(g,zA2,"A2",css("--ray"));
+  label(g,0,V.x0,"E",css("--ink"),"center",-6); label(g,e,V.x0,"S",css("--ink"),"center",-6);
+  outs.forEach(function(r,i){
+    const tr=traceP(sy,z1,x1,r.al,V.z1), al=0.45+0.55*(1-Math.abs(i-K)/(K||1));
+    pline(g,tr.pts,css("--ray"),1.8,null,al,i===K);
+    if(z2<0){ seg(g,e,r.o.x,zA2,hits[i],css("--ray"),1.2,[4,4],al); }
+    pt(g,zA2,hits[i],css("--ray"),3.2);
+  });
+  pt(g,z1,x1,css("--ink"),4.5); label(g,z1,x1,"B1",css("--ink"),"right",-6);
+  const hmin=Math.min.apply(null,hits), hmax=Math.max.apply(null,hits), spread=hmax-hmin;
+  if(spread>0.05){ const zz=zA2+(g.xr[1]-g.xr[0])*0.012; seg(g,zz,hmin,zz,hmax,css("--pos"),3); label(g,zz,(hmin+hmax)/2,"étalement",css("--pos"),"left",4); }
+  W.o.eq.innerHTML=termH(matH(TA,{k:[2],hot:[1]}),"T(A1A2) pour z1 = "+z1+" mm, z2 = "+fr(z2,1)+" mm")+opH("=")+termH(matH(["a + z2·c","T12","c","d − z1·c"]),"forme générale (n0 = ni = 1)");
+  // graphe T12(z2)
+  const f=function(zz){ return (-z1*a+b)+zz*(d-z1*c); };
+  const xs=lin(-40,200,120); let ym=1; xs.forEach(function(zz){ ym=Math.max(ym,Math.abs(f(zz))); }); ym*=1.1;
+  const G=chart(W.c.graph,[-40,200],[-ym,ym],{xt:[-40,0,50,100,150,200],yt:[-Math.round(ym),0,Math.round(ym)],xu:"",xl:"z2 = SA2 (mm)",yl:"T12 (mm)"});
+  curve(G,[-40,200],function(){return 0;},css("--line"),1,[4,4]);
+  curve(G,xs,f,css("--ink"),2.2);
+  const cc=G.ctx;
+  if(zc!==null&&zc>=-40&&zc<=200){ cc.fillStyle=css("--pos"); cc.beginPath(); cc.arc(G.X(zc),G.Y(0),5,0,7); cc.fill(); }
+  cc.fillStyle=css("--ray"); cc.beginPath(); cc.arc(G.X(z2),G.Y(f(z2)),5,0,7); cc.fill();
+  const conj=Math.abs(TA[1])<0.05;
+  let out="<div>T11 = <b>"+fm(TA[0])+"</b></div><div>T12 = <b>"+fm(TA[1])+" mm</b></div><div>T21 = <b>"+fm(TA[2])+" mm⁻¹</b> = c = −V, quels que soient z1 et z2</div><div>T22 = <b>"+fm(TA[3])+"</b></div><div>det = <b>"+fr(mdet(TA),5)+"</b></div>";
+  out+="<div style='flex-basis:100%'>Étalement mesuré dans A2 : <b>"+fm(spread)+" mm</b> ; prévu : |T12| × n0 × (αmax − αmin) = <b>"+fm(Math.abs(TA[1])*2*fan)+" mm</b>.</div>";
+  out+="<div style='flex-basis:100%'>"+(conj?"<span class='verdict-ok'>T12 ≈ 0 : A2 est le plan image de A1. Grandissement Gt = T11 = "+fm(TA[0])+".</span>":(zc===null?"A1 est au foyer objet : aucun plan à distance finie n'est conjugué.":"Plan conjugué de A1 : SA2 = <b>"+fm(zc)+" mm</b>."))+"</div>";
+  if(W.msg) out+="<div class='verdict-no' style='flex-basis:100%'>"+W.msg+"</div>";
+  W.o.out.innerHTML=out;
+}};
+/* ---------- 6. conjugaison ---------- */
+function conjSys(kind,n0,ni){
+  if(kind==="div") return lensSys(n0,1.5,ni,-40,40,6);
+  if(kind==="dio") return {n0:n0,surf:[{z:0,R:20,n:ni}]};
+  return lensSys(n0,1.5,ni,40,-40,10);
+}
+function conjOf(M,z0,n0,ni){ const a=M[0],b=M[1],c=M[2],d=M[3]; const den=d/ni-z0*c/(n0*ni); if(Math.abs(den)<1e-12) return null; return (z0*a/n0-b)/den; }
+IMPL.conj={presets:{conv:{sys:"conv",n0:1,ni:1,z0:-90,x0:5,a0:3},div:{sys:"div",n0:1,ni:1,z0:-60,x0:6,a0:3},dio:{sys:"dio",n0:1,ni:1.5,z0:-80,x0:5,a0:3},water:{sys:"conv",n0:1,ni:1.33,z0:-90,x0:5,a0:3}},
+draw:function(W){
+  const kind=W.v("sys"), n0=W.v("n0"), ni=W.v("ni"), z0=W.v("z0"), x0=W.v("x0"), a0=W.v("a0")*D2R;
+  W.o.n0.textContent=fr(n0,2)+medName(n0); W.o.ni.textContent=fr(ni,2)+medName(ni); W.o.z0.textContent=z0+" mm"; W.o.x0.textContent=fr(x0,1)+" mm"; W.o.a0.textContent=fr(a0*R2D,2)+"°";
+  const sy=conjSys(kind,n0,ni), M=matOf(sy), Vv=-M[2], e=zLast(sy);
+  if(Math.abs(Vv)<1e-9){ const g=world(W.c.scene,[-100,100],[-15,15],false); drawSys(g,sy,14,{}); axis(g); W.o.eq.innerHTML=""; W.o.out.innerHTML="<div class='verdict-no'>n0 = ni : le dioptre ne dévie plus la lumière (V = 0). Change ni.</div>"; fit(W.c.graph); return; }
+  const zi=conjOf(M,z0,n0,ni);
+  const fin=zi!==null&&Math.abs(zi)<2000;
+  const TA=fin?mmul(mT(zi,ni),mmul(M,mT(-z0,n0))):null;
+  const Gt=fin?TA[0]:Infinity;
+  const ex=exitOf(sy,-a0*z0,a0), ai=ex.a, Ga=ai/a0;
+  const zI=fin?e+zi:NaN, xI=fin?Gt*x0:NaN;
+  // cadre
+  let zmin=Math.min(z0,-20)-20, zmax=Math.max(fin?zI:e+60,e+30)+25; zmin=Math.max(zmin,-260); zmax=Math.min(zmax,340);
+  let xm=Math.max(x0,12); if(fin&&Math.abs(xI)<60) xm=Math.max(xm,Math.abs(xI)); xm*=1.3;
+  const g=world(W.c.scene,[zmin,zmax],[-xm,xm],false), V=vis(g);
+  const ds=drawSys(g,sy,14,{}); axis(g);
+  label(g,0,V.x0,"E",css("--ink"),"center",-6); if(sy.surf.length>1) label(g,e,V.x0,"S",css("--ink"),"center",-6);
+  label(g,V.z0+2,V.x1,"n0 = "+fr(n0,2),css("--ink"),"left",16); label(g,V.z1-2,V.x1,"ni = "+fr(ni,2),css("--ink"),"right",16);
+  const ap=ds.apc.length?ds.apc[0]:ds.sap[0], real0=z0<0;
+  function drawRay(zs,xs,al,color,wd){
+    if(real0){ const tr=traceP(sy,zs,xs,al,V.z1); pline(g,tr.pts,color,wd,null,1,true); return tr; }
+    const tr=traceP(sy,V.z0,xs+al*(V.z0-zs),al,V.z1); pline(g,tr.pts,color,wd,null,1,true);
+    seg(g,0,xs+al*(0-zs),zs,xs,color,1.2,[4,4],0.7); return tr;
+  }
+  [0.75,0,-0.75].forEach(function(f){ const h=f*ap, al=(h-x0)/(0-z0); const tr=drawRay(z0,x0,al,css("--ray"),1.8); if(fin&&zi<0){ const q=tr.pts[tr.pts.length-2]; seg(g,q[0],q[1],zI,xI,css("--ray"),1.1,[4,4],0.7); } });
+  const trm=drawRay(z0,0,a0,css("--pos"),2.4);
+  if(fin&&zi<0){ const q=trm.pts[trm.pts.length-2]; seg(g,q[0],q[1],zI,0,css("--pos"),1.2,[4,4],0.8); }
+  // objet et image
+  seg(g,z0,0,z0,x0,css("--ink"),2.6,real0?null:[5,4]); arrowHead(g,z0,0,z0,x0,css("--ink"),9); label(g,z0,0,"A0",css("--ink"),"center",15); label(g,z0,x0,"B0",css("--ink"),"center",-6);
+  angArc(g,z0,0,a0,1,css("--pos"),"α0",30);
+  if(fin&&zI>V.z0&&zI<V.z1){ const yI=Math.max(-xm*0.98,Math.min(xm*0.98,xI)); seg(g,zI,0,zI,yI,css("--img"),2.6,zi>0?null:[5,4]); arrowHead(g,zI,0,zI,yI,css("--img"),9); label(g,zI,0,"Ai",css("--img"),"center",15); label(g,zI,yI,"Bi",css("--img"),"center",yI>0?-6:15); angArc(g,zI,0,ai,zi>0?-1:1,css("--pos"),"αi",30); }
+  // matrice
+  W.o.eq.innerHTML=fin?termH(matH(TA,{k:[2],hot:[1]}),"T(A0Ai) calculée")+opH("=")+termH(matH(["Gt","0","−V","(ni/n0)·Ga"]),"matrice de conjugaison")+opH("=")+termH(matH(["Gt","0","−V","1/Gt"]),"avec Lagrange-Helmholtz"):"";
+  // graphe Gt(z0)
+  const xs=lin(-200,60,400), fG=function(zz){ const q=conjOf(M,zz,n0,ni); if(q===null) return NaN; const T=mmul(mT(q,ni),mmul(M,mT(-zz,n0))); return Math.abs(T[0])>8?NaN:T[0]; };
+  const G=chart(W.c.graph,[-200,60],[-6,6],{xt:[-200,-150,-100,-50,0,50],yt:[-6,-3,0,3,6],xl:"EA0 (mm)",yl:"Gt"});
+  curve(G,[-200,60],function(){return 0;},css("--line"),1,[4,4]);
+  curve(G,xs,fG,css("--ink"),2.2);
+  const EFo=-n0/Vv*M[3]; const cc=G.ctx;
+  if(EFo>-200&&EFo<60){ cc.save(); cc.strokeStyle=css("--pos"); cc.setLineDash([4,4]); cc.beginPath(); cc.moveTo(G.X(EFo),G.pt); cc.lineTo(G.X(EFo),G.h-G.pb); cc.stroke(); cc.restore(); cc.fillStyle=css("--pos"); cc.fillText("Fo",G.X(EFo)+4,G.pt+12); }
+  if(fin&&Math.abs(Gt)<6){ cc.fillStyle=css("--ray"); cc.beginPath(); cc.arc(G.X(z0),G.Y(Gt),5,0,7); cc.fill(); }
+  let out="";
+  if(!fin) out="<div class='verdict-no' style='flex-basis:100%'>L'objet est au foyer objet : l'image est rejetée à l'infini.</div>";
+  else {
+    out+="<div>SAi = <b>"+fm(zi)+" mm</b></div><div>Gt = T11 = <b>"+fm(Gt)+"</b></div><div>T12 = <b>"+fm(TA[1])+"</b> (≈ 0)</div><div>T22 = <b>"+fm(TA[3])+"</b>, 1/Gt = <b>"+fm(1/Gt)+"</b></div>";
+    out+="<div>Ga mesuré sur le rayon vert = αi/α0 = <b>"+fm(Ga)+"</b></div><div>(ni/n0) × Ga = <b>"+fm(ni/n0*Ga)+"</b> = T22</div><div>Gt × (ni/n0) × Ga = <b>"+fr(Gt*ni/n0*Ga,4)+"</b></div>";
+    out+="<div style='flex-basis:100%'>Objet <b>"+(real0?"réel":"virtuel")+"</b>, image <b>"+(zi>0?"réelle":"virtuelle")+", "+(Gt>0?"droite":"renversée")+", "+(Math.abs(Gt)>1?"agrandie":"réduite")+"</b>. V = "+fm(Vv)+" mm⁻¹.</div>";
+  }
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 7. éléments cardinaux ---------- */
+IMPL.card={presets:{
+  bic:{n0:1,n:1.5,ni:1,R1:40,R2:-40,e:16,h:7,th:5},
+  men:{n0:1,n:1.5,ni:1,R1:25,R2:60,e:10,h:7,th:5},
+  div:{n0:1,n:1.5,ni:1,R1:-40,R2:40,e:8,h:6,th:5},
+  eye:{n0:1,n:1.34,ni:1.34,R1:8,R2:0,e:0,h:3,th:6},
+  water:{n0:1,n:1.5,ni:1.33,R1:40,R2:-40,e:12,h:7,th:5}},
+draw:function(W){
+  const n0=W.v("n0"), n=W.v("n"), ni=W.v("ni"), e=W.v("e"), h=W.v("h"), th=W.v("th")*D2R;
+  W.o.n0.textContent=fr(n0,2)+medName(n0); W.o.n.textContent=fr(n,2)+medName(n); W.o.ni.textContent=fr(ni,2)+medName(ni);
+  W.o.R1.textContent=rTxt(W.v("R1")); W.o.R2.textContent=rTxt(W.v("R2")); W.o.e.textContent=fr(e,1)+" mm"; W.o.h.textContent=fr(h,1)+" mm"; W.o.th.textContent=fr(th*R2D,1)+"°";
+  const sy=lensSys(n0,n,ni,rv(W.v("R1")),rv(W.v("R2")),e), M=matOf(sy), a=M[0], d=M[3], Vv=-M[2];
+  if(Math.abs(Vv)<1e-6){ const g=world(W.c.scene,[-120,140],[-15,15],false); drawSys(g,sy,14,{}); axis(g); W.o.eq.innerHTML=""; W.o.out.innerHTML="<div class='verdict-no'>V = 0 : système afocal, pas de foyers ni de plans principaux à distance finie.</div>"; return; }
+  const fi=ni/Vv, fo=-n0/Vv;
+  const P={Ho:fo*(d-1),Hi:e+fi*(a-1),No:fo*(d-ni/n0),Ni:e+fi*(a-n0/ni),Fo:fo*d,Fi:e+fi*a};
+  const zs=[P.Ho,P.Hi,P.No,P.Ni,P.Fo,P.Fi,0,e];
+  let zmin=Math.min.apply(null,zs)-30, zmax=Math.max.apply(null,zs)+30, cut=false;
+  if(zmin<-260){ zmin=-260; cut=true; } if(zmax>320){ zmax=320; cut=true; }
+  const xm=Math.max(14,h*1.7);
+  const g=world(W.c.scene,[zmin,zmax],[-xm,xm],false), V=vis(g);
+  const single=W.v("e")===0&&W.v("R2")===0;
+  drawSys(g,single?{n0:n0,surf:[{z:0,R:rv(W.v("R1")),n:ni}]}:sy,14,{vplanes:false,labels:false}); axis(g);
+  if(e*g.sx<16) label(g,0,V.x0,"E = S",css("--ink"),"center",-6); else { label(g,0,V.x0,"E",css("--ink"),"center",-6); label(g,e,V.x0,"S",css("--ink"),"center",-6); }
+  // plans principaux
+  const pc=css("--pos");
+  seg(g,P.Ho,V.x0,P.Ho,V.x1,pc,1.3,[6,4]); seg(g,P.Hi,V.x0,P.Hi,V.x1,pc,1.3,[6,4]);
+  const sameH=Math.abs(P.Hi-P.Ho)*g.sx<26;
+  label(g,P.Ho,V.x1,"Ho",pc,sameH?"right":"center",14); label(g,P.Hi,V.x1,"Hi",pc,sameH?"left":"center",14);
+  // points sur l'axe, étiquettes décalées
+  const items=[{z:P.Fo,t:"Fo",c:pc},{z:P.Fi,t:"Fi",c:pc},{z:P.No,t:"No",c:css("--nod")},{z:P.Ni,t:"Ni",c:css("--nod")}].sort(function(p,q){return p.z-q.z;});
+  let last=-1e9,row=0; items.forEach(function(it){ if((it.z-last)*g.sx<28) row++; else row=0; last=it.z; it.row=row; });
+  items.forEach(function(it){ if(it.z>V.z0&&it.z<V.z1){ pt(g,it.z,0,it.c,4.5); label(g,it.z,0,it.t,it.c,"center",16+it.row*13); } });
+  const cons=W.v("cons"), mut=css("--muted");
+  function inc(z0,x0,s){ return function(z){ return x0+s*(z-z0); }; }
+  function drawCase(xin,sin,color){
+    const zStart=V.z0, tr=traceP(sy,zStart,xin(zStart),sin,V.z1);
+    pline(g,tr.pts,color,2.4,null,1,true);
+    const xS=tr.pts[tr.pts.length-2][1], aS=tr.a, out=function(z){ return xS+aS*(z-e); };
+    if(cons){
+      if(P.Ho>0) seg(g,0,xin(0),P.Ho,xin(P.Ho),color,1.2,[4,4],0.8);
+      if(P.Hi<e) seg(g,e,xS,P.Hi,out(P.Hi),color,1.2,[4,4],0.8);
+      seg(g,P.Ho,xin(P.Ho),P.Hi,out(P.Hi),mut,1.2,[2,3],0.9);
+      pt(g,P.Ho,xin(P.Ho),color,3); pt(g,P.Hi,out(P.Hi),color,3);
+    }
+    return {xS:xS,aS:aS,hHo:xin(P.Ho),hHi:out(P.Hi)};
+  }
+  let r1=null,r2=null,r3=null;
+  if(W.v("r1")) r1=drawCase(inc(0,h,0),0,css("--ray"));
+  if(W.v("r2")){ const s=h/fo; r2=drawCase(inc(P.Fo,0,s),s,css("--cb")); }
+  if(W.v("r3")){
+    const s=th, xin=inc(P.No,0,s), tr=traceP(sy,V.z0,xin(V.z0),s,V.z1);
+    pline(g,tr.pts,css("--nod"),2.4,null,1,true);
+    const xS=tr.pts[tr.pts.length-2][1];
+    if(cons){ if(P.No>0) seg(g,0,xin(0),P.No,0,css("--nod"),1.2,[4,4],0.8); if(P.Ni<e) seg(g,e,xS,P.Ni,0,css("--nod"),1.2,[4,4],0.8); }
+    r3={ai:tr.a};
+  }
+  // matrices de contrôle
+  const THH=mmul(mT(P.Hi-e,ni),mmul(M,mT(-P.Ho,n0))), TNN=mmul(mT(P.Ni-e,ni),mmul(M,mT(-P.No,n0)));
+  W.o.eq.innerHTML=termH(matH(M,{k:[2]}),"T(ES)")+opH(" ")+termH(matH(THH,{k:[2]}),"T(HoHi) : Gt = 1")+opH(" ")+termH(matH(TNN,{k:[2]}),"T(NoNi) : Gt = n0/ni");
+  let out="<div>fi = ni/V = <b>"+fm(fi)+" mm</b></div><div>fo = −n0/V = <b>"+fm(fo)+" mm</b></div><div>SFi = fi·a = <b>"+fm(P.Fi-e)+" mm</b></div><div>EFo = fo·d = <b>"+fm(P.Fo)+" mm</b></div><div>SHi = fi(a − 1) = <b>"+fm(P.Hi-e)+" mm</b></div><div>EHo = fo(d − 1) = <b>"+fm(P.Ho)+" mm</b></div><div>SNi = <b>"+fm(P.Ni-e)+" mm</b></div><div>ENo = <b>"+fm(P.No)+" mm</b></div><div>HiFi = <b>"+fm(P.Fi-P.Hi)+"</b> = fi</div><div>HoFo = <b>"+fm(P.Fo-P.Ho)+"</b> = fo</div>";
+  if(r1) out+="<div style='flex-basis:100%'>Rayon parallèle : hauteur "+fm(r1.hHo)+" mm dans Ho et "+fm(r1.hHi)+" mm dans Hi (Gt = 1 entre les plans principaux).</div>";
+  if(r2) out+="<div style='flex-basis:100%'>Rayon par Fo : il ressort avec une inclinaison de "+deg(r2.aS)+", donc parallèle à l'axe.</div>";
+  if(r3) out+="<div style='flex-basis:100%'>Rayon nodal : entre à "+deg(th)+", ressort à "+deg(r3.ai)+" (Ga = 1).</div>";
+  out+="<div style='flex-basis:100%'>"+(Math.abs(n0-ni)<0.005?"n0 = ni : les points nodaux sont confondus avec les points principaux.":"n0 ≠ ni : HoNo = HiNi = fi + fo = <b>"+fm(fi+fo)+" mm</b>.")+(cut?" Certains points sont hors du cadre.":"")+"</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- hero ---------- */
+function drawHero(){
+  const e=+$("heroE").value; $("heroV").textContent="e = "+fr(e,1)+" mm";
+  const sy=lensSys(1,1.5,1,30,-30,Math.max(e,2)), M=matOf(sy);
+  $("heroM").innerHTML=M.map(function(v){ return "<span>"+fm(v)+"</span>"; }).join("");
+  const g=world($("heroCv"),[-40,140],[-14,14],false), V=vis(g);
+  drawSys(g,sy,13,{stroke:"#8fa3bf",fill:"#2F6FB3",fillAlpha:1.6,vplanes:false,labels:false});
+  seg(g,V.z0,0,V.z1,0,"#3a4556",1);
+  [-6,-4,-2,0,2,4,6].forEach(function(hh){ const tr=traceP(sy,V.z0,hh,0,V.z1); pline(g,tr.pts,"#ffb07a",1.6,null,0.9,false); });
+  const Vv=-M[2]; if(Math.abs(Vv)>1e-6){ const zF=zLast(sy)+M[0]/Vv; if(zF<V.z1){ g.ctx.fillStyle="#cdd5e0"; g.ctx.beginPath(); g.ctx.arc(g.X(zF),g.Y(0),3.5,0,7); g.ctx.fill(); label(g,zF,0,"Fi","#cdd5e0","center",16); } }
+}
+$("heroE").addEventListener("input",drawHero);
+/* ---------- onglets, concepts ---------- */
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="cartes") renderCard();
+  drawAll(); save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 7 concepts revus"; $("seenBar").style.width=(n/7*100)+"%"; }
+document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
+updSeen();
+
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Vecteur rayon", r:[
+  ["X = (x ; n × α)","x : hauteur dans le plan de front ; α : angle avec l'axe ; n : indice local."],
+  ["tan(α) ≈ sin(α) ≈ α","Conditions de Gauss."],
+  ["Dioptre plan : n1 α1 = n2 α2  →  matrice identité","nα se conserve à la traversée d'un plan."]]},
+ {g:"Translation", r:[
+  ["T(A1A2) = [[1, A1A2/n], [0, 1]]","Propagation dans un milieu homogène d'indice n."],
+  ["x2 = x1 + (A1A2/n) (nα)1,   (nα)2 = (nα)1","Forme développée."],
+  ["det(T) = 1,   T(−A1A2) = T(A1A2)^(−1)","Inversible : retour inverse."]]},
+ {g:"Réfraction (dioptre sphérique)", r:[
+  ["n1 u1 − n2 u2 = a N,   a = n1 cos(i1) − n2 cos(i2)","Snell-Descartes vectorielle ; Gauss : a = n1 − n2."],
+  ["V = (n2 − n1) / R,   R = SC","Vergence du dioptre (m⁻¹ = δ)."],
+  ["R(S) = [[1, 0], [−V, 1]]","x inchangé, (nα)2 = (nα)1 − V x."],
+  ["det(R) = 1","Grâce au choix de nα."]]},
+ {g:"Système centré", r:[
+  ["XS = T(ES) XE","Matrice de transfert entre les faces d'entrée et de sortie."],
+  ["T(ES) = T(SpS) R(Sp) … T(S1S2) R(S1) T(ES1)","Produit de droite à gauche (sens opposé à la lumière)."],
+  ["T(ES) = [[a, b], [−V, d]],   a d + b V = 1","V = −c : vergence du système."],
+  ["b = 0 : E, S conjugués ;  c = 0 : afocal ;  a = 0 : Fi en S ;  d = 0 : Fo en E","Lecture des éléments nuls."]]},
+ {g:"Plans quelconques (z1 = EA1, z2 = SA2)", r:[
+  ["T(A1A2) = T(SA2) T(ES) T(A1E)","A1 dans l'espace objet (n0), A2 dans l'espace image (ni)."],
+  ["T11 = a + (z2/ni) c,   T22 = d − (z1/n0) c","Éléments diagonaux."],
+  ["T12 = −(z1/n0) a + b − (z1 z2/(n0 ni)) c + (z2/ni) d","Fixe l'étalement des rayons issus d'un même point."],
+  ["T21 = c = −V","Indépendant de la position des plans."]]},
+ {g:"Conjugaison", r:[
+  ["T12(A0Ai) = 0","Condition de conjugaison."],
+  ["T11 = Gt = xi / x0,   T22 = (ni/n0) Ga,   Ga = αi / α0","Grandissements."],
+  ["Gt × (ni/n0) × Ga = 1   ⟺   n0 x0 α0 = ni xi αi","Lagrange-Helmholtz (det = 1)."],
+  ["T(A0Ai) = [[Gt, 0], [−V, 1/Gt]]","Matrice de conjugaison."]]},
+ {g:"Éléments cardinaux", r:[
+  ["fi = ni / V,   fo = −n0 / V","n0 = ni : fi = −fo."],
+  ["SHi = fi (a − 1),   EHo = fo (d − 1)","Plans principaux (Gt = 1)."],
+  ["SNi = fi (a − n0/ni),   ENo = fo (d − ni/n0)","Points nodaux (Ga = 1)."],
+  ["SFi = fi a,   EFo = fo d,   HiFi = fi,   HoFo = fo","Foyers."],
+  ["HoNo = HiNi = fi + fo","Nul si n0 = ni : N et H confondus."]]}
+];
+(function(){
+  const box=$("fList"); let h="";
+  FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
+  box.innerHTML=h;
+  $("hideF").addEventListener("change", function(){ box.classList.toggle("hidef", this.checked); box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); }); });
+  box.addEventListener("click", function(e){ const f=e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes ---------- */
+const CARDS = [
+ ["v1","Vecteur rayon","Que contient le vecteur rayon X ?","X = (x ; nα) : la hauteur du rayon dans le plan de front et le produit de l'indice par l'angle avec l'axe."],
+ ["v2","Vecteur rayon","Pourquoi coder nα plutôt que α ?","nα se conserve à la traversée d'un dioptre plan et ne varie que de −V x à un dioptre sphérique : toutes les matrices élémentaires ont alors un déterminant égal à 1."],
+ ["v3","Vecteur rayon","Qu'est-ce qu'un système centré ?","Un ensemble de dioptres à symétrie de révolution autour d'un même axe optique."],
+ ["t1","Translation","Matrice de translation T(A1A2) ?","[[1, A1A2/n], [0, 1]]."],
+ ["t2","Translation","Que vaut α après une translation ?","Le même angle : dans un milieu homogène, la lumière va en ligne droite."],
+ ["t3","Translation","Qu'est-ce que la distance réduite ?","A1A2 / n, la distance algébrique divisée par l'indice du milieu."],
+ ["r1","Réfraction","Vergence d'un dioptre sphérique ?","V = (n2 − n1) / R avec R = SC algébrique."],
+ ["r2","Réfraction","Matrice de réfraction R(S) ?","[[1, 0], [−V, 1]] : x inchangé, (nα)2 = (nα)1 − V x."],
+ ["r3","Réfraction","Où la matrice de réfraction fait-elle réfracter le rayon ?","Dans le plan de front du sommet S : dans les conditions de Gauss, I est confondu avec S."],
+ ["r4","Réfraction","Que vaut a dans n1 u1 − n2 u2 = a N, et dans les conditions de Gauss ?","a = n1 cos(i1) − n2 cos(i2), qui devient n1 − n2 pour des angles petits."],
+ ["r5","Réfraction","Matrice d'un dioptre plan ?","L'identité : R infini, donc V = 0."],
+ ["s1","Système","Dans quel ordre multiplie-t-on les matrices d'un système ?","De droite à gauche : la première matrice rencontrée par la lumière est la plus à droite, à côté de XE."],
+ ["s2","Système","Que vaut le déterminant de toute matrice de transfert ?","1, car c'est un produit de matrices de déterminant 1."],
+ ["s3","Système","Comment lit-on la vergence dans T(ES) ?","V = −c, l'opposé de l'élément en bas à gauche."],
+ ["s4","Système","Que signifie b = 0 dans T(ES) ?","xS = a xE quel que soit l'angle : E et S sont des plans conjugués."],
+ ["s5","Système","Que signifie c = 0 ?","V = 0 : le système est afocal (un faisceau parallèle ressort parallèle)."],
+ ["p1","Plans quelconques","Quel élément de T(A1A2) ne dépend pas de la position des plans ?","T21 = c = −V."],
+ ["p2","Plans quelconques","Que traduit T12 ≠ 0 dans le plan A2 ?","Les rayons issus d'un même point de A1 arrivent étalés : A2 n'est pas le plan image de A1."],
+ ["c1","Conjugaison","Condition pour que A0 et Ai soient conjugués ?","T12(A0Ai) = 0."],
+ ["c2","Conjugaison","Que valent T11 et T22 entre plans conjugués ?","T11 = Gt et T22 = (ni/n0) Ga."],
+ ["c3","Conjugaison","Relation de Lagrange-Helmholtz ?","Gt × (ni/n0) × Ga = 1, soit n0 x0 α0 = ni xi αi."],
+ ["c4","Conjugaison","Matrice de conjugaison ?","[[Gt, 0], [−V, 1/Gt]]."],
+ ["k1","Éléments cardinaux","Distances focales en fonction de V ?","fi = ni / V et fo = −n0 / V."],
+ ["k2","Éléments cardinaux","Position des plans principaux ?","SHi = fi (a − 1) et EHo = fo (d − 1)."],
+ ["k3","Éléments cardinaux","Position des points nodaux ?","SNi = fi (a − n0/ni) et ENo = fo (d − ni/n0)."],
+ ["k4","Éléments cardinaux","Position des foyers à partir de E et S ?","SFi = fi a et EFo = fo d."],
+ ["k5","Éléments cardinaux","Quand les points nodaux sont-ils confondus avec les points principaux ?","Quand n0 = ni, par exemple pour une lentille dans l'air."],
+ ["k6","Éléments cardinaux","Matrice entre les plans principaux ?","[[1, 0], [−V, 1]] : celle d'une lentille mince de vergence V."]
+];
+let fcCur=null, fcFlipped=false;
+(function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
+function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
+function weight(id){ const b=S.cards[id]; if (b===undefined) return 3; return [6,3,2][b]||0.5; }
+function pick(){ const p=pool(); const cand=p.length>1?p.filter(function(c){return !fcCur||c[0]!==fcCur[0];}):p; let tot=0; cand.forEach(function(c){tot+=weight(c[0]);}); let r=Math.random()*tot; for (const c of cand){ r-=weight(c[0]); if (r<=0) return c; } return cand[cand.length-1]; }
+function renderCard(){
+  if (!fcCur||pool().indexOf(fcCur)<0) fcCur=pick();
+  fcFlipped=false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent=fcCur[1]; $("fcQ").textContent=fcCur[2]; $("fcA").textContent=fcCur[3];
+  $("fcYes").disabled=true; $("fcNo").disabled=true;
+  let n=0,f=0,c=0,a=0; pool().forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML='<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped=!fcFlipped; $("fc").classList.toggle("flipped",fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click",flip);
+$("fc").addEventListener("keydown",function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click",flip);
+$("fcYes").addEventListener("click",function(){ const id=fcCur[0]; S.cards[id]=Math.min(3,(S.cards[id]||0)+1); save(); fcCur=pick(); renderCard(); });
+$("fcNo").addEventListener("click",function(){ S.cards[fcCur[0]]=0; save(); fcCur=pick(); renderCard(); });
+$("fcReset").addEventListener("click",function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards={}; save(); fcCur=null; renderCard(); } });
+
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1",axis:"Optique matricielle",pts:0.5,unit:"mm",ans:3.5,tol:0.01,
+  q:"Dans un bloc de verre d'indice 1,50, un rayon passe à 2 mm au-dessus de l'axe avec une inclinaison de 0,05 rad (angle mesuré dans le verre). À quelle hauteur se trouve-t-il 30 mm plus loin ?",
+  c:"<p>Translation dans le verre : X1 = (2 ; 1,5 × 0,05) = (2 ; 0,075).</p><div class='fblock'>x2 = x1 + (A1A2 / n) × (nα)1 = 2 + (30 / 1,5) × 0,075 = 2 + 1,5 = 3,5 mm</div><p>On retrouve x1 + A1A2 × α : l'indice s'élimine. Erreur fréquente : multiplier la distance réduite par α au lieu de nα, ce qui donne 3 mm.</p>"},
+ {id:"e2",axis:"Optique matricielle",pts:1,unit:"δ",ans:25,tol:0.01,
+  q:"Un dioptre sphérique sépare l'air (à gauche) d'un verre d'indice 1,50. Son centre de courbure est 20 mm à droite du sommet. Quelle est sa vergence, en dioptries ?",
+  c:"<p>R = SC = +20 mm = 0,020 m.</p><div class='fblock'>V = (n2 − n1) / R = (1,50 − 1) / 0,020 = 25 δ   (0,025 mm⁻¹)</div><p>Erreur fréquente : garder R en mm et annoncer 0,025 « dioptrie ».</p>"},
+ {id:"e3",axis:"Optique matricielle",pts:1,unit:"rad",ans:-0.0667,tol:0.01,
+  q:"Sur ce même dioptre, un rayon arrive parallèle à l'axe, à 4 mm de hauteur. Quelle est son inclinaison α2 dans le verre, juste après la réfraction ?",
+  c:"<p>X1 = (4 ; 0). On applique R(S) avec V = 0,025 mm⁻¹ :</p><div class='fblock'>(nα)2 = (nα)1 − V × x = 0 − 0,025 × 4 = −0,1<br>α2 = −0,1 / 1,50 = −0,0667 rad</div><p>Le signe moins indique que le rayon descend vers l'axe. Erreur fréquente : oublier de diviser par n2 et répondre −0,1 rad.</p>"},
+ {id:"e4",axis:"Optique matricielle",pts:1,unit:"mm⁻¹",ans:-0.02,tol:0.01,
+  q:"Deux dioptres sphériques en verre d'indice 1,5 sont accolés (épaisseur négligeable) et forment une lentille dans l'air, avec R1 = +50 mm et R2 = −50 mm. Que vaut l'élément c de sa matrice de transfert, en mm⁻¹ ?",
+  c:"<p>Épaisseur nulle : pas de translation entre les surfaces. V1 = (1,5 − 1)/50 = 0,01 mm⁻¹ et V2 = (1 − 1,5)/(−50) = 0,01 mm⁻¹.</p><div class='fblock'>R(S2) × R(S1) = [[1, 0], [−V2, 1]] × [[1, 0], [−V1, 1]] = [[1, 0], [−(V1 + V2), 1]]<br>c = −(V1 + V2) = −0,02 mm⁻¹</div><p>On retrouve la vergence d'une lentille mince : V = (n − 1)(1/R1 − 1/R2) = 0,02 mm⁻¹ = 20 δ. Erreur fréquente : répondre +0,02, qui est V et non c.</p>"},
+ {id:"e5",axis:"Optique matricielle",pts:1,unit:"mm",ans:51.72,tol:0.005,
+  q:"La même lentille a maintenant une épaisseur de 10 mm au centre (n = 1,5, R1 = +50 mm, R2 = −50 mm, dans l'air). Quelle est sa distance focale image fi ?",
+  c:"<p>T(ES) = R(S2) × T(e/n) × R(S1), avec e/n = 10/1,5 = 6,667 mm :</p><div class='fblock'>T(e/n) × R(S1) = [[1 − 6,667 × 0,01, 6,667], [−0,01, 1]] = [[0,9333, 6,667], [−0,01, 1]]<br>R(S2) × (…) = [[0,9333, 6,667], [−0,01 × 0,9333 − 0,01, −0,01 × 6,667 + 1]]<br>T(ES) = [[0,9333, 6,667], [−0,019333, 0,9333]]     (contrôle : det = 1)<br>V = 0,019333 mm⁻¹   →   fi = ni / V = 51,72 mm</div><p>L'épaisseur fait légèrement baisser la vergence (0,0193 au lieu de 0,02). Ici l'ordre du produit ne change rien car la lentille est symétrique (V1 = V2) ; pour une lentille dissymétrique, multiplier dans le sens de la lumière échangerait a et d.</p>"},
+ {id:"e6",axis:"Optique matricielle",pts:1,unit:"mm",ans:-3.448,tol:0.01,
+  q:"Pour cette lentille épaisse, où se trouve le plan principal image Hi, mesuré depuis le sommet de sortie S (valeur algébrique) ?",
+  c:"<div class='fblock'>SHi = fi × (a − 1) = 51,72 × (0,9333 − 1) = −3,45 mm</div><p>Hi est 3,45 mm avant S, à l'intérieur du verre. Par symétrie, EHo = fo × (d − 1) = +3,45 mm : les deux plans principaux sont dans la lentille, séparés de 10 − 6,9 = 3,1 mm.</p>"},
+ {id:"e7",axis:"Optique matricielle",pts:1,unit:"mm",ans:48.28,tol:0.005,
+  q:"Toujours pour cette lentille, à quelle distance du sommet de sortie se forme l'image d'un objet très lointain ?",
+  c:"<p>Objet à l'infini : l'image est au foyer image Fi.</p><div class='fblock'>SFi = fi × a = 51,72 × 0,9333 = 48,28 mm</div><p>On vérifie : HiFi = SFi − SHi = 48,28 + 3,45 = 51,72 mm = fi. Erreur fréquente : répondre fi = 51,72 mm, qui se mesure depuis Hi et non depuis S.</p>"},
+ {id:"e8",axis:"Optique matricielle",pts:1.5,unit:"mm",ans:90,tol:0.01,
+  q:"Un fabricant donne pour un objectif dans l'air : a = 0,8, b = 10 mm et V = 0,02 mm⁻¹, mais il a oublié d. Un objet est placé 100 mm avant la face d'entrée. À quelle distance de la face de sortie se forme son image ?",
+  c:"<p>Il manque d : on utilise det(T(ES)) = 1, soit a d − b c = a d + b V = 1.</p><div class='fblock'>0,8 d + 10 × 0,02 = 1   →   d = 1</div><p>Avec z1 = EA0 = −100 mm, n0 = ni = 1, c = −0,02 :</p><div class='fblock'>T12 = −z1 a + b − z1 z2 c + z2 d = 80 + 10 − 2 z2 + z2 = 90 − z2 = 0   →   z2 = SAi = 90 mm</div><p>Grandissement : Gt = a + z2 c = 0,8 − 1,8 = −1 (image réelle, renversée, même taille), et T22 = d − z1 c = −1 = 1/Gt : le déterminant est bien conservé.</p>"},
+ {id:"e9",axis:"Optique matricielle",pts:1,unit:"",ans:-1.504,tol:0.01,
+  q:"Un système centré a son espace objet dans l'air et son espace image dans l'eau (n = 1,33). Pour un couple de plans conjugués, l'image est renversée et deux fois plus petite que l'objet. Quel est le grandissement angulaire ?",
+  c:"<p>Gt = −0,5. Relation de Lagrange-Helmholtz : Gt × (ni/n0) × Ga = 1.</p><div class='fblock'>Ga = n0 / (ni × Gt) = 1 / (1,33 × (−0,5)) = −1,504</div><p>Erreur fréquente : écrire Ga = 1/Gt = −2, ce qui oublie le changement de milieu.</p>"},
+ {id:"e10",axis:"Optique matricielle",pts:1,unit:"mm",ans:7.8,tol:0.01,
+  q:"On modélise la cornée par un dioptre unique entre l'air et un milieu d'indice 1,336, de rayon de courbure 7,8 mm. À quelle distance du sommet se trouve le point nodal image ?",
+  c:"<p>Un seul dioptre : E et S sont confondus avec le sommet, T(ES) = R(S), donc a = d = 1.</p><div class='fblock'>V = (1,336 − 1) / 7,8 = 0,043077 mm⁻¹      fi = 1,336 / V = 31,01 mm<br>SNi = fi × (a − n0/ni) = 31,01 × (1 − 1/1,336) = 7,80 mm</div><p>Le point nodal est au centre de courbure C. C'est logique : un rayon qui vise C arrive selon la normale et n'est pas dévié, il garde son inclinaison. Erreur fréquente : prendre SHi = fi (a − 1) = 0, le point principal, qui est au sommet.</p>"}
+];
+const GF={full:1,half:0.5,zero:0};
+function renderEx(){
+  $("exList").innerHTML=EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e=EX.find(function(x){return x.id===box.dataset.id;}); const inp=box.querySelector("input"); const st=S.ex[e.id];
+    if (st){ inp.value=st.v||""; if (st.v) check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click",function(){ check(box,e,true); });
+    inp.addEventListener("keydown",function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click",function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw=box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".").replace("−","-");
+  const v=parseFloat(raw), out=box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple −0,05."; return; }
+  const ok=Math.abs(v-e.ans)<=Math.abs(e.ans)*e.tol+1e-9;
+  out.className="verdict "+(ok?"ok":"no");
+  const dec = String(e.ans).indexOf(".")>=0 ? String(e.ans).split(".")[1].length : 0;
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction." : "Hors tolérance : la valeur attendue est "+fr(e.ans,dec)+(e.unit?" "+e.unit:"")+". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].v=box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+$("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click",function(){
+  const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
+  const sc={}; Object.keys(ax).forEach(function(a){ sc[a]=Math.round(ax[a].got/ax[a].max*100); });
+  const d=new Date(), date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value=JSON.stringify({date:date,subject:"optique",scores:sc},null,2); $("jsonZone").style.display="block";
+});
+$("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
+
+/* ---------- démarrage ---------- */
+initWidgets();
+renderEx();
+showTab(S.tab||"concepts");
+let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script>
+</body>
+</html>

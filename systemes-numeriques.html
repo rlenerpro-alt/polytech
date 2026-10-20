@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Systèmes numériques – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF1; --surface:#F8F9FA; --ink:#1A2230; --muted:#5A6576; --line:#CBD2DB; --soft:#DFE4EA;
+  --odd:#2F6FB3; --even:#C2571A; --ca:#6B4FA0; --cb:#B07A0A; --pos:#1F8A70; --neg:#B03A5B; --on:#1F8A70; --off:#9AA5B4; --ray:#D9480F; --img:#2F6FB3; --medium:#2F6FB3;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+    --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --on:#4CC3A0; --off:#5B6678; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+  --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --on:#4CC3A0; --off:#5B6678; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+canvas{display:block;width:100%;max-width:100%}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+header.hero{padding:40px 0 18px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.hero .heroplot{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.hero-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-row label{font-weight:600}
+.hero-row input{flex:1;min-width:200px;accent-color:var(--ink)}
+.hero-row .v{font-family:var(--mono);min-width:12ch}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:66ch}
+
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept.focus{border:2px solid var(--even)}
+.focus-tag{display:inline-block;font-size:.82rem;font-weight:600;color:var(--even);border:1px solid var(--even);border-radius:4px;padding:1px 8px;margin-bottom:10px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.92rem;background:var(--soft);padding:1px 6px;border-radius:4px}
+.fblock{font-family:var(--mono);font-size:.93rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.trap b{display:block;margin-bottom:2px;color:var(--even)}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Widgets */
+.wg{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0 18px;background:var(--bg);font-family:var(--ui)}
+.wg h4{margin:0 0 4px;font-size:1.02rem;font-weight:600}
+.wg .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem;max-width:66ch}
+.cv{background:var(--surface);border-radius:6px;margin-top:8px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:500;margin-bottom:4px;gap:8px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.ctl select{width:100%}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;font-size:.9rem}
+.readout b{font-family:var(--mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.82rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict-ok{color:var(--good);font-weight:600} .verdict-no{color:var(--bad);font-weight:600}
+.steps{margin:10px 0 0;padding:0;list-style:none;font-size:.92rem}
+.steps li{padding:6px 0;border-top:1px solid var(--line)}
+.steps li b{font-family:var(--mono);font-weight:500;margin-right:6px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.93rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+.cardzone{display:flex;flex-direction:column;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.15rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.02rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.ex{padding:18px 14px}.wg{padding:14px 12px}}
+
+.hero .stage{margin-top:22px;background:#0b0e14;border-radius:8px;overflow:hidden}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.presets .btn{padding:6px 12px;font-size:.9rem}
+
+/* tables de vérité */
+.ttwrap{overflow-x:auto;margin-top:10px}
+table.tt{border-collapse:collapse;font-family:var(--mono);font-size:.88rem;background:var(--surface);border-radius:8px}
+table.tt th{font-family:var(--ui);font-weight:600;font-size:.82rem;padding:6px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+table.tt td{padding:4px 10px;text-align:center;border-bottom:1px solid var(--soft)}
+table.tt .sep{border-left:2px solid var(--line)}
+table.tt .v1{color:var(--on);font-weight:600} table.tt .v0{color:var(--muted)}
+table.tt tr.cur td{background:var(--soft)}
+table.tt tr.bad td{background:color-mix(in srgb, var(--bad) 14%, transparent)}
+table.tt td.click{cursor:pointer} table.tt td.click:hover{outline:1px solid var(--ink)}
+table.tt .num{color:var(--muted)}
+.ov{display:inline-block;border-top:1.5px solid currentColor;padding-top:1px;line-height:1.1}
+.expr{font-family:var(--mono);font-size:.95rem}
+/* bits */
+.bits{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end;margin:8px 0}
+.bitcol{display:flex;flex-direction:column;align-items:center;gap:3px}
+.bitcol small{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+button.bit{width:32px;height:36px;border-radius:6px;border:1px solid var(--line);background:var(--surface);font-family:var(--mono);font-size:1rem;cursor:pointer;padding:0}
+button.bit.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button.bit.fs{box-shadow:inset 0 -4px 0 var(--neg)} button.bit.fe{box-shadow:inset 0 -4px 0 var(--odd)} button.bit.fm{box-shadow:inset 0 -4px 0 var(--pos)}
+button.bit.nib{margin-left:8px}
+.bits.small{gap:2px}
+.bits.small button.bit{width:20px;height:28px;font-size:.8rem}
+.bits.small button.bit.nib{margin-left:6px}
+.bits.small .bitcol small{font-size:.6rem}
+/* interrupteurs */
+.sws{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button.sw{font-family:var(--mono);font-size:.95rem;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;min-width:74px}
+button.sw.on{border-color:var(--on);color:var(--on);box-shadow:inset 0 0 0 1px var(--on)}
+input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:100%}
+.gates{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.gcard .t{font-size:.84rem;font-weight:600;display:flex;justify-content:space-between}
+.gcard .t b{font-family:var(--mono);font-size:1rem}
+.gcard .t b.v1{color:var(--on)} .gcard .t b.v0{color:var(--muted)}
+.gcard svg{width:100%;height:auto;display:block}
+.gcard .e{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.svgbox{background:var(--surface);border-radius:8px;margin-top:8px;padding:6px}
+.svgbox svg{width:100%;height:auto;display:block}
+.colrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:700px){.colrow{grid-template-columns:1fr}}
+.add{font-family:var(--mono);font-size:1rem;line-height:1.5;background:var(--surface);border-radius:8px;padding:10px 14px;display:inline-block}
+.add td{padding:0 5px;text-align:center}
+.add .cy{color:var(--even);font-size:.8rem}
+.add .res td{border-top:2px solid var(--ink)}
+.add .lost{color:var(--muted);text-decoration:line-through}
+.hero .stage{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.hero .reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.hero .reads div{background:var(--bg);border-radius:8px;padding:8px 12px;font-size:.85rem;color:var(--muted)}
+.hero .reads b{display:block;font-family:var(--mono);font-size:1.3rem;color:var(--ink);font-weight:500}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Systèmes numériques</h1>
+  <p class="sub">Algèbre de Boole, codage des nombres et logique combinatoire. Ici tout se manipule : clique sur les bits, bascule les entrées, tape une expression, et les tables de vérité, les conversions et les circuits se recalculent.</p>
+  <div class="stage">
+    <div style="font-weight:600;font-size:.95rem">Huit bits, quatre lectures : clique sur un bit</div>
+    <div class="bits" id="heroBits"></div>
+    <div class="reads" id="heroReads"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Dix blocs dans l'ordre de ton cours : algèbre de Boole, codage des nombres, puis logique combinatoire. L'outil interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées. Notation du cours : « . » pour ET, « + » pour OU, une barre au-dessus pour NON.</p>
+  <div class="progress-line"><span id="seenCount">0 / 10 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<!-- 1 OPERATEURS -->
+<article class="concept" data-id="c1">
+  <h3><span class="n">1</span>Opérateurs logiques et portes</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un ordinateur ne manipule que des 0 et des 1. Six opérateurs suffisent pour tout construire : de l'addition au processeur entier. Les connaître par cœur, avec leur table et leur symbole, c'est l'alphabet du reste du cours.</p></div>
+  <div class="wg" data-w="ops">
+    <h4>🔬 Bascule a et b, regarde les six portes réagir</h4>
+    <p class="hint">Les fils allumés en vert valent 1. Sous chaque porte, la ligne de sa table de vérité qui correspond à tes entrées est surlignée. Passe du symbole européen au symbole américain pour apprendre les deux.</p>
+    <div class="sws" data-o="sw"></div>
+    <div class="controls"><div class="ctl"><label>Symboles</label><select data-k="style"><option value="eu">Européens (rectangles)</option><option value="us">Américains (formes)</option></select></div></div>
+    <div class="gates" data-o="gates"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une porte ET, c'est une porte d'immeuble à deux serrures : elle ne s'ouvre que si les deux clés sont tournées. Une porte OU, c'est une pièce avec deux interrupteurs qui allument la même lampe : l'un ou l'autre suffit. Le OU exclusif, c'est l'interrupteur de cage d'escalier : changer l'un ou l'autre des deux interrupteurs change l'état de la lampe.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Variable booléenne</b>Variable qui ne prend que deux valeurs : 1 (vrai) ou 0 (faux).</div>
+    <div class="fblock">NON :  ā = 1 si a = 0
+ET  :  a.b = 1 si a = 1 et b = 1
+OU  :  a + b = 1 si a = 1 ou b = 1 (ou les deux)
+NON ET (NAND) :  complément de a.b
+NON OU (NOR)  :  complément de a + b
+OU exclusif (XOR) :  a ⊕ b = 1 si une et une seule entrée vaut 1
+                    à n entrées : 1 si un nombre impair d'entrées vaut 1</div>
+    <div class="def"><b>Porte logique</b>Circuit électronique qui réalise une fonction logique. Un niveau logique est associé à une tension : en général 0 = 0 V (masse) et 1 = Vcc (alimentation).</div>
+    <p>Symboles européens : rectangle portant « 1 » (NON), « &amp; » (ET), « ≥1 » (OU), « =1 » (OU exclusif) ; le petit rond en sortie signifie une inversion.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi dit-on que le XOR à n entrées « compte la parité » des entrées ? Quel usage en tirerais-tu pour détecter une erreur de transmission ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Chaque 1 supplémentaire fait basculer la sortie : elle vaut 1 si le nombre de 1 est impair. En ajoutant à un mot un bit de parité égal au XOR de tous ses bits, le mot complet a toujours un nombre pair de 1 ; si un seul bit est inversé pendant la transmission, le XOR du mot reçu vaut 1 et l'erreur est détectée.</div></details></div>
+    <div class="q"><p>Qu'est-ce que le petit rond dessiné en sortie d'une porte change physiquement au signal ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Il indique une inversion : là où la porte de base donnerait une tension haute, on obtient une tension basse, et inversement. NAND et NOR ne sont pas des portes différentes dans leur principe : ce sont un ET et un OU suivis d'un inverseur, souvent plus simples à fabriquer en transistors que les versions non inversées.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 2 PROPRIETES -->
+<article class="concept focus" data-id="c2">
+  <span class="focus-tag">Deux erreurs dans les notes, page 1 et page 2</span>
+  <h3><span class="n">2</span>Propriétés, théorèmes et lois de De Morgan</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Simplifier une expression, c'est économiser des portes, donc de la place, de l'énergie et du temps de propagation. Les propriétés de l'algèbre de Boole sont les règles de calcul qui le permettent, et De Morgan est celle qu'on utilise le plus pour passer d'un type de porte à un autre.</p></div>
+  <div class="wg" data-w="props">
+    <h4>🔬 Vérifier une identité sur toutes les combinaisons</h4>
+    <p class="hint">Choisis une propriété du cours : la table calcule les deux membres pour les 8 combinaisons de a, b, c. Une identité est vraie si et seulement si les deux colonnes sont égales sur toutes les lignes. Les lignes fausses sont surlignées en rouge. Tu peux aussi taper tes propres expressions dans les deux champs.</p>
+    <div class="controls">
+      <div class="ctl" style="grid-column:1/-1"><label>Propriété</label><select data-k="law"></select></div>
+      <div class="ctl"><label>Membre de gauche</label><input class="txt" data-k="L" value=""></div>
+      <div class="ctl"><label>Membre de droite</label><input class="txt" data-k="R" value=""></div>
+    </div>
+    <p class="hint" style="margin-top:8px">Syntaxe : <span class="expr">a.b</span> ou <span class="expr">ab</span> pour ET, <span class="expr">a+b</span> pour OU, <span class="expr">!a</span> ou <span class="expr">a'</span> pour NON, <span class="expr">!(a+b)</span> pour NON d'un groupe, <span class="expr">a^b</span> pour OU exclusif, 0 et 1 pour les constantes.</p>
+    <div class="readout" data-o="out"></div>
+    <div class="ttwrap" data-o="tt"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>De Morgan, c'est la règle du videur : « tu n'entres pas si tu as des baskets OU un jogging » revient exactement à « tu entres seulement si tu n'as PAS de baskets ET PAS de jogging ». Quand on fait passer la négation à l'intérieur, le OU devient ET, et inversement.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">Associativité :  (a.b).c = a.(b.c)        (a + b) + c = a + (b + c)
+Commutativité :  a.b = b.a                a + b = b + a
+Distributivité : a.(b + c) = a.b + a.c    a + b.c = (a + b).(a + c)
+Neutres :        a.1 = a                  a + 0 = a
+Absorbants :     a.0 = 0                  a + 1 = 1
+Complémentarité : double barre sur a = a,  a.ā = 0,  a + ā = 1
+Idempotence :    a.a = a                  a + a = a
+Simplification : a + ā.b = a + b          a.(ā + b) = a.b
+De Morgan :      barre(A + B) = Ā.B̄       barre(A.B) = Ā + B̄
+Priorité : le ET (.) passe avant le OU (+)</div>
+    <div class="def"><b>Identité booléenne</b>Égalité vraie pour toutes les combinaisons des variables. On la démontre soit par les propriétés, soit en comparant les tables de vérité (méthode exhaustive, toujours possible).</div>
+    <div class="trap"><b>Erreur page 1 : distributivité du OU</b>Tu as écrit a + (b.c) = (a + b).(a + b). Le second facteur est (a + c) : a + b.c = (a + b).(a + c). Choisis « Distributivité du OU (version des notes, fausse) » dans l'outil : la ligne a = 0, b = 1, c = 0 la met en défaut.</div>
+    <div class="trap"><b>Erreur page 2 : simplification</b>Pour a.(ā + b), tu as développé en (a.ā) + (a + b). Le développement correct est (a.ā) + (a.b) = 0 + a.b = a.b. Le résultat final a.b de tes notes est juste, seule l'étape intermédiaire est fausse.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>La distributivité du OU sur le ET n'existe pas avec les nombres ordinaires. Qu'est-ce qui, dans l'algèbre de Boole, la rend possible ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">En développant (a + b).(a + c) = a.a + a.c + a.b + b.c, on utilise l'idempotence a.a = a, puis a + a.c + a.b = a (absorption, car a.1 = a et 1 + c + b = 1). Il reste a + b.c. C'est l'idempotence et l'élément absorbant 1 du OU, qui n'existent pas pour l'addition des nombres, qui rendent cette loi vraie.</div></details></div>
+    <div class="q"><p>Pourquoi peut-on toujours vérifier une identité booléenne par une table de vérité, alors qu'on ne peut pas vérifier une identité sur les réels en testant des valeurs ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une variable booléenne n'a que deux valeurs : avec n variables, il n'y a que 2^n combinaisons, un nombre fini. Les tester toutes est une démonstration complète. Les réels sont en nombre infini : aucun nombre fini d'essais ne prouve une égalité.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 3 BINAIRE HEXA -->
+<article class="concept" data-id="c3">
+  <h3><span class="n">3</span>Binaire naturel et hexadécimal</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La machine stocke les nombres en base 2, nous pensons en base 10, et les ingénieurs lisent la mémoire en base 16. Passer de l'une à l'autre sans hésiter est indispensable pour lire un registre, un octet d'état d'un détecteur ou une adresse mémoire.</p></div>
+  <div class="wg" data-w="base">
+    <h4>🔬 Un nombre, trois écritures</h4>
+    <p class="hint">Clique sur les bits ou tape une valeur décimale ou hexadécimale. Le tableau du bas refait la méthode du cours : divisions euclidiennes successives par 2, restes lus de bas en haut (du MSB vers le LSB).</p>
+    <div class="controls">
+      <div class="ctl"><label>Taille du mot</label><select data-k="n"><option value="4">4 bits</option><option value="8" selected>8 bits (octet)</option><option value="12">12 bits</option><option value="16">16 bits (mot)</option></select></div>
+      <div class="ctl"><label>Décimal</label><input class="txt" data-k="dec" value="41" inputmode="numeric"></div>
+      <div class="ctl"><label>Hexadécimal</label><input class="txt" data-k="hex" value="29"></div>
+    </div>
+    <div class="bits" data-o="bits"></div>
+    <div class="readout" data-o="out"></div>
+    <div class="colrow"><div class="ttwrap" data-o="div"></div><div class="ttwrap" data-o="nib"></div></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Avec tes dix doigts, tu comptes jusqu'à 10 puis tu fais un paquet de dix. Un ordinateur n'a que deux « doigts » : dès qu'il en a deux, il fait un paquet, puis un paquet de deux paquets, et ainsi de suite. L'hexadécimal, c'est juste ranger les bits par boîtes de quatre pour les lire plus vite.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">A = a(n−1) × 2^(n−1) + … + a1 × 2^1 + a0 × 2^0        A = (a(n−1) … a1 a0)2
+n bits  →  2^n valeurs, de 0 à 2^n − 1
+8 bits = 1 octet : 256 valeurs     16 bits = 1 mot : 65 536     32 bits = double mot : environ 4,3 milliards
+1 Ko = 1024 octets
+Hexadécimal : chiffres 0 à 9 puis A (10) à F (15) ; un chiffre hexa = 4 bits
+(41)10 = (101001)2 = 0010 1001 = 0x29</div>
+    <div class="def"><b>MSB et LSB</b>Bit de poids fort (most significant bit, poids 2^(n−1)), qui a le plus d'impact sur la valeur ; bit de poids faible (least significant bit, poids 2^0).</div>
+    <div class="def"><b>Mot binaire</b>Ensemble de bits traité d'un bloc ; sa taille fixe la plage des nombres représentables.</div>
+    <p>Méthode générique décimal → binaire : divisions euclidiennes par 2 jusqu'à un quotient nul ; les restes donnent les bits, le premier reste est le LSB.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi lit-on les restes des divisions successives « à l'envers », du dernier vers le premier ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La première division par 2 donne le reste de A modulo 2 : c'est le bit de poids 2^0. Le quotient vaut A sans ce bit, décalé d'un rang ; son reste donne le bit de poids 2^1, etc. Les restes sortent donc du poids faible au poids fort, alors qu'on écrit un nombre du poids fort au poids faible.</div></details></div>
+    <div class="q"><p>Pourquoi l'hexadécimal se convertit-il en binaire chiffre par chiffre, alors que le décimal ne le peut pas ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">16 = 2^4 : chaque chiffre hexa correspond exactement à un groupe de 4 bits, indépendamment des autres. 10 n'est pas une puissance de 2 : un chiffre décimal ne correspond à aucun groupe fixe de bits, il faut traiter le nombre entier par divisions.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 4 COMPLEMENT A 2 -->
+<article class="concept" data-id="c4">
+  <h3><span class="n">4</span>Nombres signés : complément à 2</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Il faut coder des nombres négatifs avec les mêmes bits, et si possible garder une seule opération d'addition pour additionner et soustraire. Le complément à 2 fait exactement cela : le même additionneur sert pour les nombres positifs et négatifs.</p></div>
+  <div class="wg" data-w="c2">
+    <h4>🔬 Construire −N et lire un mot signé</h4>
+    <p class="hint">Règle la valeur ou clique sur les bits. Pour un nombre négatif, le tableau refait la méthode du cours : on code |N|, on inverse tous les bits (complément à 1), on ajoute 1. Les mêmes bits n'ont pas la même valeur selon qu'on les lit en non signé ou en signé.</p>
+    <div class="controls">
+      <div class="ctl"><label>Taille du mot</label><select data-k="n"><option value="4" selected>4 bits</option><option value="8">8 bits</option></select></div>
+      <div class="ctl"><label>Valeur signée N <span data-o="v"></span></label><input type="range" data-k="v" min="-8" max="7" step="1" value="-5"></div>
+    </div>
+    <div class="bits" data-o="bits"></div>
+    <div class="readout" data-o="out"></div>
+    <div class="ttwrap" data-o="steps"></div>
+    <div class="ttwrap" data-o="tab"></div>
+  </div>
+  <div class="wg" data-w="addc2">
+    <h4>🔬 Additionner en complément à 2, et repérer le débordement</h4>
+    <p class="hint">Une seule addition binaire pour tout : on additionne les bits, la retenue qui sort à gauche est ignorée. Le résultat n'est faux que si la vraie somme sort de la plage : c'est le débordement, repérable au bit de signe.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="p1">+6 − 5</button><button class="btn" type="button" data-pre="p2">−6 + 5</button><button class="btn" type="button" data-pre="p3">+6 + 5 (débordement)</button><button class="btn" type="button" data-pre="p4">−7 − 3</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Taille du mot</label><select data-k="n"><option value="4" selected>4 bits</option><option value="8">8 bits</option></select></div>
+      <div class="ctl"><label>A <span data-o="A"></span></label><input type="range" data-k="A" min="-8" max="7" step="1" value="6"></div>
+      <div class="ctl"><label>B <span data-o="B"></span></label><input type="range" data-k="B" min="-8" max="7" step="1" value="-5"></div>
+    </div>
+    <div data-o="add"></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Le compteur kilométrique d'une vieille voiture a quatre chiffres. Si tu recules d'un kilomètre depuis 0000, il affiche 9999. Dans ce monde, 9999 joue le rôle de −1 : ajoute-lui 1 et tu retombes sur 0000. Le complément à 2, c'est ce compteur en binaire : 1111 vaut −1.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">n bits non signés :  0 ≤ A ≤ 2^n − 1            (8 bits : 0 à 255)
+n bits signés :     −2^(n−1) ≤ A ≤ 2^(n−1) − 1   (8 bits : −128 à 127)
+N + N̄ = 11…1   donc   N + N̄ + 1 = 1 00…0   (la retenue sort du mot)
+À nombre de bits constant :   −N = N̄ + 1
+Valeur d'un mot signé :  A = −a(n−1) × 2^(n−1) + a(n−2) × 2^(n−2) + … + a0</div>
+    <div class="def"><b>Complément à 1</b>N̄ : mot obtenu en inversant chaque bit de N.</div>
+    <div class="def"><b>Complément à 2</b>N̄ + 1 : code de −N sur le même nombre de bits. Le bit de poids fort vaut 1 pour tout nombre négatif : c'est le bit de signe.</div>
+    <div class="def"><b>Débordement (overflow)</b>Le vrai résultat sort de [−2^(n−1) ; 2^(n−1) − 1]. Il ne peut arriver qu'en additionnant deux nombres de même signe, et se voit au bit de signe du résultat, opposé à celui des opérandes.</div>
+    <p>La retenue sortante (au-delà du MSB) n'est pas le débordement : dans +6 − 5 elle vaut 1 et le résultat est juste ; dans +6 + 5 elle vaut 0 et le résultat est faux.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la plage des nombres signés n'est-elle pas symétrique (−128 mais seulement +127 sur 8 bits) ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Il y a 256 codes. Le zéro n'a qu'un code (00000000), qui est rangé du côté des « bit de signe à 0 ». Il reste 127 codes positifs et 128 codes négatifs. Le code 10000000 est son propre complément à 2 : il ne peut représenter que −128.</div></details></div>
+    <div class="q"><p>Comment un même circuit additionneur peut-il servir à additionner des nombres signés et non signés ? Qu'est-ce qui change d'un cas à l'autre ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les bits du résultat sont exactement les mêmes : l'addition modulo 2^n ne dépend pas de l'interprétation. Ce qui change, c'est la façon de lire le résultat et de détecter l'erreur : en non signé, la retenue sortante signale un dépassement ; en signé, c'est la règle sur les bits de signe.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 5 IEEE -->
+<article class="concept focus" data-id="c5">
+  <span class="focus-tag">Deux erreurs dans les notes, pages 8 et 9</span>
+  <h3><span class="n">5</span>Nombres réels : virgule flottante IEEE 754</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>On a besoin de coder à la fois 1,6 × 10^−19 et 3 × 10^8 avec le même nombre de bits. La virgule flottante garde un nombre fixe de chiffres significatifs et déplace la virgule selon la taille du nombre, exactement comme la notation scientifique. C'est le format de tous les float et double de tes programmes Python.</p></div>
+  <div class="wg" data-w="ieee">
+    <h4>🔬 Décortiquer un float de 32 bits</h4>
+    <p class="hint">Tape un nombre ou clique sur les bits. Rouge : signe S (1 bit). Bleu : exposant décalé E (8 bits). Vert : mantisse codée M (23 bits). La valeur réellement stockée est affichée : pour 0,1 elle n'est pas exactement 0,1.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="a">0,15625 (cours)</button><button class="btn" type="button" data-pre="b">1</button><button class="btn" type="button" data-pre="c">2,25</button><button class="btn" type="button" data-pre="d">−118,625</button><button class="btn" type="button" data-pre="e">0,1</button><button class="btn" type="button" data-pre="f">Plus petit normalisé</button><button class="btn" type="button" data-pre="g">Infini</button><button class="btn" type="button" data-pre="h">NaN</button></div>
+    <div class="controls"><div class="ctl"><label>Nombre décimal</label><input class="txt" data-k="x" value="0,15625"></div></div>
+    <div class="bits small" data-o="bits"></div>
+    <div class="readout" data-o="out"></div>
+    <div class="ttwrap" data-o="steps"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Pour dire la taille d'un microbe ou la distance d'une étoile, on n'écrit pas trente zéros : on écrit « 1,6 fois 10 puissance moins 19 ». On garde quelques chiffres importants et un exposant qui dit où mettre la virgule. Le float fait pareil, en base 2.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">r = (−1)^s × 2^e × m,     1 ≤ m &lt; 2   (base 2)
+Stockage :  | S (1 bit) | E (ne bits) | M (nm bits) |
+S = s      E = e + (2^(ne−1) − 1)      M = m − 1  (bit implicite non stocké)
+Simple précision (float) :  32 bits = 1 + 8 + 23,   décalage 127
+Double précision (double) : 64 bits = 1 + 11 + 52,  décalage 1023
+Double étendue :            80 bits = 1 + 15 + 64,  sans bit implicite</div>
+    <div class="def"><b>Exposant décalé</b>E = e + 127 en simple précision : on ajoute un biais pour stocker l'exposant comme un entier positif.</div>
+    <div class="def"><b>Bit implicite</b>Le 1 avant la virgule de m, toujours présent pour un nombre normalisé, n'est pas stocké : M ne contient que les bits après la virgule.</div>
+    <div class="fblock">Valeurs particulières (simple précision) :
+E = 0,   M = 0      zéro (+0 ou −0)
+E = 0,   M ≠ 0      dénormalisé : 0,M × 2^(−126), bit implicite 0
+1 ≤ E ≤ 254         normalisé : e de −126 à +127
+E = 255, M = 0      infini
+E = 255, M ≠ 0      NaN (not a number : 0/0, ∞ − ∞ …)
+Plus petit normalisé : 2^(−126) ≈ 1,18 × 10^(−38)    plus grand : environ 2^128 ≈ 3,4 × 10^38
+Précision relative : 2^(−23) ≈ 1,2 × 10^(−7)</div>
+    <div class="trap"><b>Erreur page 8 : plage de e</b>Tu as écrit −127 ≤ e &lt; 128 pour E de 0 à 255. Avec e = E − 127, E = 255 donne e = 128 : la plage complète est −127 ≤ e ≤ 128, comme dans ton propre tableau en bas de la page. Les deux extrêmes sont réservés aux valeurs particulières : les nombres normalisés utilisent e de −126 à 127.</div>
+    <div class="trap"><b>Erreur page 9 : décalage</b>Tu as écrit e = E − (2^ne − 1). Le décalage est 2^(ne−1) − 1 = 127 ; 2^ne − 1 vaudrait 255. Ton calcul numérique (124 − 127 = −3) utilise bien la bonne valeur.</div>
+    <p>Méthode du cours pour coder un réel : multiplier par 2^p pour obtenir un entier, l'écrire en binaire, puis déplacer la virgule pour obtenir 1,xxx × 2^e.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi 0,1 ne peut-il pas être codé exactement en binaire, alors que 0,15625 le peut ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">0,15625 = 5/32 : son dénominateur est une puissance de 2, il s'écrit avec un nombre fini de bits après la virgule (0,00101). 0,1 = 1/10 contient un facteur 5 au dénominateur : son développement binaire est infini et périodique (0,000110011…). Il faut le tronquer à 23 bits, d'où une petite erreur, de la même façon que 1/3 ne s'écrit pas exactement en décimal.</div></details></div>
+    <div class="q"><p>Pourquoi stocker l'exposant avec un décalage plutôt qu'en complément à 2 ? Pense à la comparaison de deux floats positifs.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Avec un exposant décalé, un exposant plus grand donne un E plus grand en binaire naturel. Comme E est placé avant M, comparer deux floats positifs revient à comparer leurs 32 bits comme de simples entiers non signés : le matériel de comparaison d'entiers sert aussi pour les floats.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+<!-- 6 FONCTIONS ET FORMES CANONIQUES -->
+<article class="concept" data-id="c6">
+  <h3><span class="n">6</span>Fonctions logiques et formes canoniques</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un cahier des charges donne souvent une table (« la sortie vaut 1 dans tel et tel cas »), et un circuit se construit à partir d'une expression. Passer de l'une à l'autre dans les deux sens, c'est le cœur de la conception logique.</p></div>
+  <div class="wg" data-w="expr">
+    <h4>🔬 De l'expression à la table de vérité</h4>
+    <p class="hint">Tape une expression : la table se construit avec une colonne par sous-expression, comme dans ton cours, puis les deux formes canoniques sont déduites. Les variables sont les lettres a à d.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="p1">Exemple du cours : a.b + b̄.c + a.c̄</button><button class="btn" type="button" data-pre="p2">a + b.c</button><button class="btn" type="button" data-pre="p3">a ⊕ b ⊕ c</button><button class="btn" type="button" data-pre="p4">(a + b̄).(b + c)</button></div>
+    <div class="controls"><div class="ctl" style="grid-column:1/-1"><label>Expression f</label><input class="txt" data-k="f" value="a.b + !b.c + a.!c"></div></div>
+    <div class="readout" data-o="out"></div>
+    <div class="ttwrap" data-o="tt"></div>
+  </div>
+  <div class="wg" data-w="tt2e">
+    <h4>🔬 De la table de vérité à l'expression</h4>
+    <p class="hint">Clique sur les cases de la colonne f pour choisir la fonction. Chaque ligne à 1 donne un minterme : variable à 1 → elle-même, variable à 0 → sa barre. Si la table a plus de 1 que de 0, le cours conseille de passer par f̄ (moins de termes). La forme simplifiée en bas est un bonus calculé automatiquement.</p>
+    <div class="controls"><div class="ctl"><label>Nombre de variables</label><select data-k="nv"><option value="2">2 (a, b)</option><option value="3" selected>3 (a, b, c)</option><option value="4">4 (a, b, c, d)</option></select></div>
+      <div class="ctl" style="display:flex;align-items:end;gap:8px;flex-wrap:wrap"><button class="btn" type="button" data-act="course">Table du cours</button><button class="btn" type="button" data-act="inv">Inverser f</button><button class="btn" type="button" data-act="clr">Tout à 0</button></div></div>
+    <div class="colrow"><div class="ttwrap" data-o="tt"></div><div data-o="out" class="prose" style="font-size:.95rem"></div></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une table de vérité, c'est la liste complète des cas : « la sonnerie retentit si la porte est ouverte et l'alarme activée, ou si… ». La première forme canonique, c'est recopier cette liste telle quelle, un cas par terme, reliés par des OU. C'est long mais impossible à rater ; on simplifie ensuite.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Fonction logique</b>Entité qui prend une ou plusieurs variables booléennes et renvoie une valeur booléenne dépendant de leur combinaison. Elle est entièrement définie par son expression ou par sa table de vérité, l'une suffit.</div>
+    <div class="def"><b>Minterme</b>Produit (ET) de toutes les variables, chacune complémentée ou non. Avec a, b, c : a.b̄.c̄ est un minterme, a.b n'en est pas un.</div>
+    <div class="def"><b>Maxterme</b>Somme (OU) de toutes les variables, chacune complémentée ou non : a + b̄ + c̄.</div>
+    <div class="fblock">1re forme canonique : OU de mintermes (une par ligne où f = 1)
+2e forme canonique  : ET de maxtermes (un par ligne où f = 0, variables à 0 non barrées)
+Table avec plus de 1 que de 0 : écrire f̄ (lignes à 0), puis f = barre(f̄) et casser la barre par De Morgan
+Simplification type : a.b.c̄ + a.b.c = a.b.(c̄ + c) = a.b</div>
+    <p>Numérotation des lignes : la combinaison (a b c) lue en binaire donne le numéro de ligne, de 0 à 2^n − 1.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi un minterme ne vaut-il 1 que sur une seule ligne de la table ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est un ET de toutes les variables : il faut que chaque facteur vaille 1 en même temps. Chaque variable y apparaît une fois, barrée ou non, ce qui fixe sa valeur. Toutes les valeurs étant imposées, une seule combinaison convient.</div></details></div>
+    <div class="q"><p>Pourquoi deux mintermes qui ne diffèrent que par une variable se simplifient-ils toujours ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Ils s'écrivent P.x + P.x̄, avec P le produit commun. Par distributivité, c'est P.(x + x̄) = P.1 = P : la variable qui change n'a plus d'influence. C'est le principe que généralisera le tableau de Karnaugh, en rangeant les lignes pour que ces voisins soient côte à côte.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 7 LOGIGRAMMES ET NAND -->
+<article class="concept" data-id="c7">
+  <h3><span class="n">7</span>Logigrammes et portes universelles NAND et NOR</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Fabriquer un seul type de porte est plus simple et moins cher. Grâce à De Morgan, NAND (ou NOR) suffit à réaliser n'importe quelle fonction : c'est pour cela que les circuits intégrés en contiennent des milliers d'exemplaires identiques.</p></div>
+  <div class="wg" data-w="nand">
+    <h4>🔬 Logigrammes interactifs</h4>
+    <p class="hint">Choisis un circuit, puis bascule les entrées : chaque fil s'allume en vert quand il vaut 1. Le premier circuit est l'exemple de ton cours, f = a + b.c réalisée uniquement avec des NAND.</p>
+    <div class="controls">
+      <div class="ctl"><label>Circuit</label><select data-k="c">
+        <option value="cours">Cours : f = a + b.c en NAND</option>
+        <option value="nnot">NON avec une NAND</option><option value="nand_and">ET avec des NAND</option><option value="nand_or">OU avec des NAND</option>
+        <option value="nor_not">NON avec une NOR</option><option value="nor_or">OU avec des NOR</option><option value="nor_and">ET avec des NOR</option>
+        <option value="xor4">OU exclusif avec 4 NAND</option></select></div>
+      <div class="ctl"><label>Symboles</label><select data-k="style"><option value="eu">Européens</option><option value="us">Américains</option></select></div>
+    </div>
+    <div class="sws" data-o="sw"></div>
+    <div class="svgbox" data-o="svg"></div>
+    <div class="readout" data-o="out"></div>
+    <div class="ttwrap" data-o="tt"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Avec une seule forme de brique de Lego, bien choisie, tu peux construire un mur, une arche ou une tour : il suffit d'en assembler plusieurs. La porte NAND est cette brique universelle de l'électronique.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Logigramme</b>Schéma d'un circuit logique : les portes et les fils qui les relient, des entrées vers les sorties.</div>
+    <div class="fblock">Avec des NAND :
+NON :  barre(a.a) = ā               (ou : forcer b = 1, barre(a.1) = ā)
+ET  :  barre( barre(a.b) ) = a.b    (une NAND suivie d'une NAND montée en NON)
+OU  :  barre( ā . b̄ ) = a + b       (De Morgan : deux NON puis une NAND)
+Exemple du cours :  f = a + b.c = barre( barre(a + b.c) ) = barre( ā . barre(b.c) )
+
+Avec des NOR :
+NON :  barre(a + a) = ā
+OU  :  barre( barre(a + b) ) = a + b
+ET  :  barre( ā + b̄ ) = a.b</div>
+    <div class="trap"><b>NAND et NOR ne sont pas associatifs</b>barre(barre(a.b).c) n'est pas égal à barre(a.b.c) : on ne peut pas enchaîner deux NAND à 2 entrées pour obtenir une NAND à 3 entrées. Vérifie-le dans l'outil du concept 2 (dernière propriété de la liste). Les circuits NAND à n entrées existent, mais ils calculent barre(a.b.c…), pas un enchaînement.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi suffit-il de savoir faire NON, ET et OU avec des NAND pour affirmer que toute fonction logique est réalisable avec des NAND seules ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Toute fonction possède une première forme canonique, qui ne contient que des NON, des ET et des OU. Si chacun de ces trois opérateurs peut être remplacé par un petit montage de NAND, on peut remplacer chaque opérateur de la forme canonique, et donc construire n'importe quelle fonction.</div></details></div>
+    <div class="q"><p>Dans l'exemple du cours, pourquoi commence-t-on par écrire f comme la négation de sa négation ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une NAND produit toujours une négation en sortie. Écrire f = barre(barre(f)) fait apparaître une barre extérieure, que réalisera la dernière NAND. On applique ensuite De Morgan à la barre intérieure pour transformer le OU en ET, qui est l'opération de base d'une NAND.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 8 CODEUR DECODEUR -->
+<article class="concept" data-id="c8">
+  <h3><span class="n">8</span>Codeurs et décodeurs</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un clavier a des dizaines de touches mais envoie quelques bits ; une mémoire a des milliers de cases mais reçoit une adresse de quelques bits. Le codeur compresse « quelle ligne est active » en un numéro binaire, le décodeur fait l'inverse : c'est lui qui sélectionne la case mémoire ou le composant visé.</p></div>
+  <div class="wg" data-w="coder">
+    <h4>🔬 Codeur 8 → 3 et décodeur 2 → 4</h4>
+    <p class="hint">À gauche, active une entrée du codeur : sa position sort en binaire sur S2 S1 S0. À droite, le décodeur du cours, à sorties actives à 0 : la sortie sélectionnée passe à 0, les autres restent à 1. L'entrée CS (chip select) est elle aussi active à 0.</p>
+    <div class="colrow">
+      <div><div class="sws" data-o="encsw"></div><div class="svgbox" data-o="encsvg"></div><div class="ttwrap" data-o="enctt"></div></div>
+      <div><div class="sws" data-o="decsw"></div><div class="svgbox" data-o="decsvg"></div><div class="ttwrap" data-o="dectt"></div></div>
+    </div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Dans un restaurant, chaque table a un bouton d'appel. Le tableau en cuisine n'affiche pas huit lampes, il affiche le numéro de la table : c'est le codeur. Quand le plat est prêt, le serveur lit le numéro et va à la bonne table : c'est le décodeur.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Codeur</b>Circuit qui fait correspondre l'activation d'une entrée parmi 2^N à une combinaison de N bits en sortie. Une seule entrée doit être active à la fois.</div>
+    <div class="def"><b>Décodeur</b>Opération réciproque : un code de N bits en entrée active une unique sortie parmi 2^N.</div>
+    <div class="def"><b>Niveau actif bas</b>Convention où l'état actif est le 0 logique (un 1 correspond à un signal inactif). Fréquente sur les décodeurs et les entrées de validation.</div>
+    <div class="def"><b>Entrée de validation</b>CS (chip select) ou En (enable) : autorise ou non le fonctionnement du circuit, par exemple pour éviter les courts-circuits quand plusieurs circuits partagent les mêmes fils.</div>
+    <div class="fblock">Codeur 8 → 3 : e5 actif  →  S2 S1 S0 = 101
+Décodeur 2 → 4 actif bas : a1 a0 = 10  →  S2 = 0, S0 = S1 = S3 = 1   (si CS = 0)</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Que devrait faire un codeur si deux entrées sont activées en même temps, et pourquoi le codeur simple du cours ne sait-il pas le gérer ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le codeur simple calcule chaque bit de sortie comme un OU des entrées concernées : avec e3 et e5 actifs, il sortirait 011 OU 101 = 111, soit le numéro 7, qui n'est ni l'un ni l'autre. Il faut alors un codeur de priorité, qui ne code que l'entrée active de plus haut rang.</div></details></div>
+    <div class="q"><p>Comment un décodeur permet-il à un processeur de choisir un seul composant parmi plusieurs reliés aux mêmes fils de données ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les bits de poids fort de l'adresse entrent dans le décodeur ; chacune de ses sorties est reliée au CS d'un composant. Une seule sortie est active à la fois, donc un seul composant est validé ; les autres mettent leurs sorties en haute impédance et ne perturbent pas le bus.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 9 MUX DEMUX -->
+<article class="concept" data-id="c9">
+  <h3><span class="n">9</span>Multiplexeurs et démultiplexeurs</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Faire passer plusieurs signaux par un seul fil, ou envoyer un signal vers une destination choisie : c'est l'aiguillage de toute l'électronique numérique. Et le multiplexeur a une propriété étonnante : il peut réaliser n'importe quelle fonction logique.</p></div>
+  <div class="wg" data-w="mux">
+    <h4>🔬 Multiplexeur 4 → 1 et démultiplexeur 1 → 4</h4>
+    <p class="hint">Le trait épais dans chaque boîte montre l'aiguillage choisi par l'adresse a1 a0. En (enable) et CS sont actifs à 0 : mets-les à 1 pour voir la sortie se déconnecter. Coche « générateur de fonction » pour brancher sur e0 à e3 la table d'une fonction de deux variables : la sortie du MUX devient cette fonction de a1 et a0.</p>
+    <div class="colrow">
+      <div><div class="sws" data-o="muxsw"></div>
+        <div class="controls" style="margin-top:0"><div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="gen"> Générateur de fonction</label></div>
+        <div class="ctl" data-gen><label>Fonction de (a1, a0)</label><select data-k="fn"><option value="and">a1 . a0</option><option value="or">a1 + a0</option><option value="xor">a1 ⊕ a0</option><option value="nand">NON ET</option><option value="imp">a1 . ā0</option></select></div></div>
+        <div class="svgbox" data-o="muxsvg"></div><div class="ttwrap" data-o="muxtt"></div></div>
+      <div><div class="sws" data-o="demsw"></div><div class="svgbox" data-o="demsvg"></div><div class="ttwrap" data-o="demtt"></div></div>
+    </div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un aiguillage de train : plusieurs voies arrivent, une seule repart, et un levier choisit laquelle passe. Le multiplexeur, c'est l'aiguillage qui fusionne ; le démultiplexeur, l'aiguillage qui répartit un train vers une voie au choix.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Multiplexeur</b>Circuit à 2^p entrées de données, p entrées de sélection (l'adresse) et une sortie : la sortie recopie l'entrée dont l'indice est codé par l'adresse.</div>
+    <div class="def"><b>Démultiplexeur</b>Élément réciproque : une entrée de données aiguillée vers une sortie parmi 2^p, choisie par p bits d'adresse.</div>
+    <div class="def"><b>Bus</b>Ensemble de k fils transportant une information de k bits, dessiné par un trait barré annoté k.</div>
+    <div class="def"><b>Haute impédance (Z)</b>État d'une sortie déconnectée, comme un circuit ouvert : elle n'impose ni 0 ni 1.</div>
+    <div class="fblock">MUX 4 → 1 (n = 4, p = 2, k = 1), En actif bas :
+En = 0 :  sortie = e(a1 a0)        En = 1 :  sortie en haute impédance (Z)
+S = ā1.ā0.e0 + ā1.a0.e1 + a1.ā0.e2 + a1.a0.e3
+MUX à p entrées de sélection  →  n'importe quelle fonction de p variables
+  (on branche sur ei la valeur de la fonction à la ligne i)
+DEMUX 1 → 2, CS actif bas, sorties inactives à 1 :
+CS = 0, a0 = 0 : S0 = e, S1 = 1     CS = 0, a0 = 1 : S0 = 1, S1 = e     CS = 1 : S0 = S1 = 1</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi un multiplexeur à p entrées de sélection peut-il réaliser n'importe quelle fonction de p variables ? Fais le lien avec la première forme canonique.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">L'expression du MUX est une somme de tous les mintermes des variables de sélection, chacun multiplié par une entrée ei. En mettant ei = 1 sur les lignes où la fonction vaut 1 et ei = 0 ailleurs, on ne garde que les mintermes de la fonction : on obtient exactement sa première forme canonique.</div></details></div>
+    <div class="q"><p>À quoi sert un démultiplexeur relié à un multiplexeur par un seul fil, avec les mêmes adresses de part et d'autre ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">À faire transiter plusieurs signaux sur une seule ligne, à tour de rôle : le MUX choisit quelle source envoie, le DEMUX réachemine vers la destination correspondante. En balayant l'adresse rapidement, on partage le fil entre plusieurs voies (multiplexage temporel), comme sur un bus de communication.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 10 COMPARATEUR ADDITIONNEUR -->
+<article class="concept" data-id="c10">
+  <h3><span class="n">10</span>Comparateur et additionneur</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Comparer et additionner sont les deux opérations de base de l'unité de calcul d'un processeur. Toutes les autres (soustraction, multiplication, tests) se construisent à partir d'elles.</p></div>
+  <div class="wg" data-w="arith">
+    <h4>🔬 Comparateur et additionneur 4 bits</h4>
+    <p class="hint">Règle A et B. Le comparateur examine les bits du poids fort vers le poids faible : le premier bit différent décide (surligné). L'additionneur est montré étage par étage : chaque additionneur 1 bit reçoit la retenue de l'étage précédent et transmet la sienne au suivant.</p>
+    <div class="controls">
+      <div class="ctl"><label>A <span data-o="A"></span></label><input type="range" data-k="A" min="0" max="15" step="1" value="11"></div>
+      <div class="ctl"><label>B <span data-o="B"></span></label><input type="range" data-k="B" min="0" max="15" step="1" value="6"></div>
+      <div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="cin"> Retenue entrante Cin = 1</label></div>
+    </div>
+    <div class="colrow"><div><div class="ttwrap" data-o="cmp"></div><div class="readout" data-o="cmpout"></div></div><div><div class="ttwrap" data-o="add"></div><div class="readout" data-o="addout"></div></div></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Pour savoir qui est le plus vieux entre deux personnes, tu compares d'abord les années de naissance ; les mois ne comptent que si les années sont égales. Le comparateur fait pareil avec les bits. L'additionneur, c'est l'addition posée de l'école : chiffre par chiffre, en reportant la retenue sur la colonne suivante.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Comparateur</b>Circuit combinatoire qui compare deux mots de même format et active une sortie parmi (A &gt; B), (A &lt; B), (A = B). Des entrées supplémentaires permettent la mise en cascade de plusieurs comparateurs.</div>
+    <div class="def"><b>Additionneur</b>Circuit qui additionne deux mots de n bits, avec une retenue entrante Cin (venant d'un calcul précédent) et une retenue sortante Cout, pour la mise en cascade.</div>
+    <div class="fblock">Additionneur complet 1 bit :
+s = a ⊕ b ⊕ c(entrée)
+c(sortie) = a.b + c(entrée).(a ⊕ b)
+Additionneur n bits : n additionneurs 1 bit en cascade (retenue propagée)
+Binaire signé : valeurs négatives en complément à 2 ; vérifier le bit de signe (débordement)</div>
+    <p>La structure interne d'un comparateur dépend du format de codage : comparer deux nombres en complément à 2 ne se fait pas comme deux nombres non signés (le bit de poids fort a un poids négatif).</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la sortie de somme d'un additionneur 1 bit est-elle un XOR des trois entrées ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le bit de somme est le chiffre des unités de a + b + c, qui vaut 0, 1, 2 ou 3. Il vaut 1 quand le total est impair, c'est-à-dire quand un nombre impair d'entrées vaut 1 : c'est exactement la définition du XOR à n entrées.</div></details></div>
+    <div class="q"><p>Un additionneur 32 bits à retenue propagée doit attendre que la retenue traverse les 32 étages. Quel est l'inconvénient, et quelle idée permettrait d'aller plus vite ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le temps de calcul croît avec le nombre de bits : le dernier bit ne peut être juste qu'après la propagation complète. On peut anticiper les retenues (additionneur à retenue anticipée) en calculant, pour chaque groupe de bits, s'il génère ou propage une retenue, au prix de portes supplémentaires.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+</div></section>
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours avec les conditions d'usage. Le mode test floute les formules : retrouve-les, puis touche pour vérifier.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites.</p>
+  <div class="row"><label for="fcTheme">Thème</label><select id="fcTheme"></select><button class="btn" id="fcReset">Remettre à zéro</button></div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions"><button class="btn" id="fcFlip">Retourner</button><button class="btn bad" id="fcNo" disabled>Pas su</button><button class="btn good" id="fcYes" disabled>Su</button></div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
+</div></section>
+</main>
+<footer class="wrap">Ta progression (concepts revus, cartes, exercices) est enregistrée dans ce navigateur uniquement.</footer>
+<script>
+(function(){
+"use strict";
+const KEY="systemes-numeriques-v1";
+let S={seen:{},cards:{},ex:{},tab:"concepts"};
+try{ const r=localStorage.getItem(KEY); if(r) Object.assign(S,JSON.parse(r)); }catch(e){}
+let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} },150); }
+const $=function(id){ return document.getElementById(id); };
+const fr=function(x,d){ if(!isFinite(x)) return "∞"; if(Math.abs(x)<0.5*Math.pow(10,-d)) x=0; return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const D2R=Math.PI/180, R2D=180/Math.PI;
+function asinS(x){ return (x>1||x<-1)?NaN:Math.asin(x); }
+
+/* ---------- tracé ---------- */
+function fit(c){
+  const r=c.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+  if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){ c.width=Math.round(w*d); c.height=Math.round(h*d); }
+  const ctx=c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+/* monde : repère orthonormé ou non */
+function world(cv, xr, yr, equal){
+  const F=fit(cv), w=F.w, h=F.h, pad=10;
+  let sx=(w-2*pad)/(xr[1]-xr[0]), sy=(h-2*pad)/(yr[1]-yr[0]);
+  let ox=pad, oy=pad;
+  if(equal){ const s=Math.min(sx,sy); ox=(w-s*(xr[1]-xr[0]))/2; oy=(h-s*(yr[1]-yr[0]))/2; sx=sy=s; }
+  const X=function(x){ return ox+(x-xr[0])*sx; }, Y=function(y){ return oy+(yr[1]-y)*sy; };
+  const Xi=function(px){ return xr[0]+(px-ox)/sx; }, Yi=function(py){ return yr[1]-(py-oy)/sy; };
+  return {ctx:F.ctx,w:w,h:h,X:X,Y:Y,Xi:Xi,Yi:Yi,sx:sx,sy:sy,xr:xr,yr:yr};
+}
+function seg(g,x0,y0,x1,y1,color,wd,dash,alpha){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.globalAlpha=alpha===undefined?1:alpha; c.beginPath(); c.moveTo(g.X(x0),g.Y(y0)); c.lineTo(g.X(x1),g.Y(y1)); c.stroke(); c.restore(); }
+function arrowHead(g,x0,y0,x1,y1,color,size){ const c=g.ctx, a=[g.X(x0),g.Y(y0)], b=[g.X(x1),g.Y(y1)], ang=Math.atan2(b[1]-a[1],b[0]-a[0]), s=size||8; c.save(); c.fillStyle=color; c.beginPath(); c.moveTo(b[0],b[1]); c.lineTo(b[0]-s*Math.cos(ang-0.4),b[1]-s*Math.sin(ang-0.4)); c.lineTo(b[0]-s*Math.cos(ang+0.4),b[1]-s*Math.sin(ang+0.4)); c.closePath(); c.fill(); c.restore(); }
+function ray(g,x0,y0,x1,y1,color,wd,dash,alpha){ seg(g,x0,y0,x1,y1,color,wd,dash,alpha); const mx=x0+(x1-x0)*0.55, my=y0+(y1-y0)*0.55; if(!dash) arrowHead(g,x0,y0,mx,my,color,7); }
+function label(g,x,y,t,color,align,dy){ const c=g.ctx; c.save(); c.fillStyle=color||css("--ink"); c.font="12px "+css("--ui"); c.textAlign=align||"left"; c.fillText(t,g.X(x),g.Y(y)+(dy||0)); c.restore(); }
+function pt(g,x,y,color,r){ const c=g.ctx; c.fillStyle=color; c.beginPath(); c.arc(g.X(x),g.Y(y),r||3.5,0,2*Math.PI); c.fill(); }
+function arc(g,cx,cy,r,a0,a1,color){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=1.3; c.beginPath(); c.arc(g.X(cx),g.Y(cy),r,-a0,-a1,a1>a0); c.stroke(); c.restore(); }
+function tint(n){ return Math.max(0,Math.min(0.55,(n-1)/1.6)); }
+/* graphique cartésien simple */
+function fmtTick(v){ return Number.isInteger(v)?String(v).replace('-','−'):v.toLocaleString('fr-FR',{maximumFractionDigits:4}).replace('-','−'); }
+function chart(cv,xr,yr,o){
+  const F=fit(cv), ctx=F.ctx, w=F.w, h=F.h, pl=40, pr=10, pt_=10, pb=24;
+  const X=function(x){ return pl+(x-xr[0])/(xr[1]-xr[0])*(w-pl-pr); }, Y=function(y){ return pt_+(yr[1]-y)/(yr[1]-yr[0])*(h-pt_-pb); };
+  ctx.font="11px "+css("--ui"); ctx.strokeStyle=css("--line"); ctx.fillStyle=css("--muted"); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pl,pt_); ctx.lineTo(pl,h-pb); ctx.lineTo(w-pr,h-pb); ctx.stroke();
+  (o.xt||[]).forEach(function(v){ ctx.textAlign="center"; ctx.fillText(fmtTick(v)+(o.xu||""),X(v),h-pb+14); });
+  (o.yt||[]).forEach(function(v){ ctx.textAlign="right"; ctx.fillText(fmtTick(v)+(o.yu||""),pl-5,Y(v)+4); ctx.save(); ctx.globalAlpha=0.4; ctx.beginPath(); ctx.moveTo(pl,Y(v)); ctx.lineTo(w-pr,Y(v)); ctx.stroke(); ctx.restore(); });
+  if(o.xl){ ctx.textAlign="right"; ctx.fillText(o.xl,w-pr,h-pb-5); }
+  if(o.yl){ ctx.textAlign="left"; ctx.fillText(o.yl,pl+5,pt_+10); }
+  return {ctx:ctx,X:X,Y:Y,w:w,h:h,pl:pl,pr:pr,pt:pt_,pb:pb};
+}
+function curve(g,xs,fn,color,wd,dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.beginPath(); let on=false; xs.forEach(function(x){ const y=fn(x); if(!isFinite(y)){ on=false; return; } if(!on){ c.moveTo(g.X(x),g.Y(y)); on=true; } else c.lineTo(g.X(x),g.Y(y)); }); c.stroke(); c.restore(); }
+function lin(a,b,n){ const o=[]; for(let i=0;i<=n;i++) o.push(a+(b-a)*i/n); return o; }
+function wl2rgb(w){ let r=0,g=0,b=0; if(w<440){r=-(w-440)/60;b=1;} else if(w<490){g=(w-440)/50;b=1;} else if(w<510){g=1;b=-(w-510)/20;} else if(w<580){r=(w-510)/70;g=1;} else if(w<645){r=1;g=-(w-645)/65;} else r=1; return "rgb("+[r,g,b].map(function(c){return Math.round(255*Math.pow(c,0.8));}).join(",")+")"; }
+
+/* ---------- moteur de widgets ---------- */
+const widgets=[], IMPL={};
+function initWidgets(){
+  document.querySelectorAll(".wg[data-w]").forEach(function(root){
+    const W={root:root,type:root.dataset.w,k:{},o:{},c:{}};
+    root.querySelectorAll("[data-k]").forEach(function(el){ W.k[el.dataset.k]=el; el.addEventListener("input",function(){ draw(W); }); el.addEventListener("change",function(){ draw(W); }); });
+    root.querySelectorAll("[data-o]").forEach(function(el){ W.o[el.dataset.o]=el; });
+    root.querySelectorAll("canvas[data-c]").forEach(function(el){ W.c[el.dataset.c]=el; });
+    W.v=function(k){ const el=W.k[k]; if(el.type==="checkbox") return el.checked; if(el.type==="range") return +el.value; return el.value; };
+    W.set=function(o){ Object.keys(o).forEach(function(k){ if(W.k[k].type==="checkbox") W.k[k].checked=o[k]; else W.k[k].value=o[k]; }); draw(W); };
+    const P=IMPL[W.type].presets;
+    if(P) root.querySelectorAll("[data-pre]").forEach(function(b){ b.addEventListener("click",function(){ W.set(P[b.dataset.pre]); }); });
+    if(IMPL[W.type].init) IMPL[W.type].init(W);
+    widgets.push(W);
+  });
+}
+function visible(W){ return W.root.offsetParent!==null; }
+function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
+function drawAll(){ widgets.forEach(draw); drawHero(); }
+function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
+
+/* ---------- expressions booléennes ---------- */
+function parseExpr(src){
+  const s=String(src).toLowerCase().replace(/\s+/g,"").replace(/[·*×∙]/g,".").replace(/⊕/g,"^").replace(/[¬~\/]/g,"!");
+  let i=0;
+  const peek=function(){ return s[i]; };
+  const err=function(m){ throw new Error(m); };
+  const starts=function(c){ return c!==undefined&&/[a-d01(!]/.test(c); };
+  function pOr(){ const a=[pXor()]; while(peek()==="+"){ i++; a.push(pXor()); } return a.length>1?{t:"or",a:a}:a[0]; }
+  function pXor(){ const a=[pAnd()]; while(peek()==="^"){ i++; a.push(pAnd()); } return a.length>1?{t:"xor",a:a}:a[0]; }
+  function pAnd(){ const a=[pNot()]; for(;;){ if(peek()==="."){ i++; a.push(pNot()); } else if(starts(peek())) a.push(pNot()); else break; } return a.length>1?{t:"and",a:a}:a[0]; }
+  function pNot(){ if(peek()==="!"){ i++; return {t:"not",a:pNot()}; } let n=pPrim(); while(peek()==="'"){ i++; n={t:"not",a:n}; } return n; }
+  function pPrim(){ const c=peek(); if(c===undefined) err("expression incomplète"); if(/[a-d]/.test(c)){ i++; return {t:"var",n:c}; } if(c==="0"||c==="1"){ i++; return {t:"const",v:+c}; } if(c==="("){ i++; const e=pOr(); if(peek()!==")") err("parenthèse fermante manquante"); i++; return e; } if(/[e-z]/.test(c)) err("variable « "+c+" » : seules a, b, c, d sont permises"); err("caractère inattendu « "+c+" »"); }
+  if(!s.length) err("expression vide");
+  const r=pOr(); if(i<s.length) err("caractère inattendu « "+s[i]+" »"); return r;
+}
+function ev(n,env){ switch(n.t){ case "var": return env[n.n]; case "const": return n.v; case "not": return 1-ev(n.a,env); case "and": return n.a.every(function(x){return ev(x,env);})?1:0; case "or": return n.a.some(function(x){return ev(x,env);})?1:0; case "xor": return n.a.reduce(function(s,x){return s^ev(x,env);},0); } }
+function kids(n){ return n.a?(Array.isArray(n.a)?n.a:[n.a]):[]; }
+function varsOf(n,set){ set=set||new Set(); if(n.t==="var") set.add(n.n); kids(n).forEach(function(x){ varsOf(x,set); }); return set; }
+const PREC={or:1,xor:2,and:3,not:4,var:5,const:5};
+function eh(n,pp){ pp=pp||0; let s;
+  switch(n.t){ case "var": s=n.n; break; case "const": s=String(n.v); break;
+    case "not": s='<span class="ov">'+eh(n.a,0)+'</span>'; break;
+    case "and": s=n.a.map(function(x){return eh(x,3);}).join("."); break;
+    case "or": s=n.a.map(function(x){return eh(x,1);}).join(" + "); break;
+    case "xor": s=n.a.map(function(x){return eh(x,2);}).join(" ⊕ "); break; }
+  return (PREC[n.t]<pp&&n.t!=="not")?"("+s+")":s; }
+function envOf(vars,row){ const env={}, nv=vars.length; vars.forEach(function(v,k){ env[v]=(row>>(nv-1-k))&1; }); return env; }
+function ovv(v){ return '<span class="ov">'+v+'</span>'; }
+function sopH(vars,rows){ if(!rows.length) return "0"; if(rows.length===1<<vars.length) return "1"; const nv=vars.length; return rows.map(function(r){ return vars.map(function(v,k){ return ((r>>(nv-1-k))&1)?v:ovv(v); }).join("."); }).join(" + "); }
+function posH(vars,rows){ if(!rows.length) return "1"; if(rows.length===1<<vars.length) return "0"; const nv=vars.length; return rows.map(function(r){ return "("+vars.map(function(v,k){ return ((r>>(nv-1-k))&1)?ovv(v):v; }).join(" + ")+")"; }).join("."); }
+function popc(x){ let c=0; while(x){ c+=x&1; x>>=1; } return c; }
+function qmH(vars,ones){
+  const nv=vars.length; if(!ones.length) return "0"; if(ones.length===1<<nv) return "1";
+  let groups=ones.map(function(m){ return {v:m,mask:0,cov:[m]}; }), primes=[];
+  while(groups.length){ const next=[], used=new Set();
+    for(let i=0;i<groups.length;i++) for(let j=i+1;j<groups.length;j++){ const A=groups[i],B=groups[j]; if(A.mask!==B.mask) continue; const d=A.v^B.v; if(d&&!(d&(d-1))){ used.add(i); used.add(j); const v=A.v&~d, mask=A.mask|d; if(!next.some(function(x){return x.v===v&&x.mask===mask;})) next.push({v:v,mask:mask,cov:A.cov.concat(B.cov)}); } }
+    groups.forEach(function(g,i){ if(!used.has(i)&&!primes.some(function(p){return p.v===g.v&&p.mask===g.mask;})) primes.push(g); });
+    groups=next; }
+  const rem=new Set(ones), chosen=[];
+  ones.forEach(function(m){ const cs=primes.filter(function(p){return p.cov.indexOf(m)>=0;}); if(cs.length===1&&chosen.indexOf(cs[0])<0) chosen.push(cs[0]); });
+  chosen.forEach(function(p){ p.cov.forEach(function(m){ rem.delete(m); }); });
+  while(rem.size){ let best=null,bc=-1; primes.forEach(function(p){ if(chosen.indexOf(p)>=0) return; const c=p.cov.filter(function(m){return rem.has(m);}).length; if(c>bc||(c===bc&&popc(p.mask)>popc(best.mask))){ best=p; bc=c; } }); chosen.push(best); best.cov.forEach(function(m){ rem.delete(m); }); }
+  return chosen.map(function(p){ const lits=[]; vars.forEach(function(v,k){ const bit=1<<(nv-1-k); if(p.mask&bit) return; lits.push((p.v&bit)?v:ovv(v)); }); return lits.length?lits.join("."):"1"; }).join(" + ");
+}
+function bitsOf(x,n){ const o=[]; for(let k=n-1;k>=0;k--) o.push(Math.floor(x/Math.pow(2,k))%2); return o; }
+function bstr(x,n,sp){ const b=bitsOf(x,n).join(""); return sp?b.replace(/(.{4})(?=.)/g,"$1 "):b; }
+function sgn(x,n){ const M=Math.pow(2,n); x=((x%M)+M)%M; return x>=M/2?x-M:x; }
+function uns(x,n){ const M=Math.pow(2,n); return ((x%M)+M)%M; }
+function vc(v){ return '<span class="v'+v+'">'+v+'</span>'; }
+function sup(k){ return "2<sup>"+k+"</sup>"; }
+
+/* ---------- portes en SVG ---------- */
+function wc(v){ return v===1?"var(--on)":v===0?"var(--off)":"var(--muted)"; }
+function wire(x1,y1,x2,y2,v,w){ return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" style="stroke:'+wc(v)+';stroke-width:'+(w||2.4)+';stroke-linecap:round"/>'; }
+function poly(pts,v,w){ return '<polyline fill="none" points="'+pts.map(function(p){return p.join(",");}).join(" ")+'" style="stroke:'+wc(v)+';stroke-width:'+(w||2.4)+';stroke-linejoin:round;stroke-linecap:round"/>'; }
+function txt(x,y,t,o){ o=o||{}; return '<text x="'+x+'" y="'+y+'" text-anchor="'+(o.a||"middle")+'" style="font:'+(o.w||400)+' '+(o.s||12)+'px var(--mono);fill:'+(o.c||"var(--ink)")+(o.ov?';text-decoration:overline':'')+'">'+t+'</text>'; }
+function dot(x,y,v){ return '<circle cx="'+x+'" cy="'+y+'" r="3.2" style="fill:'+wc(v)+'"/>'; }
+const GK={not:{b:"buf",n:1},and:{b:"and",n:0},or:{b:"or",n:0},xor:{b:"xor",n:0},nand:{b:"and",n:1},nor:{b:"or",n:1}};
+function gate(kind,style,x,y,vins,vout){
+  const g=GK[kind], neg=g.n, nin=vins.length, pys=nin===1?[20]:[12,28];
+  const body="fill:var(--surface);stroke:var(--ink);stroke-width:1.8";
+  let s="", end, pin=[];
+  if(style==="eu"){
+    s+='<rect x="'+x+'" y="'+y+'" width="44" height="40" rx="3" style="'+body+'"/>';
+    s+=txt(x+22,y+25,{buf:"1",and:"&amp;",or:"≥1",xor:"=1"}[g.b],{s:13,w:600});
+    end=x+44; pys.forEach(function(py){ pin.push([x,y+py]); });
+  } else {
+    if(g.b==="and"){ s+='<path d="M'+x+' '+y+' H'+(x+24)+' A20 20 0 0 1 '+(x+24)+' '+(y+40)+' H'+x+' Z" style="'+body+'"/>'; end=x+44; pys.forEach(function(py){ pin.push([x,y+py]); }); }
+    else if(g.b==="buf"){ s+='<path d="M'+x+' '+y+' L'+(x+36)+' '+(y+20)+' L'+x+' '+(y+40)+' Z" style="'+body+'"/>'; end=x+36; pys.forEach(function(py){ pin.push([x,y+py]); }); }
+    else { const o=g.b==="xor"?6:0; s+='<path d="M'+(x+o)+' '+y+' Q'+(x+o+12)+' '+(y+20)+' '+(x+o)+' '+(y+40)+' Q'+(x+o+30)+' '+(y+40)+' '+(x+o+46)+' '+(y+20)+' Q'+(x+o+30)+' '+y+' '+(x+o)+' '+y+' Z" style="'+body+'"/>';
+      if(o) s+='<path d="M'+x+' '+y+' Q'+(x+12)+' '+(y+20)+' '+x+' '+(y+40)+'" style="fill:none;stroke:var(--ink);stroke-width:1.8"/>';
+      end=x+o+46; pys.forEach(function(py){ pin.push([x+(o?3:6),y+py]); }); }
+  }
+  if(neg){ s+='<circle cx="'+(end+4)+'" cy="'+(y+20)+'" r="4" style="'+body+'"/>'; end+=8; }
+  let w=""; pin.forEach(function(p,j){ w+=wire(p[0]-16,p[1],p[0],p[1],vins[j]); });
+  w+=wire(end,y+20,end+14,y+20,vout);
+  return {svg:w+s, ins:pin.map(function(p){ return [p[0]-16,p[1]]; }), out:[end+14,y+20]};
+}
+function frt(x,d){ let s=fr(x,d); if(s.indexOf(",")>=0) s=s.replace(/0+$/,"").replace(/,$/,""); return s; }
+/* ---------- utilitaires interrupteurs ---------- */
+function swH(name,v,lbl){ return '<button type="button" class="sw'+(v?' on':'')+'" data-sw="'+name+'" aria-pressed="'+(v?"true":"false")+'">'+(lbl||name)+' = '+v+'</button>'; }
+function bindSw(W,box,st,after){ box.addEventListener("click",function(e){ const b=e.target.closest("[data-sw]"); if(!b) return; const k=b.dataset.sw; st[k]=st[k]?0:1; (after||function(){ draw(W); })(k); }); }
+function ttH(head,rows,o){ o=o||{}; let h='<table class="tt"><thead><tr>'+head.map(function(c){ return '<th'+(c.sep?' class="sep"':'')+'>'+c.t+'</th>'; }).join("")+'</tr></thead><tbody>';
+  rows.forEach(function(r,i){ const cls=[]; if(o.cur===i||(o.curs&&o.curs.indexOf(i)>=0)) cls.push("cur"); if(o.bad&&o.bad.indexOf(i)>=0) cls.push("bad");
+    h+='<tr'+(cls.length?' class="'+cls.join(" ")+'"':'')+'>'+r.map(function(v,j){ const c=head[j]||{}; const cl=[]; if(c.sep) cl.push("sep"); if(c.num) cl.push("num"); if(c.click) cl.push("click"); const txtv=(v===0||v===1)&&!c.num?vc(v):v; return '<td'+(cl.length?' class="'+cl.join(" ")+'"':'')+(c.click?' data-r="'+i+'"':'')+'>'+txtv+'</td>'; }).join("")+'</tr>'; });
+  return h+'</tbody></table>'; }
+
+/* ---------- 1. opérateurs ---------- */
+IMPL.ops={init:function(W){ W.st={a:0,b:1}; bindSw(W,W.o.sw,W.st); },
+draw:function(W){
+  const a=W.st.a, b=W.st.b, st=W.v("style");
+  W.o.sw.innerHTML=swH("a",a)+swH("b",b);
+  const G=[["not","NON","ā",function(x){return 1-x;},1],["and","ET","a.b",function(x,y){return x&y;}],["or","OU","a + b",function(x,y){return x|y;}],["nand","NON ET (NAND)",'<span class="ov">a.b</span>',function(x,y){return 1-(x&y);}],["nor","NON OU (NOR)",'<span class="ov">a + b</span>',function(x,y){return 1-(x|y);}],["xor","OU exclusif (XOR)","a ⊕ b",function(x,y){return x^y;}]];
+  W.o.gates.innerHTML=G.map(function(g){
+    const one=g[4]===1, out=one?g[3](a):g[3](a,b), ins=one?[a]:[a,b];
+    const gg=gate(g[0],st,30,6,ins,out);
+    let svg='<svg viewBox="0 0 130 52" role="img" aria-label="porte '+g[1]+'">'+gg.svg+txt(gg.ins[0][0]-6,gg.ins[0][1]+4,"a",{a:"end"})+(one?"":txt(gg.ins[1][0]-6,gg.ins[1][1]+4,"b",{a:"end"}))+txt(gg.out[0]+4,gg.out[1]+4,String(out),{a:"start",w:600,c:wc(out)})+'</svg>';
+    const rows=one?[[0,1],[1,0]]:[[0,0,g[3](0,0)],[0,1,g[3](0,1)],[1,0,g[3](1,0)],[1,1,g[3](1,1)]];
+    const cur=one?a:a*2+b;
+    return '<div class="gcard"><div class="t"><span>'+g[1]+'</span><b class="v'+out+'">'+out+'</b></div>'+svg+'<div class="e">S = '+g[2]+'</div>'+ttH(one?[{t:"a"},{t:"S",sep:1}]:[{t:"a"},{t:"b"},{t:"S",sep:1}],rows,{cur:cur})+'</div>';
+  }).join("");
+}};
+
+/* ---------- 2. propriétés ---------- */
+const LAWS=[
+ ["Associativité du ET","(a.b).c","a.(b.c)"],["Associativité du OU","(a+b)+c","a+(b+c)"],
+ ["Commutativité du ET","a.b","b.a"],["Commutativité du OU","a+b","b+a"],
+ ["Distributivité du ET sur le OU","a.(b+c)","a.b+a.c"],["Distributivité du OU sur le ET","a+b.c","(a+b).(a+c)"],
+ ["Distributivité du OU (version des notes, fausse)","a+b.c","(a+b).(a+b)"],
+ ["Élément neutre du ET","a.1","a"],["Élément neutre du OU","a+0","a"],["Élément absorbant du ET","a.0","0"],["Élément absorbant du OU","a+1","1"],
+ ["Complémentarité : double négation","!!a","a"],["Complémentarité : a.ā","a.!a","0"],["Complémentarité : a + ā","a+!a","1"],
+ ["Idempotence du ET","a.a","a"],["Idempotence du OU","a+a","a"],
+ ["Simplification : a + ā.b","a+!a.b","a+b"],["Simplification : a.(ā + b)","a.(!a+b)","a.b"],
+ ["De Morgan : barre(A + B)","!(a+b)","!a.!b"],["De Morgan : barre(A.B)","!(a.b)","!a+!b"],
+ ["Piège : De Morgan sans changer l'opérateur","!(a+b)","!a+!b"],
+ ["Le XOR est associatif","(a^b)^c","a^(b^c)"],["La NAND n'est pas associative","!(!(a.b).c)","!(a.b.c)"]];
+IMPL.props={init:function(W){ W.k.law.innerHTML=LAWS.map(function(l,i){ return '<option value="'+i+'">'+l[0]+'</option>'; }).join("")+'<option value="free">Expressions libres</option>'; W.k.law.value="5"; W.k.L.value=LAWS[5][1]; W.k.R.value=LAWS[5][2];
+  W.k.law.addEventListener("change",function(){ const v=W.k.law.value; if(v!=="free"){ W.k.L.value=LAWS[+v][1]; W.k.R.value=LAWS[+v][2]; } draw(W); });
+  ["L","R"].forEach(function(k){ W.k[k].addEventListener("input",function(){ W.k.law.value="free"; }); }); },
+draw:function(W){
+  let L,R; try{ L=parseExpr(W.k.L.value); R=parseExpr(W.k.R.value); }catch(e){ W.o.out.innerHTML="<div class='verdict-no'>"+e.message+"</div>"; W.o.tt.innerHTML=""; return; }
+  const vs=Array.from(new Set(["a","b","c"].concat(Array.from(varsOf(L)),Array.from(varsOf(R))))).sort(), nv=vs.length, rows=[], bad=[];
+  for(let r=0;r<(1<<nv);r++){ const env=envOf(vs,r), l=ev(L,env), rr=ev(R,env); rows.push([r].concat(vs.map(function(v){return env[v];}),[l,rr,l===rr?"✓":"✗"])); if(l!==rr) bad.push(r); }
+  const head=[{t:"n°",num:1}].concat(vs.map(function(v){return {t:v};}),[{t:eh(L),sep:1},{t:eh(R),sep:1},{t:"égal ?",sep:1}]);
+  W.o.tt.innerHTML=ttH(head,rows,{bad:bad});
+  W.o.out.innerHTML="<div class='expr'>"+eh(L)+"  =  "+eh(R)+" ?</div><div>"+(bad.length?"<span class='verdict-no'>Fausse : les deux membres diffèrent sur "+bad.length+" ligne"+(bad.length>1?"s":"")+" sur "+rows.length+".</span>":"<span class='verdict-ok'>Identité vraie : égalité sur les "+rows.length+" combinaisons.</span>")+"</div>";
+}};
+
+/* ---------- 3. bases ---------- */
+IMPL.base={init:function(W){ W.val=41; W.o.bits.addEventListener("click",function(e){ const b=e.target.closest("[data-bit]"); if(!b) return; W.val^=(1<<+b.dataset.bit); W.src="bits"; draw(W); }); },
+draw:function(W){
+  const n=+W.v("n"), max=Math.pow(2,n)-1, ae=document.activeElement; let warn="";
+  if(ae===W.k.dec){ const t=W.k.dec.value.trim(); const v=parseInt(t,10); if(/^\d+$/.test(t)){ if(v>max){ warn="Valeur trop grande pour "+n+" bits (maximum "+max+")."; W.val=v%(max+1); } else W.val=v; } else if(t!=="") warn="Entre un entier décimal positif."; }
+  else if(ae===W.k.hex){ const t=W.k.hex.value.trim().replace(/^0x/i,""); if(/^[0-9a-f]+$/i.test(t)){ const v=parseInt(t,16); if(v>max){ warn="Valeur trop grande pour "+n+" bits."; W.val=v%(max+1); } else W.val=v; } else if(t!=="") warn="Chiffres hexadécimaux : 0 à 9 et A à F."; }
+  else W.val=W.val&max;
+  const v=W.val;
+  if(ae!==W.k.dec) W.k.dec.value=v; if(ae!==W.k.hex) W.k.hex.value=v.toString(16).toUpperCase();
+  let h=""; bitsOf(v,n).forEach(function(b,i){ const k=n-1-i; h+='<div class="bitcol"><small>'+(k===n-1?"MSB":k===0?"LSB":"")+'</small><button type="button" class="bit'+(b?" on":"")+((k%4===3&&k!==n-1)?" nib":"")+'" data-bit="'+k+'" aria-label="bit de poids 2 puissance '+k+'">'+b+'</button><small>2<sup>'+k+'</sup></small></div>'; });
+  W.o.bits.innerHTML=h;
+  const terms=[]; bitsOf(v,n).forEach(function(b,i){ if(b) terms.push(sup(n-1-i)); });
+  const need=v>0?Math.floor(Math.log2(v))+1:1;
+  W.o.out.innerHTML="<div>("+v+")<sub>10</sub> = ("+bstr(v,n,true)+")<sub>2</sub> = 0x"+v.toString(16).toUpperCase().padStart(Math.ceil(n/4),"0")+"</div><div>"+v+" = "+(terms.length?terms.join(" + "):"0")+"</div><div>Bits significatifs nécessaires : <b>"+need+"</b> ("+(v>0?sup(need-1)+" ≤ "+v+" &lt; "+sup(need):"")+")</div><div>Plage sur "+n+" bits : 0 à <b>"+max+"</b> ("+(max+1)+" valeurs)</div>"+(warn?"<div class='verdict-no' style='flex-basis:100%'>"+warn+"</div>":"");
+  const rows=[]; let q=v, i=0; do { rows.push([q+" ÷ 2",Math.floor(q/2),q%2,i===0?"LSB (a0)":""]); q=Math.floor(q/2); i++; } while(q>0);
+  rows[rows.length-1][3]=rows.length===1?"LSB = MSB":"MSB (a"+(rows.length-1)+")";
+  W.o.div.innerHTML=ttH([{t:"division",num:1},{t:"quotient",num:1},{t:"reste",sep:1},{t:"bit",num:1}],rows)+"<p class='hint' style='margin-top:6px'>Lecture des restes de bas en haut : "+rows.map(function(r){return r[2];}).reverse().join("")+"</p>";
+  const nib=[]; for(let g=Math.ceil(n/4)-1;g>=0;g--){ const nv=(v>>(4*g))&15; nib.push([bstr(nv,4),nv,nv.toString(16).toUpperCase()]); }
+  W.o.nib.innerHTML=ttH([{t:"groupe de 4 bits"},{t:"valeur",num:1},{t:"chiffre hexa",sep:1,num:1}],nib);
+}};
+
+/* ---------- 4. complément à 2 ---------- */
+IMPL.c2={init:function(W){ W.k.n.addEventListener("change",function(){ const n=+W.v("n"); W.k.v.min=-Math.pow(2,n-1); W.k.v.max=Math.pow(2,n-1)-1; draw(W); });
+  W.o.bits.addEventListener("click",function(e){ const b=e.target.closest("[data-bit]"); if(!b) return; const n=+W.v("n"); const u=uns(+W.v("v"),n)^(1<<+b.dataset.bit); W.k.v.value=sgn(u,n); draw(W); }); },
+draw:function(W){
+  const n=+W.v("n"), v=+W.v("v"), u=uns(v,n);
+  W.o.v.textContent=v>0?"+"+v:String(v);
+  let h=""; bitsOf(u,n).forEach(function(b,i){ const k=n-1-i; h+='<div class="bitcol"><small>'+(k===n-1?"signe":"")+'</small><button type="button" class="bit'+(b?" on":"")+(k===n-1?" fs":"")+'" data-bit="'+k+'">'+b+'</button><small>'+(k===n-1?"−":"")+'2<sup>'+k+'</sup></small></div>'; });
+  W.o.bits.innerHTML=h;
+  W.o.out.innerHTML="<div>Mot : <b>"+bstr(u,n,true)+"</b></div><div>Lu en non signé : <b>"+u+"</b></div><div>Lu en signé (complément à 2) : <b>"+v+"</b></div><div>Plage signée sur "+n+" bits : "+(-Math.pow(2,n-1))+" à "+(Math.pow(2,n-1)-1)+"</div><div style='flex-basis:100%'>Valeur signée = −"+sup(n-1)+" × "+bitsOf(u,n)[0]+" + "+(u%Math.pow(2,n-1))+" = <b>"+v+"</b></div>";
+  let rows;
+  if(v<0){ const a=-v; if(a===Math.pow(2,n-1)) rows=[["|N| = "+a,"ne tient pas en signé sur "+n+" bits : on prend "+bstr(a,n,true)+" (binaire naturel)"],["N̄ (complément à 1)",bstr(uns(~a,n),n,true)],["N̄ + 1",bstr(uns(~a+1,n),n,true)+" : le code est son propre complément"]];
+    else rows=[["|N| = "+a+" en binaire",bstr(a,n,true)],["N̄ : inverser chaque bit",bstr(uns(~a,n),n,true)],["N̄ + 1",bstr(uns(~a+1,n),n,true)+" = code de "+v],["Contrôle : |N| + code(−N)","1 "+bstr(0,n,true)+" → retenue ignorée → 0"]]; }
+  else rows=[["N ≥ 0","binaire naturel, bit de signe à 0 : "+bstr(u,n,true)],["−N = N̄ + 1",v===0?"0̄ + 1 = 1 "+bstr(0,n,true)+" → 0 (retenue ignorée)":bstr(uns(~v,n),n,true)+" + 1 = "+bstr(uns(-v,n),n,true)+" (code de "+(-v)+")"]];
+  W.o.steps.innerHTML=ttH([{t:"étape"},{t:"résultat",sep:1}],rows);
+  if(n===4){ const t=[]; for(let s=-8;s<=7;s++) t.push([s,bstr(uns(s,4),4),uns(s,4)]); W.o.tab.innerHTML="<p class='hint' style='margin:10px 0 4px'>Les 16 codes sur 4 bits (comme dans ton cours)</p>"+ttH([{t:"N signé",num:1},{t:"code",sep:1},{t:"lu en non signé",sep:1,num:1}],t,{cur:v+8}); }
+  else W.o.tab.innerHTML="";
+}};
+IMPL.addc2={presets:{p1:{n:"4",A:6,B:-5},p2:{n:"4",A:-6,B:5},p3:{n:"4",A:6,B:5},p4:{n:"4",A:-7,B:-3}},
+init:function(W){ W.k.n.addEventListener("change",function(){ const n=+W.v("n"); ["A","B"].forEach(function(k){ W.k[k].min=-Math.pow(2,n-1); W.k[k].max=Math.pow(2,n-1)-1; }); draw(W); }); },
+draw:function(W){
+  const n=+W.v("n"); ["A","B"].forEach(function(k){ W.k[k].min=-Math.pow(2,n-1); W.k[k].max=Math.pow(2,n-1)-1; });
+  const A=+W.v("A"), B=+W.v("B"); W.o.A.textContent=A; W.o.B.textContent=B;
+  const ua=uns(A,n), ub=uns(B,n), ba=bitsOf(ua,n), bb=bitsOf(ub,n), cy=new Array(n+1).fill(0), s=new Array(n).fill(0);
+  for(let k=n-1;k>=0;k--){ const t=ba[k]+bb[k]+cy[k+1]; s[k]=t%2; cy[k]=t>>1; }
+  const cout=cy[0], us=uns(ua+ub,n), ss=sgn(us,n), trueS=A+B, ovf=trueS!==ss;
+  let t='<table class="add"><tr class="cy"><td></td>'+cy.slice(1).map(function(c,k){ return '<td>'+(c?"1":"")+'</td>'; }).join("")+'<td></td></tr>';
+  t+='<tr><td></td>'+ba.map(function(x){return '<td>'+x+'</td>';}).join("")+'<td style="color:var(--muted)">  ('+A+')</td></tr>';
+  t+='<tr><td>+</td>'+bb.map(function(x){return '<td>'+x+'</td>';}).join("")+'<td style="color:var(--muted)">  ('+B+')</td></tr>';
+  t+='<tr class="res"><td class="'+(cout?"lost":"")+'">'+(cout?"1":"")+'</td>'+s.map(function(x){return '<td><b>'+x+'</b></td>';}).join("")+'<td style="color:var(--muted)">  ('+ss+')</td></tr></table>';
+  W.o.add.innerHTML='<div style="margin-top:10px">'+t+'</div>';
+  let out="<div>Somme réelle : "+A+" + "+B+" = <b>"+trueS+"</b></div><div>Résultat sur "+n+" bits, lu en signé : <b>"+ss+"</b></div><div>Retenue sortante : <b>"+cout+"</b>"+(cout?" (ignorée)":"")+"</div>";
+  out+="<div style='flex-basis:100%'>"+(ovf?"<span class='verdict-no'>Débordement : "+trueS+" sort de la plage ["+(-Math.pow(2,n-1))+" ; "+(Math.pow(2,n-1)-1)+"]. Les deux opérandes sont de même signe et le bit de signe du résultat est opposé.</span>":"<span class='verdict-ok'>Pas de débordement : résultat correct"+(cout?", la retenue sortante est non significative.":".")+"</span>")+"</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 5. IEEE 754 ---------- */
+const F32=new DataView(new ArrayBuffer(4));
+function f2u(x){ F32.setFloat32(0,x); return F32.getUint32(0); }
+function u2f(u){ F32.setUint32(0,u>>>0); return F32.getFloat32(0); }
+function parseNum(t){ t=String(t).trim().toLowerCase().replace(/\s/g,"").replace(",",".").replace("−","-"); if(/^[-+]?(inf|infini|infinity|∞)$/.test(t)) return t[0]==="-"?-Infinity:Infinity; if(t==="nan") return NaN; if(/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/.test(t)) return parseFloat(t); return null; }
+IMPL.ieee={presets:{a:{x:"0,15625"},b:{x:"1"},c:{x:"2,25"},d:{x:"-118,625"},e:{x:"0,1"},f:{x:"1,1754943508222875e-38"},g:{x:"Infini"},h:{x:"NaN"}},
+init:function(W){ W.u=f2u(0.15625); W.o.bits.addEventListener("click",function(e){ const b=e.target.closest("[data-bit]"); if(!b) return; W.u=(W.u^(1<<+b.dataset.bit))>>>0; const f=u2f(W.u); W.k.x.value=isNaN(f)?"NaN":!isFinite(f)?(f<0?"-Infini":"Infini"):String(f).replace(".",","); W.fromBits=true; draw(W); }); },
+draw:function(W){
+  let warn="";
+  if(!W.fromBits){ const x=parseNum(W.k.x.value); if(x===null) warn="Nombre non reconnu (exemples : -118,625 ou 1e-5)."; else W.u=f2u(x); }
+  W.fromBits=false;
+  const u=W.u, S=u>>>31, E=(u>>>23)&255, M=u&0x7FFFFF, f=u2f(u);
+  let h=""; for(let k=31;k>=0;k--){ const b=(u>>>k)&1, cls=k===31?"fs":k>=23?"fe":"fm", sep=(k===30||k===22); h+='<div class="bitcol"><small>'+(k===31?"S":k===30?"E":k===22?"M":"")+'</small><button type="button" class="bit'+(b?" on":"")+" "+cls+(sep?" nib":"")+'" data-bit="'+k+'" aria-label="bit '+k+'">'+b+'</button></div>'; }
+  W.o.bits.innerHTML=h;
+  let cat, e=E-127, m;
+  if(E===0&&M===0){ cat="zéro (E = 0, M = 0)"; }
+  else if(E===0){ cat="dénormalisé (E = 0, M ≠ 0) : bit implicite à 0, exposant −126"; e=-126; }
+  else if(E===255&&M===0){ cat="infini (E = 255, M = 0)"; }
+  else if(E===255){ cat="NaN (E = 255, M ≠ 0)"; }
+  else cat="normalisé (1 ≤ E ≤ 254)";
+  const normal=E>0&&E<255, den=E===0&&M!==0;
+  m=normal?1+M/8388608:M/8388608;
+  const Mb=bstr(M,23), mb=(normal?"1,":"0,")+Mb.replace(/0+$/,"")||"0";
+  const rows=[["S (bit de signe)",String(S),S?"négatif":"positif"],["E (exposant décalé)",bstr(E,8),"E = "+E],["e = E − 127",normal?String(e):den?"−126 (fixé)":"—",normal||den?"2<sup>"+e+"</sup>":"valeur particulière"],["M (mantisse codée)",Mb.replace(/(.{4})(?=.)/g,"$1 "),"M = "+frt(M/8388608,8)],["m = 1 + M",normal||den?mb.replace(/,$/,",0"):"—",normal||den?"m = "+frt(m,10):""]];
+  W.o.steps.innerHTML=ttH([{t:"champ"},{t:"bits",sep:1},{t:"valeur",sep:1}],rows);
+  let out="<div>Catégorie : <b>"+cat+"</b></div>";
+  if(normal||den) out+="<div style='flex-basis:100%'>r = (−1)<sup>"+S+"</sup> × "+frt(m,10)+" × 2<sup>"+e+"</sup> = <b>"+String(f).replace(".",",")+"</b></div>";
+  else out+="<div>Valeur : <b>"+(isNaN(f)?"NaN":!isFinite(f)?(f<0?"−∞":"+∞"):(S?"−0":"+0"))+"</b></div>";
+  out+="<div>Hexadécimal : <b>0x"+(u>>>0).toString(16).toUpperCase().padStart(8,"0")+"</b></div>";
+  const x=parseNum(W.k.x.value);
+  if(x!==null&&isFinite(x)&&normal&&x!==f) out+="<div style='flex-basis:100%'><span class='verdict-no'>Arrondi : "+String(x).replace(".",",")+" n'est pas représentable exactement ; valeur stockée "+String(f).replace(".",",")+" (écart "+String(Math.abs(f-x).toPrecision(3)).replace(".",",")+").</span></div>";
+  if(normal){ // méthode du cours
+    let N=BigInt(8388608+M), sh=e-23; while(sh<0&&(N&1n)===0n){ N>>=1n; sh++; }
+    const p=sh<0?-sh:0, Nb=N.toString(2), Nbig=sh>0?(N<<BigInt(sh)):N;
+    out+="<div style='flex-basis:100%'>Méthode du cours : |r| × 2<sup>"+p+"</sup> = "+Nbig.toString()+" (entier) = ("+(sh>0?Nbig.toString(2):Nb)+")<sub>2</sub> ; on déplace la virgule de "+(((sh>0?Nbig.toString(2):Nb).length)-1)+" rangs vers la gauche → 1,"+(((sh>0?Nbig.toString(2):Nb).slice(1))||"0")+" × 2<sup>"+((sh>0?Nbig.toString(2):Nb).length-1)+"</sup> × 2<sup>"+(-p)+"</sup>, d'où e = "+e+" et E = "+E+".</div>";
+  }
+  if(warn) out="<div class='verdict-no' style='flex-basis:100%'>"+warn+"</div>"+out;
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- hero ---------- */
+let heroV=0xC5;
+function drawHero(){
+  let h=""; bitsOf(heroV,8).forEach(function(b,i){ const k=7-i; h+='<div class="bitcol"><button type="button" class="bit'+(b?" on":"")+(k===3?" nib":"")+'" data-bit="'+k+'" aria-label="bit '+k+'">'+b+'</button><small>2<sup>'+k+'</sup></small></div>'; });
+  $("heroBits").innerHTML=h;
+  const ch=heroV>=32&&heroV<127?"« "+String.fromCharCode(heroV)+" »":"non imprimable";
+  $("heroReads").innerHTML="<div>non signé<b>"+heroV+"</b></div><div>signé (complément à 2)<b>"+sgn(heroV,8)+"</b></div><div>hexadécimal<b>0x"+heroV.toString(16).toUpperCase().padStart(2,"0")+"</b></div><div>caractère ASCII<b>"+ch+"</b></div>";
+}
+$("heroBits").addEventListener("click",function(e){ const b=e.target.closest("[data-bit]"); if(!b) return; heroV^=(1<<+b.dataset.bit); drawHero(); });
+/* ---------- 6a. expression → table ---------- */
+function subNodes(n,acc){ kids(n).forEach(function(x){ subNodes(x,acc); }); if(n.t!=="var"&&n.t!=="const"){ const k=eh(n); if(!acc.some(function(a){return a.k===k;})) acc.push({k:k,n:n}); } return acc; }
+IMPL.expr={presets:{p1:{f:"a.b + !b.c + a.!c"},p2:{f:"a + b.c"},p3:{f:"a ^ b ^ c"},p4:{f:"(a + !b).(b + c)"}},
+draw:function(W){
+  let F; try{ F=parseExpr(W.k.f.value); }catch(e){ W.o.out.innerHTML="<div class='verdict-no'>"+e.message+"</div>"; W.o.tt.innerHTML=""; return; }
+  const vs=Array.from(varsOf(F)).sort(); if(!vs.length) vs.push("a"); const nv=vs.length;
+  const subs=subNodes(F,[]); const main=subs.pop()||{k:eh(F),n:F};
+  const head=[{t:"n°",num:1}].concat(vs.map(function(v){return {t:v};}),subs.map(function(s,i){return {t:s.k,sep:i===0};}),[{t:"f = "+main.k,sep:1}]);
+  const rows=[], ones=[], zeros=[];
+  for(let r=0;r<(1<<nv);r++){ const env=envOf(vs,r), fv=ev(F,env); (fv?ones:zeros).push(r); rows.push([r].concat(vs.map(function(v){return env[v];}),subs.map(function(s){return ev(s.n,env);}),[fv])); }
+  W.o.tt.innerHTML=ttH(head,rows,{curs:ones});
+  W.o.out.innerHTML="<div>Lignes où f = 1 : <b>"+(ones.length?ones.join(", "):"aucune")+"</b> (surlignées)</div><div style='flex-basis:100%'>1re forme canonique (OU de mintermes) : <span class='expr'>f = "+sopH(vs,ones)+"</span></div><div style='flex-basis:100%'>2e forme canonique (ET de maxtermes) : <span class='expr'>f = "+posH(vs,zeros)+"</span></div><div style='flex-basis:100%'>Forme simplifiée (bonus) : <span class='expr'>f = "+qmH(vs,ones)+"</span></div>";
+}};
+
+/* ---------- 6b. table → expression ---------- */
+IMPL.tt2e={init:function(W){ W.f=[0,1,0,0,1,1,1,1];
+  W.k.nv.addEventListener("change",function(){ const n=+W.v("nv"); W.f=new Array(1<<n).fill(0); draw(W); });
+  W.o.tt.addEventListener("click",function(e){ const td=e.target.closest("[data-r]"); if(!td) return; const r=+td.dataset.r; W.f[r]=W.f[r]?0:1; draw(W); });
+  W.root.querySelectorAll("[data-act]").forEach(function(b){ b.addEventListener("click",function(){ const a=b.dataset.act; if(a==="course"){ W.k.nv.value="3"; W.f=[0,1,0,0,1,1,1,1]; } else if(a==="inv") W.f=W.f.map(function(x){return 1-x;}); else W.f=W.f.map(function(){return 0;}); draw(W); }); }); },
+draw:function(W){
+  const n=+W.v("nv"), vs=["a","b","c","d"].slice(0,n); if(W.f.length!==(1<<n)) W.f=new Array(1<<n).fill(0);
+  const ones=[], zeros=[]; W.f.forEach(function(v,r){ (v?ones:zeros).push(r); });
+  const rows=W.f.map(function(fv,r){ const env=envOf(vs,r); return [r].concat(vs.map(function(v){return env[v];}),[fv,fv?vs.map(function(v){return env[v]?v:ovv(v);}).join("."):""]); });
+  W.o.tt.innerHTML=ttH([{t:"n°",num:1}].concat(vs.map(function(v){return {t:v};}),[{t:"f (clique)",sep:1,click:1},{t:"minterme",sep:1,num:1}]),rows,{curs:ones});
+  let h="<p><b>Mintermes</b> : lignes "+(ones.length?ones.join(", "):"aucune")+"</p>";
+  h+="<p><b>1re forme canonique</b><br><span class='expr'>f = "+sopH(vs,ones)+"</span></p>";
+  h+="<p><b>2e forme canonique</b><br><span class='expr'>f = "+posH(vs,zeros)+"</span></p>";
+  if(ones.length>zeros.length&&zeros.length){ h+="<p><b>Plus de 1 que de 0</b> : la méthode du cours passe par f̄, qui n'a que "+zeros.length+" terme"+(zeros.length>1?"s":"")+".<br><span class='expr'><span class='ov'>f</span> = "+sopH(vs,zeros)+"</span><br><span class='expr'>f = <span class='ov'>"+sopH(vs,zeros)+"</span></span><br>En cassant la barre (De Morgan), on retombe sur la 2e forme canonique.</p>"; }
+  h+="<p><b>Forme simplifiée</b> (bonus)<br><span class='expr'>f = "+qmH(vs,ones)+"</span></p>";
+  W.o.out.innerHTML=h;
+}};
+
+/* ---------- 7. logigrammes ---------- */
+const CIRC={
+ cours:{ins:["a","b","c"],g:[{id:"g1",k:"nand",i:["a","a"],c:0,r:0,l:"ā"},{id:"g2",k:"nand",i:["b","c"],c:0,r:1.3,l:"b.c",ov:1},{id:"g3",k:"nand",i:["g1","g2"],c:1,r:0.65,l:"f"}],ref:"a+b.c",name:"a + b.c"},
+ nnot:{ins:["a"],g:[{id:"g1",k:"nand",i:["a","a"],c:0,r:0,l:"f"}],ref:"!a",name:"ā"},
+ nand_and:{ins:["a","b"],g:[{id:"g1",k:"nand",i:["a","b"],c:0,r:0,l:"a.b",ov:1},{id:"g2",k:"nand",i:["g1","g1"],c:1,r:0,l:"f"}],ref:"a.b",name:"a.b"},
+ nand_or:{ins:["a","b"],g:[{id:"g1",k:"nand",i:["a","a"],c:0,r:0,l:"ā"},{id:"g2",k:"nand",i:["b","b"],c:0,r:1.3,l:"b̄"},{id:"g3",k:"nand",i:["g1","g2"],c:1,r:0.65,l:"f"}],ref:"a+b",name:"a + b"},
+ nor_not:{ins:["a"],g:[{id:"g1",k:"nor",i:["a","a"],c:0,r:0,l:"f"}],ref:"!a",name:"ā"},
+ nor_or:{ins:["a","b"],g:[{id:"g1",k:"nor",i:["a","b"],c:0,r:0,l:"a + b",ov:1},{id:"g2",k:"nor",i:["g1","g1"],c:1,r:0,l:"f"}],ref:"a+b",name:"a + b"},
+ nor_and:{ins:["a","b"],g:[{id:"g1",k:"nor",i:["a","a"],c:0,r:0,l:"ā"},{id:"g2",k:"nor",i:["b","b"],c:0,r:1.3,l:"b̄"},{id:"g3",k:"nor",i:["g1","g2"],c:1,r:0.65,l:"f"}],ref:"a.b",name:"a.b"},
+ xor4:{ins:["a","b"],g:[{id:"g1",k:"nand",i:["a","b"],c:0,r:0.65,l:"a.b",ov:1},{id:"g2",k:"nand",i:["a","g1"],c:1,r:0,l:"x"},{id:"g3",k:"nand",i:["g1","b"],c:1,r:1.3,l:"y"},{id:"g4",k:"nand",i:["g2","g3"],c:2,r:0.65,l:"f"}],ref:"a^b",name:"a ⊕ b"}};
+function gfun(k,x,y){ return {nand:1-(x&y),nor:1-(x|y),and:x&y,or:x|y}[k]; }
+function simCirc(C,env){ const val=Object.assign({},env); C.g.forEach(function(g){ val[g.id]=gfun(g.k,val[g.i[0]],val[g.i[1]]); }); return val; }
+IMPL.nand={init:function(W){ W.st={a:1,b:0,c:1}; bindSw(W,W.o.sw,W.st); },
+draw:function(W){
+  const C=CIRC[W.v("c")], style=W.v("style"), env={}; C.ins.forEach(function(v){ env[v]=W.st[v]; });
+  W.o.sw.innerHTML=C.ins.map(function(v){ return swH(v,W.st[v]); }).join("");
+  const val=simCirc(C,env), last=C.g[C.g.length-1];
+  const nIn=C.ins.length, busX=function(i){ return 24+i*26; }, colX=function(c){ return 150+c*170; }, rowY=function(r){ return 28+r*62; };
+  const maxR=Math.max.apply(null,C.g.map(function(g){return g.r;})), H=rowY(maxR)+70, Wd=colX(Math.max.apply(null,C.g.map(function(g){return g.c;})))+150;
+  let s="", outPos={};
+  C.g.forEach(function(g){ const gg=gate(g.k,style,colX(g.c),rowY(g.r),[val[g.i[0]],val[g.i[1]]],val[g.id]); g._gg=gg; outPos[g.id]=gg.out; });
+  // fils d'entrée
+  C.ins.forEach(function(v,i){ s+=wire(busX(i),14,busX(i),H-8,env[v],2.4)+txt(busX(i),10,v,{w:600}); });
+  C.g.forEach(function(g){ g.i.forEach(function(src,j){ const p=g._gg.ins[j];
+    if(C.ins.indexOf(src)>=0){ const bx=busX(C.ins.indexOf(src)); s+=wire(bx,p[1],p[0],p[1],env[src])+dot(bx,p[1],env[src]); }
+    else { const o=outPos[src], mx=p[0]-18-j*8; s+=poly([[o[0],o[1]],[mx,o[1]],[mx,p[1]],[p[0],p[1]]],val[src]); s+=dot(o[0],o[1],val[src]); } }); });
+  C.g.forEach(function(g){ s+=g._gg.svg; if(g!==last) s+=txt(g._gg.out[0]-2,g._gg.out[1]-8,g.l,{a:"end",s:11,c:"var(--muted)",ov:g.ov}); });
+  const fo=outPos[last.id]; s+=wire(fo[0],fo[1],fo[0]+30,fo[1],val[last.id])+txt(fo[0]+36,fo[1]+5,"f = "+val[last.id],{a:"start",w:600,s:14,c:wc(val[last.id])});
+  W.o.svg.innerHTML='<svg viewBox="0 0 '+(Wd+40)+' '+H+'" role="img" aria-label="logigramme">'+s+'</svg>';
+  const R=parseExpr(C.ref), nv=nIn, rows=[]; let cur=0, ok=true;
+  for(let r=0;r<(1<<nv);r++){ const e=envOf(C.ins,r), vv=simCirc(C,e), ref=ev(R,e); if(vv[last.id]!==ref) ok=false; if(C.ins.every(function(v){return e[v]===env[v];})) cur=r; rows.push(C.ins.map(function(v){return e[v];}).concat(C.g.slice(0,-1).map(function(g){return vv[g.id];}),[vv[last.id],ref])); }
+  W.o.tt.innerHTML=ttH(C.ins.map(function(v){return {t:v};}).concat(C.g.slice(0,-1).map(function(g,i){return {t:(g.ov?'<span class="ov">'+g.l+'</span>':g.l),sep:i===0};}),[{t:"f (circuit)",sep:1},{t:"attendu : "+eh(R),sep:1}]),rows,{cur:cur});
+  W.o.out.innerHTML="<div>Fonction réalisée : <b class='expr'>f = "+eh(R)+"</b></div><div>"+C.g.length+" porte"+(C.g.length>1?"s":"")+" "+(C.g[0].k==="nand"?"NAND":"NOR")+"</div><div>"+(ok?"<span class='verdict-ok'>Le circuit coïncide avec la fonction sur toutes les lignes.</span>":"<span class='verdict-no'>Écart avec la fonction attendue.</span>")+"</div>";
+}};
+/* ---------- blocs fonctionnels ---------- */
+function block(x,y,w,h,title,L,R,B){
+  let s='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="4" style="fill:var(--surface);stroke:var(--ink);stroke-width:1.8"/>'+txt(x+w/2,y+16,title,{w:600,s:12});
+  const pl={}, pr={}, pb={};
+  L.forEach(function(p,i){ const yy=y+28+i*((h-36)/Math.max(1,L.length-1||1)); const py=L.length===1?y+h/2:yy; s+=wire(x-34,py,x,py,p.v)+txt(x-38,py+4,p.n,{a:"end",s:11})+txt(x-17,py-4,p.v===null?"":String(p.v),{s:10,c:wc(p.v)}); pl[p.n]=[x,py]; });
+  R.forEach(function(p,i){ const yy=y+28+i*((h-36)/Math.max(1,R.length-1||1)); const py=R.length===1?y+h/2:yy; s+=wire(x+w,py,x+w+34,py,p.v)+txt(x+w+38,py+4,p.n+" = "+(p.t!==undefined?p.t:p.v),{a:"start",s:11,w:p.mark?700:400,c:p.mark?"var(--even)":"var(--ink)"}); pr[p.n]=[x+w,py]; });
+  B.forEach(function(p,i){ const px=x+w*(i+1)/(B.length+1); s+=wire(px,y+h,px,y+h+26,p.v)+txt(px,y+h+38,p.n+"="+p.v,{s:10.5}); pb[p.n]=[px,y+h]; });
+  return {svg:s,L:pl,R:pr,B:pb};
+}
+function thick(a,b,on){ return '<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" style="stroke:'+(on?"var(--even)":"var(--line)")+';stroke-width:4;stroke-linecap:round"/>'; }
+
+/* ---------- 8. codeur / décodeur ---------- */
+IMPL.coder={init:function(W){ W.e=5; W.d={a1:1,a0:0,CS:0};
+  W.o.encsw.addEventListener("click",function(e){ const b=e.target.closest("[data-e]"); if(!b) return; W.e=+b.dataset.e; draw(W); });
+  bindSw(W,W.o.decsw,W.d); },
+draw:function(W){
+  const e=W.e; W.o.encsw.innerHTML=[0,1,2,3,4,5,6,7].map(function(i){ return '<button type="button" class="sw'+(i===e?" on":"")+'" data-e="'+i+'" style="min-width:52px">e'+i+'</button>'; }).join("");
+  const S=bitsOf(e,3);
+  const enc=block(70,10,110,230,"codeur",[0,1,2,3,4,5,6,7].map(function(i){ return {n:"e"+i,v:i===e?1:0}; }),[{n:"S2",v:S[0]},{n:"S1",v:S[1]},{n:"S0",v:S[2]}],[]);
+  W.o.encsvg.innerHTML='<svg viewBox="0 0 290 250">'+enc.svg+'</svg>';
+  W.o.enctt.innerHTML=ttH([{t:"entrée active"},{t:"S2",sep:1},{t:"S1"},{t:"S0"}],[0,1,2,3,4,5,6,7].map(function(i){ return ["e"+i].concat(bitsOf(i,3)); }),{cur:e});
+  const d=W.d, sel=d.a1*2+d.a0, act=d.CS===0;
+  W.o.decsw.innerHTML=swH("a1",d.a1)+swH("a0",d.a0)+swH("CS",d.CS);
+  const outs=[0,1,2,3].map(function(i){ return act&&i===sel?0:1; });
+  const dec=block(70,10,130,170,"décodeur 2 → 4",[{n:"a1",v:d.a1},{n:"a0",v:d.a0}],[3,2,1,0].map(function(i){ return {n:"S"+i,v:outs[i],mark:act&&i===sel,t:outs[i]+(act&&i===sel?"  ← active":"")}; }),[{n:"CS",v:d.CS}]);
+  W.o.decsvg.innerHTML='<svg viewBox="0 0 360 225">'+dec.svg+'</svg>';
+  const rows=[[0,0,0,1,1,1,0],[0,0,1,1,1,0,1],[0,1,0,1,0,1,1],[0,1,1,0,1,1,1],[1,"X","X",1,1,1,1]];
+  W.o.dectt.innerHTML=ttH([{t:"CS"},{t:"a1"},{t:"a0"},{t:"S3",sep:1},{t:"S2"},{t:"S1"},{t:"S0"}],rows,{cur:act?sel:4})+"<p class='hint' style='margin-top:6px'>Sorties actives à 0 : la sortie sélectionnée est celle qui vaut 0.</p>";
+}};
+
+/* ---------- 9. MUX / DEMUX ---------- */
+const MUXF={and:[0,0,0,1],or:[0,1,1,1],xor:[0,1,1,0],nand:[1,1,1,0],imp:[0,0,1,0]};
+IMPL.mux={init:function(W){ W.m={e0:0,e1:1,e2:1,e3:0,a1:1,a0:0,En:0}; W.dm={e:1,a1:0,a0:1,CS:0}; bindSw(W,W.o.muxsw,W.m); bindSw(W,W.o.demsw,W.dm); },
+draw:function(W){
+  const m=W.m, gen=W.v("gen"); W.root.querySelector("[data-gen]").style.display=gen?"":"none";
+  if(gen){ const f=MUXF[W.v("fn")]; [0,1,2,3].forEach(function(i){ m["e"+i]=f[i]; }); }
+  W.o.muxsw.innerHTML=(gen?"":[0,1,2,3].map(function(i){ return swH("e"+i,m["e"+i]); }).join(""))+swH("a1",m.a1)+swH("a0",m.a0)+swH("En",m.En);
+  const sel=m.a1*2+m.a0, en=m.En===0, out=en?m["e"+sel]:null;
+  const b=block(70,10,170,170,"MUX 4 → 1",[0,1,2,3].map(function(i){ return {n:"e"+i,v:m["e"+i]}; }),[{n:"S",v:out,t:en?out:"Z (haute impédance)"}],[{n:"En",v:m.En},{n:"a1",v:m.a1},{n:"a0",v:m.a0}]);
+  W.o.muxsvg.innerHTML='<svg viewBox="0 0 400 230">'+b.svg+(en?thick(b.L["e"+sel],b.R["S"],true):"")+'</svg>';
+  const rows=[0,1,2,3].map(function(i){ const r=[0].concat(bitsOf(i,2),["e"+i+" = "+m["e"+i]]); if(gen) r.push(MUXF[W.v("fn")][i]); return r; }); rows.push([1,"X","X","Z"].concat(gen?["—"]:[]));
+  W.o.muxtt.innerHTML=ttH([{t:"En"},{t:"a1"},{t:"a0"},{t:"sortie",sep:1}].concat(gen?[{t:"f(a1, a0)",sep:1}]:[]),rows,{cur:en?sel:4})+(gen?"<p class='hint' style='margin-top:6px'>Chaque entrée ei reçoit la valeur de f à la ligne i : la sortie vaut f(a1, a0) pour toute adresse.</p>":"");
+  const d=W.dm, ds=d.a1*2+d.a0, act=d.CS===0, outs=[0,1,2,3].map(function(i){ return act&&i===ds?d.e:1; });
+  W.o.demsw.innerHTML=swH("e",d.e)+swH("a1",d.a1)+swH("a0",d.a0)+swH("CS",d.CS);
+  const B2=block(70,10,170,170,"DEMUX 1 → 4",[{n:"e",v:d.e}],[0,1,2,3].map(function(i){ return {n:"S"+i,v:outs[i],mark:act&&i===ds,t:outs[i]+(act&&i===ds?" (= e)":"")}; }),[{n:"CS",v:d.CS},{n:"a1",v:d.a1},{n:"a0",v:d.a0}]);
+  W.o.demsvg.innerHTML='<svg viewBox="0 0 400 230">'+B2.svg+(act?thick(B2.L["e"],B2.R["S"+ds],true):"")+'</svg>';
+  const dr=[0,1,2,3].map(function(i){ return [0].concat(bitsOf(i,2),[0,1,2,3].map(function(j){ return j===i?"e":1; })); }); dr.push([1,"X","X",1,1,1,1]);
+  W.o.demtt.innerHTML=ttH([{t:"CS"},{t:"a1"},{t:"a0"},{t:"S0",sep:1},{t:"S1"},{t:"S2"},{t:"S3"}],dr,{cur:act?ds:4})+"<p class='hint' style='margin-top:6px'>Sorties inactives à 1, comme dans l'exemple 1 → 2 du cours.</p>";
+}};
+
+/* ---------- 10. comparateur, additionneur ---------- */
+IMPL.arith={draw:function(W){
+  const A=+W.v("A"), B=+W.v("B"), cin=W.v("cin")?1:0; W.o.A.textContent=A+" = "+bstr(A,4); W.o.B.textContent=B+" = "+bstr(B,4);
+  const ba=bitsOf(A,4), bb=bitsOf(B,4); let first=-1; for(let i=0;i<4;i++) if(ba[i]!==bb[i]){ first=i; break; }
+  const rows=[0,1,2,3].map(function(i){ return ["a"+(3-i)+" / b"+(3-i)+" (poids "+Math.pow(2,3-i)+")",ba[i],bb[i],i<first||first<0?"égaux":i===first?(ba[i]>bb[i]?"a > b : décide":"a < b : décide"):"ignoré"]; });
+  W.o.cmp.innerHTML="<p class='hint' style='margin:0 0 4px'><b>Comparateur</b> (non signé), du MSB au LSB</p>"+ttH([{t:"rang"},{t:"A",sep:1},{t:"B"},{t:"verdict",sep:1}],rows,{cur:first});
+  W.o.cmpout.innerHTML="<div>(A &gt; B)out = <b>"+(A>B?1:0)+"</b></div><div>(A &lt; B)out = <b>"+(A<B?1:0)+"</b></div><div>(A = B)out = <b>"+(A===B?1:0)+"</b></div><div style='flex-basis:100%'>"+(first<0?"Tous les bits sont égaux : A = B. En cascade, ce sont alors les entrées (A &gt; B)in, (A &lt; B)in, (A = B)in de l'étage de poids inférieur qui décident.":"Le premier bit différent est au rang "+(3-first)+" : les bits de poids plus faible ne comptent plus.")+"</div>";
+  let c=cin; const st=[];
+  for(let k=0;k<4;k++){ const a=(A>>k)&1, b=(B>>k)&1, s=a^b^c, co=(a&b)|(c&(a^b)); st.push([k,a,b,c,s,co]); c=co; }
+  W.o.add.innerHTML="<p class='hint' style='margin:0 0 4px'><b>Additionneur</b> : 4 additionneurs 1 bit en cascade</p>"+ttH([{t:"étage k",num:1},{t:"ak",sep:1},{t:"bk"},{t:"ck"},{t:"sk",sep:1},{t:"ck+1",sep:1}],st)+"<p class='hint' style='margin-top:6px'>sk = ak ⊕ bk ⊕ ck ; ck+1 = ak.bk + ck.(ak ⊕ bk). c0 = Cin, c4 = Cout.</p>";
+  const S=(A+B+cin)&15, cout=(A+B+cin)>>4, sa=sgn(A,4), sb=sgn(B,4), ss=sgn(S,4), ovf=(sa+sb+cin)!==ss;
+  W.o.addout.innerHTML="<div>Σ = "+bstr(S,4)+", Cout = <b>"+cout+"</b></div><div>Non signé : "+A+" + "+B+(cin?" + 1":"")+" = "+(A+B+cin)+(cout?" → dépasse 15, Cout = 1 signale le dépassement":"")+"</div><div style='flex-basis:100%'>Signé (complément à 2) : "+sa+" + "+sb+(cin?" + 1":"")+" → lu "+ss+(ovf?" <span class='verdict-no'>débordement</span>":" <span class='verdict-ok'>correct</span>")+"</div>";
+}};
+/* ---------- onglets, concepts ---------- */
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="cartes") renderCard();
+  drawAll(); save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 10 concepts revus"; $("seenBar").style.width=(n/10*100)+"%"; }
+document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
+updSeen();
+
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Opérateurs", r:[
+  ["ā : NON a","1 si a = 0."],
+  ["a.b : ET","1 si a = 1 et b = 1."],
+  ["a + b : OU","1 si au moins une entrée vaut 1."],
+  ["NAND = barre(a.b),   NOR = barre(a + b)","Portes universelles ; non associatives."],
+  ["a ⊕ b : OU exclusif","1 si une et une seule entrée vaut 1 ; à n entrées : nombre impair de 1."],
+  ["priorité : NON, puis ET, puis OU","Le « . » passe avant le « + »."]]},
+ {g:"Propriétés et théorèmes", r:[
+  ["a.(b + c) = a.b + a.c","Distributivité du ET sur le OU."],
+  ["a + b.c = (a + b).(a + c)","Distributivité du OU sur le ET (propre à l'algèbre de Boole)."],
+  ["a.1 = a,  a + 0 = a,  a.0 = 0,  a + 1 = 1","Neutres et absorbants."],
+  ["a.ā = 0,  a + ā = 1,  double barre sur a = a","Complémentarité."],
+  ["a.a = a,  a + a = a","Idempotence."],
+  ["a + ā.b = a + b,   a.(ā + b) = a.b","Simplification."],
+  ["barre(A + B) = Ā.B̄,   barre(A.B) = Ā + B̄","De Morgan : casser la barre change l'opérateur."]]},
+ {g:"Binaire et hexadécimal", r:[
+  ["A = a(n−1) 2^(n−1) + … + a1 2 + a0","Binaire naturel ; MSB à gauche, LSB à droite."],
+  ["n bits : 2^n valeurs, de 0 à 2^n − 1","8 bits : 256 ; 16 bits : 65 536 ; 1 Ko = 1024 octets."],
+  ["décimal → binaire : divisions par 2, restes lus de bas en haut","Le premier reste est le LSB."],
+  ["1 chiffre hexa = 4 bits ;  A = 10 … F = 15","(41)10 = 0010 1001 = 0x29."]]},
+ {g:"Complément à 2", r:[
+  ["−2^(n−1) ≤ A ≤ 2^(n−1) − 1","Plage signée ; 8 bits : −128 à 127."],
+  ["−N = N̄ + 1","À nombre de bits constant, retenue sortante ignorée."],
+  ["A = −a(n−1) 2^(n−1) + a(n−2) 2^(n−2) + … + a0","Lecture directe d'un mot signé."],
+  ["débordement : opérandes de même signe, résultat de signe opposé","La retenue sortante seule ne signale pas un débordement signé."]]},
+ {g:"IEEE 754", r:[
+  ["r = (−1)^s × 2^e × m,   1 ≤ m < 2","Représentation normalisée en base 2."],
+  ["E = e + (2^(ne−1) − 1),   M = m − 1","Exposant décalé, bit implicite non stocké."],
+  ["float : 1 + 8 + 23 bits, décalage 127 ;  double : 1 + 11 + 52, décalage 1023","Formats usuels."],
+  ["E = 0 : zéro (M = 0) ou dénormalisé ;  E = 255 : infini (M = 0) ou NaN","Valeurs particulières (simple précision)."],
+  ["normalisés : e de −126 à 127 ;  2^(−126) ≈ 1,18 × 10^(−38) ;  max ≈ 3,4 × 10^38","Plage du float ; précision relative 2^(−23)."]]},
+ {g:"Fonctions logiques", r:[
+  ["minterme : ET de toutes les variables ;  maxterme : OU de toutes les variables","Chaque variable une fois, barrée ou non."],
+  ["1re forme canonique : OU des mintermes des lignes à 1","Variable à 1 → elle-même ; à 0 → barrée."],
+  ["2e forme canonique : ET des maxtermes des lignes à 0","Variable à 0 → elle-même ; à 1 → barrée."],
+  ["P.x + P.x̄ = P","Simplification de deux termes voisins."]]},
+ {g:"Circuits combinatoires", r:[
+  ["codeur : 1 entrée active parmi 2^N → N bits","Une seule entrée active à la fois."],
+  ["décodeur : N bits → 1 sortie active parmi 2^N","Souvent actif bas, avec CS ou En."],
+  ["MUX : 2^p entrées, p bits d'adresse → 1 sortie","En inactif : sortie en haute impédance (Z)."],
+  ["MUX à p entrées de sélection → toute fonction de p variables","ei = valeur de la fonction à la ligne i."],
+  ["DEMUX : 1 entrée → 1 sortie parmi 2^p","Réciproque du MUX."],
+  ["s = a ⊕ b ⊕ c,   c(sortie) = a.b + c.(a ⊕ b)","Additionneur complet 1 bit."]]}
+];
+(function(){
+  const box=$("fList"); let h="";
+  FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
+  box.innerHTML=h;
+  $("hideF").addEventListener("change", function(){ box.classList.toggle("hidef", this.checked); box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); }); });
+  box.addEventListener("click", function(e){ const f=e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes ---------- */
+const CARDS = [
+ ["o1","Opérateurs","Quand le OU exclusif à n entrées vaut-il 1 ?","Quand un nombre impair d'entrées vaut 1."],
+ ["o2","Opérateurs","Quel opérateur est prioritaire entre « . » et « + » ?","Le ET (« . ») passe avant le OU (« + »)."],
+ ["o3","Opérateurs","Que signifie le petit rond en sortie d'une porte ?","Une inversion (NON) de la sortie."],
+ ["o4","Opérateurs","Symboles européens de NON, ET, OU, XOR ?","Rectangles marqués 1, &, ≥1 et =1."],
+ ["p1","Propriétés","Distributivité du OU sur le ET ?","a + b.c = (a + b).(a + c)."],
+ ["p2","Propriétés","Simplification de a + ā.b ?","a + b."],
+ ["p3","Propriétés","Simplification de a.(ā + b) ?","a.b."],
+ ["p4","Propriétés","Lois de De Morgan ?","barre(A + B) = Ā.B̄ et barre(A.B) = Ā + B̄."],
+ ["p5","Propriétés","Comment démontrer une identité booléenne sans calcul ?","Comparer les tables de vérité des deux membres sur toutes les combinaisons."],
+ ["b1","Codage","Valeur de (101001)2 ?","41."],
+ ["b2","Codage","Combien de valeurs sur 16 bits ?","2^16 = 65 536."],
+ ["b3","Codage","Comment convertir un décimal en binaire ?","Divisions euclidiennes successives par 2 ; restes lus du dernier au premier (le premier reste est le LSB)."],
+ ["b4","Codage","(44)10 en hexadécimal ?","0x2C (0010 1100)."],
+ ["s1","Codage","Plage signée sur 8 bits ?","−128 à +127."],
+ ["s2","Codage","Comment obtenir −N en complément à 2 ?","Inverser tous les bits de N puis ajouter 1."],
+ ["s3","Codage","Comment détecte-t-on un débordement en complément à 2 ?","Deux opérandes de même signe donnent un résultat de signe opposé."],
+ ["s4","Codage","Code de −1 sur 4 bits ?","1111."],
+ ["f1","IEEE 754","Répartition des 32 bits d'un float ?","1 bit de signe, 8 bits d'exposant décalé, 23 bits de mantisse."],
+ ["f2","IEEE 754","Décalage de l'exposant en simple précision ?","127 : E = e + 127."],
+ ["f3","IEEE 754","Qu'est-ce que le bit implicite ?","Le 1 avant la virgule de la mantisse normalisée, toujours présent donc non stocké."],
+ ["f4","IEEE 754","Codage de l'infini et de NaN ?","E = 255 ; M = 0 pour l'infini, M ≠ 0 pour NaN."],
+ ["f5","IEEE 754","Exposants des nombres normalisés en simple précision ?","De −126 à +127 (E de 1 à 254)."],
+ ["l1","Fonctions","Qu'est-ce qu'un minterme ?","Un ET de toutes les variables, chacune barrée ou non : il vaut 1 sur une seule ligne."],
+ ["l2","Fonctions","1re forme canonique ?","OU des mintermes correspondant aux lignes où f = 1."],
+ ["l3","Fonctions","2e forme canonique ?","ET des maxtermes correspondant aux lignes où f = 0."],
+ ["l4","Fonctions","Comment obtenir NON a avec une NAND ?","Relier les deux entrées : barre(a.a) = ā (ou forcer l'autre entrée à 1)."],
+ ["l5","Fonctions","Combien de NAND à 2 entrées pour un OU ?","3 : deux pour inverser a et b, une pour barre(ā.b̄) = a + b."],
+ ["c1","Circuits","Que fait un décodeur 2 → 4 actif bas pour a1 a0 = 10 ?","S2 = 0, les autres sorties à 1 (si CS = 0)."],
+ ["c2","Circuits","Combien d'entrées de données pour un MUX à 3 bits d'adresse ?","2^3 = 8."],
+ ["c3","Circuits","Pourquoi un MUX peut-il réaliser n'importe quelle fonction ?","Son expression est la somme de tous les mintermes des adresses, chacun multiplié par ei : en fixant ei à f(i), on obtient la 1re forme canonique de f."],
+ ["c4","Circuits","Équations de l'additionneur complet 1 bit ?","s = a ⊕ b ⊕ c et c(sortie) = a.b + c.(a ⊕ b)."]
+];
+let fcCur=null, fcFlipped=false;
+(function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
+function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
+function weight(id){ const b=S.cards[id]; if (b===undefined) return 3; return [6,3,2][b]||0.5; }
+function pick(){ const p=pool(); const cand=p.length>1?p.filter(function(c){return !fcCur||c[0]!==fcCur[0];}):p; let tot=0; cand.forEach(function(c){tot+=weight(c[0]);}); let r=Math.random()*tot; for (const c of cand){ r-=weight(c[0]); if (r<=0) return c; } return cand[cand.length-1]; }
+function renderCard(){
+  if (!fcCur||pool().indexOf(fcCur)<0) fcCur=pick();
+  fcFlipped=false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent=fcCur[1]; $("fcQ").textContent=fcCur[2]; $("fcA").textContent=fcCur[3];
+  $("fcYes").disabled=true; $("fcNo").disabled=true;
+  let n=0,f=0,c=0,a=0; pool().forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML='<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped=!fcFlipped; $("fc").classList.toggle("flipped",fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click",flip);
+$("fc").addEventListener("keydown",function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click",flip);
+$("fcYes").addEventListener("click",function(){ const id=fcCur[0]; S.cards[id]=Math.min(3,(S.cards[id]||0)+1); save(); fcCur=pick(); renderCard(); });
+$("fcNo").addEventListener("click",function(){ S.cards[fcCur[0]]=0; save(); fcCur=pick(); renderCard(); });
+$("fcReset").addEventListener("click",function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards={}; save(); fcCur=null; renderCard(); } });
+
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1",axis:"Codage des nombres",pts:0.5,unit:"valeurs",ans:4096,tol:0,
+  q:"Combien de valeurs différentes un mot de 12 bits peut-il coder ?",
+  c:"<div class='fblock'>2^12 = 4096</div><p>Erreur fréquente : répondre 4095, qui est la plus grande valeur codable (de 0 à 2^12 − 1), pas le nombre de valeurs.</p>"},
+ {id:"e2",axis:"Codage des nombres",pts:1,unit:"",ans:183,tol:0,
+  q:"Quelle est la valeur décimale de (10110111)2 ?",
+  c:"<div class='fblock'>1×128 + 0×64 + 1×32 + 1×16 + 0×8 + 1×4 + 1×2 + 1×1 = 128 + 32 + 16 + 4 + 2 + 1 = 183</div><p>Contrôle : 1011 0111 = 0xB7 = 11×16 + 7 = 183.</p>"},
+ {id:"e3",axis:"Codage des nombres",pts:1,unit:"",ans:1010,tol:0,
+  q:"Quelle est la valeur décimale de 0x3F2 ?",
+  c:"<div class='fblock'>3×16² + 15×16 + 2 = 768 + 240 + 2 = 1010</div><p>Erreur fréquente : prendre F pour 16 au lieu de 15.</p>"},
+ {id:"e4",axis:"Codage des nombres",pts:1,unit:"",ans:-10,tol:0,
+  q:"Sur 8 bits en complément à 2, quelle valeur décimale représente le mot 11110110 ?",
+  c:"<p>Bit de signe à 1 : nombre négatif. On reprend la méthode : inverser puis ajouter 1 donne |N|.</p><div class='fblock'>N̄ = 00001001,  N̄ + 1 = 00001010 = 10   →   N = −10</div><p>Lecture directe : −128 + 64 + 32 + 16 + 4 + 2 = −10. Erreur fréquente : lire 246, la valeur non signée.</p>"},
+ {id:"e5",axis:"Codage des nombres",pts:1,unit:"",ans:-106,tol:0,
+  q:"Sur 8 bits signés (complément à 2), on additionne 100 et 50. Quelle valeur décimale lit-on dans le résultat ?",
+  c:"<p>La vraie somme, 150, dépasse 127 : débordement. Les 8 bits du résultat valent 150 en non signé, soit 1001 0110, dont le bit de signe est à 1.</p><div class='fblock'>valeur lue = 150 − 256 = −106</div><p>Deux positifs donnent un résultat négatif : c'est la signature du débordement.</p>"},
+ {id:"e6",axis:"Logique combinatoire",pts:1,unit:"mintermes",ans:4,tol:0,
+  q:"Combien de mintermes compte la première forme canonique de f(a, b, c) = (a + b̄).(b + c) ?",
+  c:"<p>On dresse la table : f = 1 quand les deux facteurs valent 1.</p><div class='fblock'>abc : 000→0, 001→1, 010→0, 011→0, 100→0, 101→1, 110→1, 111→1</div><p>Quatre lignes à 1 (n° 1, 5, 6, 7) : f = ā.b̄.c + a.b̄.c + a.b.c̄ + a.b.c. Tu peux le vérifier dans l'outil du concept 6.</p>"},
+ {id:"e7",axis:"Codage des nombres",pts:1,unit:"",ans:10,tol:0,
+  q:"Quelle valeur décimale code le float (0 10000010 01000000000000000000000)2 ?",
+  c:"<div class='fblock'>S = 0 : positif<br>E = 10000010 = 130   →   e = 130 − 127 = 3<br>m = (1,01)2 = 1,25<br>r = 1,25 × 2^3 = 10</div><p>Erreur fréquente : oublier le bit implicite et prendre m = 0,25, d'où 2.</p>"},
+ {id:"e8",axis:"Codage des nombres",pts:1.5,unit:"",ans:125,tol:0,
+  q:"Quel est l'exposant décalé E (en décimal) du codage IEEE 754 simple précision de −0,375 ?",
+  c:"<p>Le signe ne joue que sur S. 0,375 = 3/8 : on multiplie par 2^3 pour obtenir l'entier 3 = (11)2.</p><div class='fblock'>0,375 = (11)2 × 2^(−3) = (1,1)2 × 2^1 × 2^(−3) = 1,5 × 2^(−2)<br>e = −2   →   E = −2 + 127 = 125</div><p>Code complet : S = 1, E = 01111101, M = 1000…0, soit 0xBEC00000.</p>"},
+ {id:"e9",axis:"Algèbre de Boole",pts:1,unit:"portes",ans:3,tol:0,
+  q:"Combien de portes NAND à deux entrées faut-il au minimum pour réaliser a + b ?",
+  c:"<p>De Morgan : a + b = barre(ā.b̄).</p><div class='fblock'>NAND(a, a) = ā     NAND(b, b) = b̄     NAND(ā, b̄) = a + b</div><p>Trois portes, comme dans l'outil du concept 7 (« OU avec des NAND »).</p>"},
+ {id:"e10",axis:"Logique combinatoire",pts:1,unit:"sorties",ans:7,tol:0,
+  q:"Un décodeur 3 → 8 a des sorties actives à 0 et son entrée CS est active. On applique a2 a1 a0 = 101. Combien de sorties sont à 1 ?",
+  c:"<p>Une seule sortie est sélectionnée (S5) ; actif bas signifie qu'elle passe à 0, et les sept autres restent à leur niveau inactif, 1.</p><div class='fblock'>8 − 1 = 7 sorties à 1</div><p>Erreur fréquente : répondre 1 en raisonnant en logique active haute.</p>"}
+];
+const GF={full:1,half:0.5,zero:0};
+function renderEx(){
+  $("exList").innerHTML=EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e=EX.find(function(x){return x.id===box.dataset.id;}); const inp=box.querySelector("input"); const st=S.ex[e.id];
+    if (st){ inp.value=st.v||""; if (st.v) check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click",function(){ check(box,e,true); });
+    inp.addEventListener("keydown",function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click",function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw=box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".").replace("−","-");
+  const v=parseFloat(raw), out=box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple 183 ou −10."; return; }
+  const ok=Math.abs(v-e.ans)<=Math.abs(e.ans)*e.tol+1e-9;
+  out.className="verdict "+(ok?"ok":"no");
+  const dec = String(e.ans).indexOf(".")>=0 ? String(e.ans).split(".")[1].length : 0;
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction." : "Hors tolérance : la valeur attendue est "+fr(e.ans,dec)+(e.unit?" "+e.unit:"")+". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].v=box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+$("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click",function(){
+  const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
+  const sc={}; Object.keys(ax).forEach(function(a){ sc[a]=Math.round(ax[a].got/ax[a].max*100); });
+  const d=new Date(), date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value=JSON.stringify({date:date,subject:"informatique",scores:sc},null,2); $("jsonZone").style.display="block";
+});
+$("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
+
+/* ---------- démarrage ---------- */
+initWidgets();
+renderEx();
+showTab(S.tab||"concepts");
+let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script>
+</body>
+</html>

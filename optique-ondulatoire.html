@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Optique ondulatoire – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EDF2; --surface:#F7F9FB; --ink:#172131; --muted:#56647A; --line:#C7D0DB; --soft:#DEE4EB;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --accent:rgb(60,220,0);
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E131C; --surface:#161D29; --ink:#E2E8F1; --muted:#94A1B5; --line:#2B3546; --soft:#1E2737;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E131C; --surface:#161D29; --ink:#E2E8F1; --muted:#94A1B5; --line:#2B3546; --soft:#1E2737;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+img,canvas,svg{max-width:100%;display:block}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* Hero */
+header.hero{padding:40px 0 20px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:60ch;font-size:1.05rem}
+.screen{margin-top:26px;background:#000;border-radius:6px;overflow:hidden;position:relative}
+.screen canvas{width:100%;height:120px}
+.screen .cap{position:absolute;left:10px;bottom:8px;color:#c3cad4;background:rgba(0,0,0,.7);padding:2px 8px;border-radius:4px;font-size:.8rem;font-family:var(--ui)}
+.lambda-row{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+.lambda-row label{font-weight:600}
+.lambda-val{font-family:var(--mono);font-size:1.05rem;min-width:7ch}
+input[type=range].spectrum{flex:1;min-width:200px;-webkit-appearance:none;appearance:none;height:10px;border-radius:5px;
+  background:linear-gradient(90deg,#7600ed 0%,#0028ff 13%,#00b7ff 30%,#00ff4f 43%,#b6ff00 57%,#ffd500 67%,#ff5a00 83%,#ff0000 100%);}
+input[type=range].spectrum::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);cursor:pointer}
+input[type=range].spectrum::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);cursor:pointer}
+
+/* Nav */
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 24px;max-width:66ch}
+
+/* Concepts */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--accent);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.95rem;background:var(--soft);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.fblock{font-family:var(--mono);font-size:.95rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.6}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Lab */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:22px}
+.sim h3{margin:0 0 4px;font-size:1.25rem;font-weight:600}
+.sim .hint{color:var(--muted);margin:0 0 16px;font-size:.95rem;max-width:66ch}
+.stage{background:#000;border-radius:6px;overflow:hidden}
+.stage canvas{width:100%}
+.plot{background:var(--bg);border-radius:6px;margin-top:10px}
+.plot canvas{width:100%}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 22px;margin-top:16px}
+.ctl label{display:flex;justify-content:space-between;font-size:.9rem;font-weight:500;margin-bottom:4px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:14px;font-size:.92rem}
+.readout div b{font-family:var(--mono);font-weight:500}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+/* Formules */
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.95rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+/* Cartes */
+.cardzone{display:flex;flex-direction:column;align-items:stretch;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.2rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.05rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+
+/* Exercices */
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.sim,.ex{padding:18px 16px}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Optique ondulatoire</h1>
+  <p class="sub">Concepts, simulations, formules, cartes mémoire et exercices corrigés. Change la longueur d'onde : tout le laboratoire suit.</p>
+  <div class="screen"><canvas id="heroCanvas"></canvas><div class="cap" id="heroCap"></div></div>
+  <div class="lambda-row">
+    <label for="lambdaHero">Longueur d'onde</label>
+    <input type="range" class="spectrum" id="lambdaHero" min="400" max="700" step="1" value="532" data-lambda>
+    <span class="lambda-val" data-lambda-val>532 nm</span>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="labo">Laboratoire</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Chaque concept suit le même ordre : pourquoi il existe, une analogie simple, la version formelle, puis des questions pour vérifier que le principe est compris. Déplie une partie seulement quand tu as essayé de la reconstruire de tête.</p>
+  <div class="progress-line"><span id="seenCount">0 / 8 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+  <!-- C1 -->
+  <article class="concept" data-id="c1">
+    <h3><span class="n">1</span>L'onde lumineuse et le chemin optique</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Toute l'optique ondulatoire consiste à comparer des ondes entre elles. Pour savoir si deux ondes s'additionnent ou s'annulent, il faut une mesure commune de « combien l'une est en retard sur l'autre », même si elles ont traversé des milieux différents. Le chemin optique est cette monnaie commune.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Deux enfants partent en même temps vers la même porte. L'un marche sur le trottoir, l'autre traverse un bac à sable où il avance deux fois moins vite. Même distance, mais le second arrive plus tard. Pour comparer, on se demande : « quelle distance aurait-il parcourue sur le trottoir pendant ce temps ? ». Le bac à sable compte double.</p>
+      <p>Pour la lumière, le trottoir c'est le vide, le bac à sable c'est le verre, et le « compte double » c'est l'indice n.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <p>Onde plane monochromatique se propageant selon x :</p>
+      <div class="fblock">E(x, t) = E0 × cos(ω t − k x + φ0)<br>k = 2π / λ = n × k0,  avec k0 = 2π / λ0<br>λ = λ0 / n  (la fréquence ne change pas d'un milieu à l'autre)</div>
+      <div class="def"><b>Onde plane monochromatique</b>Onde de fréquence unique dont les surfaces d'égale phase sont des plans. Modèle idéal : une source réelle a toujours une largeur spectrale et une extension finies.</div>
+      <p>Le déphasage accumulé sur un trajet de longueur d dans un milieu d'indice n vaut 2π × n × d / λ0. On regroupe n × d dans une seule grandeur :</p>
+      <div class="fblock">L = n × d        (ou somme des n × d le long du trajet)<br>δ = L2 − L1<br>Δφ = 2π × δ / λ0</div>
+      <div class="def"><b>Chemin optique L</b>Distance que la lumière parcourrait dans le vide pendant le temps qu'elle met à faire le trajet réel. L = c × t.</div>
+      <div class="def"><b>Différence de marche δ</b>Différence des chemins optiques de deux ondes arrivant au même point. C'est elle, divisée par λ0, qui fixe l'état d'interférence.</div>
+      <p>Une réflexion sur un milieu plus réfringent (n plus grand) ajoute un déphasage de π, soit λ0 / 2 à la différence de marche. Une réflexion sur un milieu moins réfringent n'ajoute rien.</p>
+      <p>Les détecteurs (œil, photodiode, pixel d'un capteur) ne suivent pas une oscillation à 10^14 – 10^15 Hz : ils mesurent l'intensité, moyenne temporelle du carré du champ :</p>
+      <div class="fblock">I = K × &lt;E²&gt;</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi aucun détecteur ne mesure directement le champ E d'une onde visible, et qu'est-ce que cela impose sur ce que l'on peut observer d'une superposition d'ondes ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La fréquence est bien trop élevée pour tout temps de réponse de détecteur ; on n'accède qu'à une moyenne de E². Toute l'information de phase est donc perdue sur une onde seule. On ne peut « voir » une phase que relativement, quand deux ondes se superposent : le terme croisé de &lt;(E1 + E2)²&gt; traduit leur déphasage en variation d'intensité.</div></details></div>
+      <div class="q"><p>On place une lame de verre sur le trajet d'un seul faisceau. Qu'est-ce qui change physiquement pour ce faisceau, et qu'est-ce qui reste identique ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La vitesse et la longueur d'onde diminuent dans la lame (facteur n), donc le faisceau accumule plus de phase : son chemin optique augmente de (n − 1) × e par rapport à l'air. La fréquence, elle, reste la même : c'est elle qui est imposée par la source.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C2 -->
+  <article class="concept" data-id="c2">
+    <h3><span class="n">2</span>Superposition et cohérence</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Deux ampoules qui éclairent un mur ne produisent jamais de franges, alors que deux trous éclairés par la même source en produisent. Comprendre la cohérence, c'est savoir quand le terme d'interférence survit à la moyenne temporelle.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Deux enfants poussent une balançoire. S'ils poussent au même rythme et toujours au bon moment, la balançoire monte très haut ; s'ils poussent au même rythme mais en opposition, elle bouge à peine. Si chacun pousse n'importe quand, en moyenne leurs efforts s'additionnent simplement, sans rien d'étonnant.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <p>Deux ondes de même fréquence, d'intensités I1 et I2, de déphasage Δφ :</p>
+      <div class="fblock">I = I1 + I2 + 2 × √(I1 × I2) × cos(Δφ)</div>
+      <p>Le troisième terme est le terme d'interférence. Il ne survit à la moyenne temporelle que si Δφ est stable pendant le temps d'intégration du détecteur.</p>
+      <div class="def"><b>Ondes cohérentes</b>Ondes de même fréquence dont le déphasage reste constant dans le temps. En pratique, on les obtient en divisant une seule source en deux, car deux sources distinctes émettent des trains d'onde aux phases aléatoires et indépendantes.</div>
+      <p>Si les ondes sont incohérentes, cos(Δφ) prend toutes les valeurs et sa moyenne est nulle : I = I1 + I2. De même, deux polarisations orthogonales n'interfèrent pas.</p>
+      <div class="fblock">C = (Imax − Imin) / (Imax + Imin) = 2 × √(I1 × I2) / (I1 + I2)</div>
+      <div class="def"><b>Contraste (visibilité) C</b>Nombre entre 0 et 1 qui mesure la netteté des franges. C = 1 : franges noires parfaites, obtenu seulement si I1 = I2.</div>
+      <p>Une source émet des trains d'onde de durée finie τc. Deux copies d'un même train n'interfèrent que si leur décalage est plus petit que la longueur d'un train :</p>
+      <div class="fblock">Lc = c × τc ≈ λ0² / Δλ<br>franges visibles si |δ| &lt; Lc</div>
+      <div class="def"><b>Longueur de cohérence temporelle Lc</b>Longueur d'un train d'onde. Elle est d'autant plus grande que la source est monochromatique : environ 1 µm pour la lumière blanche, de quelques dizaines de cm à plusieurs mètres pour un laser.</div>
+      <div class="def"><b>Cohérence spatiale</b>Capacité de deux points distincts d'un front d'onde à interférer. Elle se dégrade quand la source est étendue, car chaque point de la source produit son propre système de franges, décalé des autres.</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi le contraste est-il maximal quand les deux intensités sont égales ? Que se passe-t-il physiquement quand l'une des deux domine ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">L'extinction totale exige que les deux amplitudes se compensent exactement. Si une onde domine, même en opposition de phase la plus faible ne peut pas l'annuler : il reste un fond d'intensité, Imin &gt; 0. Les franges se superposent à un fond uniforme et perdent en netteté.</div></details></div>
+      <div class="q"><p>Qu'est-ce qui, dans la façon dont émet une source thermique, détruit l'interférence entre deux sources distinctes ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Une source thermique émet par une multitude d'émissions atomiques courtes et indépendantes. La phase relative entre deux sources change de manière aléatoire des milliards de fois par seconde : la figure d'interférence existe à chaque instant mais se déplace en permanence, et sa moyenne est un éclairement uniforme.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C3 -->
+  <article class="concept" data-id="c3">
+    <h3><span class="n">3</span>Fentes d'Young : division du front d'onde</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>C'est l'expérience qui a établi la nature ondulatoire de la lumière, et c'est encore un outil de mesure : longueur d'onde, indice d'une lame très fine, cohérence d'une source.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Tu lâches deux cailloux dans une flaque exactement au même moment. Les rides s'étendent et se croisent. Dans certaines directions, les bosses arrivent en même temps et l'eau s'agite fort ; dans d'autres, une bosse rencontre un creux et l'eau reste calme. Ces directions calmes et agitées forment des lignes régulières.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <p>Deux fentes S1 et S2 séparées de a, éclairées par la même source, écran à distance D (D très grand devant a et x). Au point d'abscisse x de l'écran :</p>
+      <div class="fblock">δ = a × x / D<br>I(x) = 2 × I0 × [1 + cos(2π × a × x / (λ × D))]<br>franges brillantes : x = m × λ × D / a<br>i = λ × D / a</div>
+      <div class="def"><b>Division du front d'onde</b>Les deux ondes qui interfèrent proviennent de deux régions différentes d'une même surface d'onde (ici les deux fentes). Nécessite une bonne cohérence spatiale, donc une source quasi ponctuelle.</div>
+      <div class="def"><b>Interfrange i</b>Distance entre deux franges brillantes (ou sombres) consécutives. Elle correspond à une variation de δ égale à λ.</div>
+      <p>Si le dispositif est plongé dans un milieu d'indice n, λ devient λ0 / n et l'interfrange est divisé par n.</p>
+      <p>Si on place une lame d'indice n et d'épaisseur e devant une seule fente, le chemin optique de ce côté augmente de (n − 1) × e. Toute la figure glisse, sans que l'interfrange change :</p>
+      <div class="fblock">décalage = (n − 1) × e × D / a        vers la fente recouverte<br>nombre de franges défilées = (n − 1) × e / λ0</div>
+      <p>En pratique, les fentes ont une largeur b non nulle : les franges sont modulées par l'enveloppe de diffraction d'une fente (voir concept 5 et le laboratoire).</p>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Si on plonge tout le dispositif dans l'eau, que devient la figure, et pourquoi ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La fréquence est inchangée mais la longueur d'onde dans l'eau vaut λ0 / n. La même différence de chemin géométrique contient donc plus de longueurs d'onde : les franges se resserrent, i est divisé par n ≈ 1,33.</div></details></div>
+      <div class="q"><p>Pourquoi la frange centrale se déplace-t-elle du côté de la fente recouverte par la lame, et pas de l'autre ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La frange centrale est l'endroit où δ = 0. La lame allonge le chemin optique côté fente recouverte ; pour compenser, il faut un point de l'écran géométriquement plus proche de cette fente, donc décalé de son côté.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C4 -->
+  <article class="concept" data-id="c4">
+    <h3><span class="n">4</span>Lames minces et interféromètre de Michelson</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Couches antireflet, irisations des bulles de savon, contrôle d'épaisseurs au nanomètre, tomographie OCT, détection des ondes gravitationnelles : tout repose sur l'interférence entre deux réflexions d'un même faisceau.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Tu cries face à une vitre posée devant un mur. Une partie de ta voix rebondit sur la vitre, une autre la traverse et rebondit sur le mur. Tu entends deux échos, le second un peu en retard. Ce retard dépend seulement de la distance entre la vitre et le mur. Si tu ajustes cette distance, les deux échos peuvent se renforcer ou se gêner.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="def"><b>Division d'amplitude</b>Un même rayon est séparé en deux par une surface partiellement réfléchissante (dioptre, lame séparatrice). Les deux ondes proviennent du même point de la source : on peut utiliser une source étendue sans perdre le contraste, à condition d'observer au bon endroit.</div>
+      <p>Lame d'indice n, d'épaisseur e, angle de réfraction r dans la lame, observée en réflexion :</p>
+      <div class="fblock">δ = 2 × n × e × cos(r)   (+ λ0 / 2 si une seule des deux réflexions a lieu sur un milieu plus réfringent)</div>
+      <p>Couche antireflet d'indice n sur un verre d'indice plus élevé : les deux réflexions (air vers couche, couche vers verre) ont lieu sur des milieux plus réfringents, les deux déphasages de π se compensent. Pour une extinction en incidence normale :</p>
+      <div class="fblock">2 × n × e = λ0 / 2   donc   e = λ0 / (4 × n)<br>extinction totale si n ≈ √(n_verre)</div>
+      <p>Michelson, deux configurations :</p>
+      <div class="fblock">Lame d'air (miroirs parallèles) : δ = 2 × e × cos(i)<br>   anneaux d'égale inclinaison, localisés à l'infini<br>Coin d'air (miroirs inclinés) : δ ≈ 2 × e(x)<br>   franges rectilignes d'égale épaisseur, localisées sur les miroirs</div>
+      <div class="def"><b>Localisation des franges</b>Avec une source étendue, région de l'espace où toutes les paires de rayons issues des différents points de la source donnent la même différence de marche, et donc où le contraste reste bon.</div>
+      <p>En lame d'air, l'ordre au centre vaut p0 = 2 × e / λ0. Quand e diminue, p0 diminue : chaque anneau se contracte et disparaît au centre. Un anneau qui disparaît correspond à une variation de e de λ0 / 2.</p>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Dans un Michelson en lame d'air, on réduit e : les anneaux « rentrent » vers le centre. Pourquoi ce sens-là ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Un anneau donné correspond à un ordre p fixé, donc à 2 e cos(i) constant. Si e diminue, cos(i) doit augmenter, donc i diminue : l'anneau se rapproche de l'axe. Le centre ayant l'ordre le plus élevé, les anneaux y disparaissent un par un. À e = 0 (contact optique), il ne reste qu'une teinte uniforme.</div></details></div>
+      <div class="q"><p>Pourquoi une bulle de savon devient-elle sombre juste avant d'éclater ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Quand l'épaisseur tend vers zéro, 2 n e devient négligeable devant λ. Il ne reste que la différence de λ0 / 2 due au fait qu'une seule des deux réflexions (air vers eau) se fait sur un milieu plus réfringent. Les deux ondes réfléchies sont en opposition pour toutes les couleurs : la réflexion s'éteint.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C5 -->
+  <article class="concept" data-id="c5">
+    <h3><span class="n">5</span>Diffraction par une ouverture</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La diffraction explique pourquoi un faisceau finit toujours par s'élargir, et elle fixe la limite ultime de finesse de tout instrument d'optique. Aucune qualité de fabrication ne permet de passer en dessous.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Des vagues arrivent sur une digue percée d'une ouverture. Si l'ouverture est large, les vagues continuent tout droit derrière. Si elle est étroite, de la taille des vagues, elles s'étalent en demi-cercles dans tout le port. Plus le passage est petit par rapport à la vague, plus elle s'étale.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="def"><b>Principe de Huygens-Fresnel</b>Chaque point d'une surface d'onde se comporte comme une source secondaire. Ces sources sont cohérentes entre elles ; l'onde en un point est la somme de leurs contributions avec leurs déphasages respectifs.</div>
+      <div class="def"><b>Diffraction de Fraunhofer</b>Observation à l'infini (ou dans le plan focal d'une lentille) : la figure ne dépend que de la direction θ. Condition en espace libre : distance très grande devant b² / λ.</div>
+      <div class="def"><b>Diffraction de Fresnel</b>Observation à distance finie : la figure dépend aussi de la distance d'observation.</div>
+      <p>Fente de largeur b, incidence normale, Fraunhofer :</p>
+      <div class="fblock">I(θ) = I0 × sinc²(π × b × sin θ / λ),   sinc(u) = sin(u) / u<br>zéros : b × sin θ = m × λ,  m entier non nul<br>demi-largeur angulaire du lobe central ≈ λ / b</div>
+      <p>Origine du premier zéro : on coupe la fente en deux moitiés. À chaque point de la première correspond un point de la seconde décalé de b / 2. Si b × sin θ = λ, ces paires sont décalées de λ / 2 et s'annulent deux à deux.</p>
+      <p>Ouverture circulaire de diamètre D : tache d'Airy.</p>
+      <div class="fblock">premier zéro : sin θ = 1,22 × λ / D</div>
+      <div class="def"><b>Tache d'Airy</b>Figure de diffraction d'une ouverture circulaire : disque central contenant environ 84 % de l'énergie, entouré d'anneaux de plus en plus faibles.</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi un faisceau laser très fin diverge-t-il plus qu'un faisceau large ? Est-ce un défaut du laser ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">L'extension transverse du faisceau joue le rôle de l'ouverture : la divergence est de l'ordre de λ / largeur. Ce n'est pas un défaut mais une conséquence de la nature ondulatoire : confiner une onde dans l'espace impose un étalement en directions. On élargit le faisceau (expanseur) pour le rendre plus parallèle.</div></details></div>
+      <div class="q"><p>Si chaque point d'une ouverture est une source secondaire, comment expliquer que la lumière semble aller tout droit à travers une grande fenêtre ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Les ondelettes interfèrent. Pour une ouverture très grande devant λ, elles ne s'ajoutent en phase que dans la direction de propagation initiale ; dans toutes les autres directions, elles se compensent presque exactement. L'étalement angulaire λ / b devient négligeable : on retrouve l'optique géométrique comme cas limite.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C6 -->
+  <article class="concept" data-id="c6">
+    <h3><span class="n">6</span>Réseaux de diffraction</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un réseau disperse la lumière selon sa longueur d'onde avec une finesse bien supérieure à celle d'un prisme : c'est le cœur des spectromètres et des monochromateurs. Un cristal est un réseau en trois dimensions ; la diffraction des rayons X par un cristal de protéine obéit à la même physique.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Une chorale de nombreux chanteurs alignés chante la même note. Tu n'entends un son puissant que dans quelques directions précises, là où toutes les voix arrivent ensemble. Plus la chorale compte de chanteurs, plus ces directions sont étroites et le son y est fort.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <p>N fentes identiques de largeur b, régulièrement espacées d'un pas a. Deux fentes voisines envoient dans la direction θ des ondes décalées de a × (sin θ − sin θi). Elles sont toutes en phase si ce décalage vaut un nombre entier de longueurs d'onde :</p>
+      <div class="fblock">a × (sin θm − sin θi) = m × λ      (formule des réseaux, en transmission)</div>
+      <div class="def"><b>Ordre m</b>Nombre entier de longueurs d'onde de décalage entre fentes voisines. L'ordre 0 est non dispersif (toutes les couleurs y sont superposées).</div>
+      <p>Intensité en incidence normale :</p>
+      <div class="fblock">I(θ) = I0 × sinc²(β) × [sin(N α) / sin(α)]²<br>α = π × a × sin θ / λ,   β = π × b × sin θ / λ</div>
+      <p>Le premier facteur est l'enveloppe de diffraction d'une fente. Le second donne des maxima principaux d'intensité proportionnelle à N², séparés par N − 1 zéros et N − 2 maxima secondaires. La largeur d'un pic varie comme 1 / N.</p>
+      <div class="fblock">pouvoir de résolution : R = λ / Δλ = m × N</div>
+      <div class="def"><b>Pouvoir de résolution R</b>Rapport entre la longueur d'onde et le plus petit écart Δλ que l'instrument distingue. Il ne dépend que de l'ordre et du nombre de traits réellement éclairés.</div>
+      <div class="def"><b>Ordre manquant</b>Maximum principal qui tombe sur un zéro de l'enveloppe de diffraction. Se produit quand m × b / a est un entier non nul, par exemple a = 3b supprime les ordres 3, 6, 9.</div>
+      <p>Pour un cristal, les « fentes » sont les plans réticulaires, espacés de d, et l'on raisonne sur les réflexions :</p>
+      <div class="fblock">2 × d × sin θ = n × λ      (loi de Bragg, θ angle rasant)</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi augmenter le nombre de fentes affine-t-il les pics sans changer leur position ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La position d'un maximum ne dépend que de la condition de phase entre fentes voisines, fixée par a et λ. Mais dès qu'on s'écarte un peu de cette direction, le petit déphasage entre voisines s'accumule sur toute la longueur du réseau : avec N fentes, il suffit d'un écart de 1 / N de période pour que la dernière fente soit déphasée de 2π par rapport à la première et que la somme s'annule.</div></details></div>
+      <div class="q"><p>En cristallographie, qu'est-ce qui joue le rôle du nombre de traits N, et quelle conséquence cela a-t-il sur les taches de diffraction enregistrées par le détecteur ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Le nombre de mailles qui diffusent de façon cohérente dans chaque direction, c'est-à-dire la taille des domaines cristallins ordonnés. Plus il est grand, plus chaque réflexion est fine. En pratique, la mosaïcité, la divergence et la largeur spectrale du faisceau élargissent souvent davantage les taches que la taille finie du cristal.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C7 -->
+  <article class="concept" data-id="c7">
+    <h3><span class="n">7</span>Pouvoir séparateur : critère de Rayleigh</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Tout instrument transforme un point en une tache de diffraction. La question « quel est le plus petit détail que je peux voir ? » devient « à partir de quand deux taches se distinguent-elles ? ».</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Deux lampes de poche au loin dans la nuit. Chacune fait un petit halo. Tant que les halos se recouvrent trop, tu vois une seule lumière un peu allongée. En t'approchant, les halos se séparent et tu comptes deux lampes.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="fblock">Δθ min = 1,22 × λ / D        (pupille circulaire de diamètre D)</div>
+      <div class="def"><b>Critère de Rayleigh</b>Convention : deux points sont considérés comme séparés quand le maximum de la tache de l'un tombe sur le premier zéro de la tache de l'autre. Le profil somme présente alors un creux central d'environ 73 % du maximum.</div>
+      <p>Pour un microscope, en termes de distance dans l'objet :</p>
+      <div class="fblock">d min = 0,61 × λ / ON,   ON = n × sin(u)  (ouverture numérique)</div>
+      <p>Ordre de grandeur pour l'œil : pupille de 3 mm à 550 nm, Δθ ≈ 2,2 × 10^-4 rad, soit environ 0,8 minute d'arc.</p>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi utilise-t-on de l'ultraviolet pour graver des circuits et des rayons X pour étudier la position des atomes ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La taille minimale résolue est proportionnelle à λ. Pour voir ou graver un détail, il faut une longueur d'onde du même ordre que ce détail ou plus petite : quelques dizaines de nm pour la gravure, de l'ordre de 0,1 nm pour des distances interatomiques.</div></details></div>
+      <div class="q"><p>Le critère de Rayleigh est-il une loi physique ou une convention ? Qu'est-ce qui pourrait permettre de faire mieux ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">C'est une convention pratique pour un observateur qui regarde un profil d'intensité. Avec un bon rapport signal sur bruit et un modèle de la tache, on peut séparer des sources plus proches (déconvolution, ajustement). La microscopie de super-résolution contourne la limite en rendant les émetteurs actifs à des instants différents.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+
+  <!-- C8 -->
+  <article class="concept" data-id="c8">
+    <h3><span class="n">8</span>Polarisation</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La lumière est une onde transverse : le champ E a une direction. Écrans LCD, lunettes anti-reflets, mesures de contraintes, et même la condition d'interférence de deux ondes dépendent de cette direction.</p></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Tu agites une corde qui passe entre les barreaux verticaux d'une grille. Si tu l'agites de haut en bas, l'onde passe. Si tu l'agites de gauche à droite, les barreaux la bloquent. Si tu l'agites en biais, seule la partie verticale du mouvement continue de l'autre côté.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="def"><b>Polarisation rectiligne</b>Le champ E oscille toujours selon une même direction perpendiculaire à la propagation. La lumière naturelle, elle, change de direction de polarisation de façon aléatoire et très rapide.</div>
+      <div class="fblock">loi de Malus : I = I0 × cos²(θ)<br>lumière naturelle à travers un polariseur idéal : I = I0 / 2</div>
+      <p>θ est l'angle entre la direction de polarisation incidente et l'axe du polariseur. Le polariseur projette le champ sur son axe : l'amplitude est multipliée par cos(θ), l'intensité par cos²(θ).</p>
+      <div class="fblock">angle de Brewster : tan θB = n2 / n1</div>
+      <p>À l'incidence de Brewster, le rayon réfléchi est polarisé rectilignement, perpendiculairement au plan d'incidence.</p>
+      <div class="def"><b>Lames à retard</b>Lames biréfringentes qui déphasent les deux composantes du champ. Une lame demi-onde fait tourner une polarisation rectiligne de 2α (α angle avec son axe). Une lame quart d'onde à 45° transforme une polarisation rectiligne en circulaire.</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Deux polariseurs croisés éteignent tout. Comment un troisième polariseur, placé entre eux, peut-il rallumer la lumière ? Qu'est-ce que cela révèle sur ce que fait vraiment un polariseur ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Un polariseur ne filtre pas passivement une propriété préexistante : il projette le champ sur son axe et impose une nouvelle direction de polarisation en sortie. Le polariseur du milieu crée une composante qui a de nouveau une projection non nulle sur le dernier axe. À 45°, on récupère I0 / 8 de la lumière naturelle initiale.</div></details></div>
+      <div class="q"><p>Pourquoi les lunettes polarisantes atténuent-elles fortement les reflets sur l'eau ou sur une route mouillée ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La lumière réfléchie par une surface horizontale, autour de l'incidence de Brewster, est fortement polarisée horizontalement. Des verres dont l'axe de transmission est vertical bloquent cette composante tout en laissant passer une bonne partie de la lumière diffuse non polarisée.</div></details></div>
+    </div></details>
+    <label class="seen"><input type="checkbox"> Concept revu</label>
+  </article>
+</div></section>
+<section class="panel" id="labo"><div class="wrap">
+  <h2>Laboratoire</h2>
+  <p class="lead">Trois expériences à manipuler. Avant de bouger un curseur, prédis ce qui va se passer ; c'est l'écart entre ta prédiction et l'écran qui fait apprendre.</p>
+
+  <div class="sim">
+    <h3>Superposition de deux ondes</h3>
+    <p class="hint">Deux ondes de même fréquence et leur somme. Fais varier le déphasage et le rapport d'amplitude, puis coupe la cohérence pour voir le terme d'interférence disparaître en moyenne.</p>
+    <div class="plot"><canvas id="supCanvas" style="height:260px"></canvas></div>
+    <div class="controls">
+      <div class="ctl"><label for="supPhi">Déphasage Δφ <span id="supPhiV">0°</span></label><input type="range" id="supPhi" min="0" max="360" step="1" value="0"></div>
+      <div class="ctl"><label for="supRatio">Rapport d'amplitude A2 / A1 <span id="supRatioV">1,00</span></label><input type="range" id="supRatio" min="0" max="1" step="0.01" value="1"></div>
+      <div class="ctl" style="display:flex;align-items:end"><label class="chk" for="supCoh" style="margin:0"><input type="checkbox" id="supCoh" checked> Sources cohérentes</label></div>
+    </div>
+    <div class="readout" id="supOut"></div>
+  </div>
+
+  <div class="sim">
+    <h3>Fente, fentes d'Young et réseau</h3>
+    <p class="hint">Un seul modèle pour N fentes de largeur b et de pas a. N = 1 donne la diffraction d'une fente, N = 2 les fentes d'Young, N grand un réseau. La courbe pointillée est l'enveloppe de diffraction d'une seule fente.</p>
+    <div class="presets">
+      <button class="btn" data-preset="slit">Fente seule</button>
+      <button class="btn" data-preset="young">Fentes d'Young</button>
+      <button class="btn" data-preset="grating">Réseau</button>
+    </div>
+    <div class="stage"><canvas id="nsScreen" style="height:80px"></canvas></div>
+    <div class="plot"><canvas id="nsPlot" style="height:220px"></canvas></div>
+    <div class="controls">
+      <div class="ctl"><label for="lambdaNs">Longueur d'onde <span data-lambda-val>532 nm</span></label><input type="range" class="spectrum" id="lambdaNs" min="400" max="700" step="1" value="532" data-lambda style="width:100%"></div>
+      <div class="ctl"><label for="nsN">Nombre de fentes N <span id="nsNV"></span></label><input type="range" id="nsN" min="1" max="20" step="1" value="2"></div>
+      <div class="ctl"><label for="nsA">Pas a <span id="nsAV"></span></label><input type="range" id="nsA" min="20" max="400" step="5" value="250"></div>
+      <div class="ctl"><label for="nsB">Largeur de fente b <span id="nsBV"></span></label><input type="range" id="nsB" min="5" max="200" step="1" value="40"></div>
+      <div class="ctl"><label for="nsD">Distance à l'écran D <span id="nsDV"></span></label><input type="range" id="nsD" min="0.5" max="3" step="0.05" value="1"></div>
+      <div class="ctl"><label for="nsX">Demi-largeur d'écran affichée <span id="nsXV"></span></label><input type="range" id="nsX" min="1" max="60" step="0.5" value="20"></div>
+    </div>
+    <div class="readout" id="nsOut"></div>
+  </div>
+
+  <div class="sim">
+    <h3>Deux points et le critère de Rayleigh</h3>
+    <p class="hint">Deux sources ponctuelles incohérentes vues à travers une pupille circulaire. L'écart est donné en unités de l'écart de Rayleigh 1,22 λ / D. Cherche à partir de quand tu « vois » deux points, puis compare avec le critère.</p>
+    <div class="stage"><canvas id="rayImg" style="height:200px"></canvas></div>
+    <div class="plot"><canvas id="rayPlot" style="height:180px"></canvas></div>
+    <div class="controls">
+      <div class="ctl"><label for="raySep">Écart angulaire / écart de Rayleigh <span id="raySepV"></span></label><input type="range" id="raySep" min="0.2" max="2.5" step="0.01" value="1"></div>
+    </div>
+    <div class="readout" id="rayOut"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours, avec les conditions de validité. Active le mode test pour flouter les formules : essaie de les retrouver, puis touche une formule pour la révéler.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites d'affilée.</p>
+  <div class="row">
+    <label for="fcTheme">Thème</label>
+    <select id="fcTheme"></select>
+    <button class="btn" id="fcReset">Remettre à zéro</button>
+  </div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions">
+      <button class="btn" id="fcFlip">Retourner</button>
+      <button class="btn bad" id="fcNo" disabled>Pas su</button>
+      <button class="btn good" id="fcYes" disabled>Su</button>
+    </div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points au total. Aucune formule n'est donnée : à toi d'identifier le phénomène et la bonne approche. Entre seulement ta valeur finale ; la correction complète s'affiche ensuite. Note-toi toi-même selon le barème : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox">
+    <span>Score</span><span class="big" id="exScore">0 / 10</span>
+    <button class="btn" id="exJson">Générer le JSON</button>
+    <button class="btn" id="exReset">Recommencer</button>
+  </div>
+  <div id="jsonZone" style="display:none">
+    <textarea id="jsonOut" readonly></textarea>
+    <button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button>
+  </div>
+</div></section>
+</main>
+<footer class="wrap">Ta progression (concepts revus, cartes, exercices) est enregistrée dans ce navigateur uniquement.</footer>
+<script>
+(function(){
+"use strict";
+const KEY = "optique-ondulatoire-v1";
+let S = {lambda:532, seen:{}, cards:{}, ex:{}, tab:"concepts"};
+try { const raw = localStorage.getItem(KEY); if (raw) Object.assign(S, JSON.parse(raw)); } catch(e) {}
+let saveT = null;
+function save(){ clearTimeout(saveT); saveT = setTimeout(function(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }, 150); }
+const $ = function(id){ return document.getElementById(id); };
+const fr = function(x, d){ return x.toLocaleString("fr-FR", {minimumFractionDigits:d, maximumFractionDigits:d}); };
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+/* ---------- couleur d'une longueur d'onde ---------- */
+function wl2rgb(w){
+  let r=0,g=0,b=0;
+  if (w<440){ r=-(w-440)/60; b=1; }
+  else if (w<490){ g=(w-440)/50; b=1; }
+  else if (w<510){ g=1; b=-(w-510)/20; }
+  else if (w<580){ r=(w-510)/70; g=1; }
+  else if (w<645){ r=1; g=-(w-645)/65; }
+  else { r=1; }
+  let f = 1;
+  if (w<420) f = 0.3+0.7*(w-380)/40; else if (w>700) f = 0.3+0.7*(780-w)/80;
+  return [r,g,b].map(function(c){ return Math.round(255*Math.pow(c*f,0.8)); });
+}
+
+/* ---------- canvas HiDPI ---------- */
+function fit(c){
+  const r = c.getBoundingClientRect();
+  const d = window.devicePixelRatio || 1;
+  const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+  if (c.width !== Math.round(w*d) || c.height !== Math.round(h*d)){ c.width = Math.round(w*d); c.height = Math.round(h*d); }
+  const ctx = c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0);
+  return {ctx:ctx, w:w, h:h};
+}
+
+/* ---------- longueur d'onde globale ---------- */
+function setLambda(w){
+  S.lambda = w;
+  document.querySelectorAll("[data-lambda]").forEach(function(el){ if (+el.value !== w) el.value = w; });
+  document.querySelectorAll("[data-lambda-val]").forEach(function(el){ el.textContent = w + " nm"; });
+  const c = wl2rgb(w);
+  document.documentElement.style.setProperty("--accent", "rgb("+c.join(",")+")");
+  drawHero(); if (S.tab === "labo") drawNS();
+  save();
+}
+document.querySelectorAll("[data-lambda]").forEach(function(el){ el.addEventListener("input", function(){ setLambda(+el.value); }); });
+
+/* ---------- hero : fentes d'Young ---------- */
+function drawHero(){
+  const o = fit($("heroCanvas")); const ctx=o.ctx, w=o.w, h=o.h;
+  const lam = S.lambda*1e-9, a = 0.25e-3, b = 0.05e-3, D = 1, X = 12e-3;
+  const col = wl2rgb(S.lambda);
+  const img = ctx.createImageData(w, 1);
+  for (let px=0; px<w; px++){
+    const x = (px/(w-1)*2-1)*X;
+    const s = x/Math.sqrt(x*x+D*D);
+    const be = Math.PI*b*s/lam, al = Math.PI*a*s/lam;
+    const env = Math.abs(be)<1e-9 ? 1 : Math.pow(Math.sin(be)/be,2);
+    const I = env*Math.pow(Math.cos(al),2);
+    const v = Math.pow(I, 0.6);
+    img.data[px*4]=col[0]*v; img.data[px*4+1]=col[1]*v; img.data[px*4+2]=col[2]*v; img.data[px*4+3]=255;
+  }
+  const tmp = document.createElement("canvas"); tmp.width=w; tmp.height=1; tmp.getContext("2d").putImageData(img,0,0);
+  ctx.imageSmoothingEnabled = false; ctx.drawImage(tmp, 0, 0, w, h);
+  const i = lam*D/a*1e3;
+  $("heroCap").textContent = "Fentes d'Young, a = 0,25 mm, b = 0,05 mm, D = 1 m : interfrange i = " + fr(i,2) + " mm";
+}
+
+/* ---------- onglets ---------- */
+function showTab(t){
+  S.tab = t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t ? "true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="labo"){ drawNS(); drawRay(); startSup(); } else stopSup();
+  if (t==="cartes") renderCard();
+  save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+
+/* ---------- concepts revus ---------- */
+function updSeen(){
+  const n = Object.keys(S.seen).filter(function(k){ return S.seen[k]; }).length;
+  $("seenCount").textContent = n + " / 8 concepts revus";
+  $("seenBar").style.width = (n/8*100) + "%";
+}
+document.querySelectorAll(".concept").forEach(function(c){
+  const cb = c.querySelector(".seen input"); const id = c.dataset.id;
+  cb.checked = !!S.seen[id];
+  cb.addEventListener("change", function(){ S.seen[id] = cb.checked; updSeen(); save(); });
+});
+updSeen();
+
+/* ---------- superposition ---------- */
+let supRAF = null, supT = 0, supLast = 0, supPhiEff = 0, supJump = 0;
+function drawSup(){
+  const o = fit($("supCanvas")); const ctx=o.ctx, w=o.w, h=o.h;
+  const phi = +$("supPhi").value*Math.PI/180, r = +$("supRatio").value, coh = $("supCoh").checked;
+  const dphi = coh ? phi : supPhiEff;
+  const ink = css("--ink"), muted = css("--muted"), line = css("--line"), acc = css("--accent");
+  ctx.clearRect(0,0,w,h);
+  const lanes = [{y0:h*0.27, s:h*0.18}, {y0:h*0.72, s:h*0.11}];
+  ctx.strokeStyle = line; ctx.lineWidth = 1;
+  lanes.forEach(function(L){ ctx.beginPath(); ctx.moveTo(0,L.y0); ctx.lineTo(w,L.y0); ctx.stroke(); });
+  ctx.fillStyle = muted; ctx.font = "12px " + css("--ui");
+  ctx.fillText("Onde 1 (trait plein) et onde 2 (pointillés)", 10, 16);
+  ctx.fillText("Somme des deux champs", 10, h*0.50+10);
+  const k = 2*Math.PI/(w/3);
+  function trace(fn, L, style, width, dash){
+    ctx.beginPath(); ctx.setLineDash(dash||[]); ctx.strokeStyle = style; ctx.lineWidth = width;
+    for (let x=0; x<=w; x+=2){ const y = L.y0 - L.s*fn(x); if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  const f1 = function(x){ return Math.cos(k*x - supT); };
+  const f2 = function(x){ return r*Math.cos(k*x - supT + dphi); };
+  ctx.globalAlpha = 0.75;
+  trace(f1, lanes[0], ink, 2);
+  trace(f2, lanes[0], ink, 2, [6,5]);
+  ctx.globalAlpha = 1;
+  const fs = function(x){ return f1(x)+f2(x); };
+  trace(fs, lanes[1], ink, 5);
+  trace(fs, lanes[1], acc, 2.5);
+  const Iinst = 1 + r*r + 2*r*Math.cos(dphi);
+  const C = (1+r*r)>0 ? 2*r/(1+r*r) : 0;
+  let html = "";
+  if (coh) html += "<div>Intensité I / I1 : <b>" + fr(Iinst,2) + "</b></div>";
+  else html += "<div>Intensité moyenne I / I1 : <b>" + fr(1+r*r,2) + "</b> (le terme d'interférence se moyenne à zéro)</div>";
+  html += "<div>Contraste attendu des franges : <b>" + (coh ? fr(C,2) : "0") + "</b></div>";
+  $("supOut").innerHTML = html;
+  $("supPhiV").textContent = $("supPhi").value + "°";
+  $("supRatioV").textContent = fr(r,2);
+}
+function supLoop(ts){
+  const dt = supLast ? (ts - supLast)/1000 : 0; supLast = ts;
+  supT += dt*2.2;
+  supJump += dt;
+  if (!$("supCoh").checked && supJump > 0.07){ supJump = 0; supPhiEff = Math.random()*2*Math.PI; }
+  drawSup();
+  supRAF = requestAnimationFrame(supLoop);
+}
+function startSup(){ if (reduced){ drawSup(); return; } if (!supRAF){ supLast = 0; supRAF = requestAnimationFrame(supLoop); } }
+function stopSup(){ if (supRAF){ cancelAnimationFrame(supRAF); supRAF = null; } }
+["supPhi","supRatio","supCoh"].forEach(function(id){ $(id).addEventListener("input", drawSup); });
+
+/* ---------- N fentes ---------- */
+function nsParams(){
+  return {N:+$("nsN").value, a:+$("nsA").value, b:+$("nsB").value, D:+$("nsD").value, X:+$("nsX").value};
+}
+function nsIntensity(x, p, lam){
+  const s = x/Math.sqrt(x*x+p.D*p.D);
+  const bb = Math.min(p.b, p.N>1 ? p.a : p.b)*1e-6;
+  const be = Math.PI*bb*s/lam;
+  const env = Math.abs(be)<1e-9 ? 1 : Math.pow(Math.sin(be)/be,2);
+  let arr = 1;
+  if (p.N>1){
+    const al = Math.PI*p.a*1e-6*s/lam; const sa = Math.sin(al);
+    arr = Math.abs(sa)<1e-9 ? 1 : Math.pow(Math.sin(p.N*al)/(p.N*sa),2);
+  }
+  return {I:env*arr, env:env};
+}
+function drawNS(){
+  const p = nsParams(); const lam = S.lambda*1e-9; const X = p.X*1e-3;
+  if (p.N>1 && p.b>p.a){ $("nsB").value = p.a; p.b = p.a; }
+  $("nsNV").textContent = p.N; $("nsAV").textContent = p.a + " µm"; $("nsBV").textContent = p.b + " µm";
+  $("nsDV").textContent = fr(p.D,2) + " m"; $("nsXV").textContent = fr(p.X,1) + " mm";
+  $("nsA").disabled = p.N===1;
+  const col = wl2rgb(S.lambda);
+  const o = fit($("nsScreen")); const w=o.w, h=o.h;
+  const vals = new Float32Array(w), envs = new Float32Array(w);
+  const sub = 6;
+  for (let px=0; px<w; px++){
+    let sI=0, sE=0;
+    for (let k=0; k<sub; k++){
+      const x = ((px + (k+0.5)/sub)/w*2-1)*X;
+      const r = nsIntensity(x,p,lam); sI += r.I; sE += r.env;
+    }
+    vals[px]=sI/sub; envs[px]=sE/sub;
+  }
+  const img = o.ctx.createImageData(w,1);
+  for (let px=0; px<w; px++){
+    const v = Math.pow(vals[px],0.5);
+    img.data[px*4]=col[0]*v; img.data[px*4+1]=col[1]*v; img.data[px*4+2]=col[2]*v; img.data[px*4+3]=255;
+  }
+  const tmp = document.createElement("canvas"); tmp.width=w; tmp.height=1; tmp.getContext("2d").putImageData(img,0,0);
+  o.ctx.imageSmoothingEnabled=false; o.ctx.drawImage(tmp,0,0,w,h);
+
+  const q = fit($("nsPlot")); const ctx=q.ctx, W=q.w, H=q.h;
+  const ink=css("--ink"), muted=css("--muted"), line=css("--line"), acc=css("--accent");
+  ctx.clearRect(0,0,W,H);
+  const top=12, bot=H-26, sx=W/w;
+  ctx.strokeStyle=line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,bot); ctx.lineTo(W,bot); ctx.stroke();
+  ctx.fillStyle=muted; ctx.font="11px "+css("--ui"); ctx.textAlign="center";
+  const step = niceStep(p.X);
+  for (let t=-Math.floor(p.X/step)*step; t<=p.X+1e-9; t+=step){
+    const xx = (t/p.X+1)/2*W;
+    ctx.beginPath(); ctx.moveTo(xx,bot); ctx.lineTo(xx,bot+4); ctx.stroke();
+    if (xx>14 && xx<W-14) ctx.fillText(fr(t, step<1?1:0), xx, bot+16);
+  }
+  ctx.textAlign="right"; ctx.fillText("x (mm)", W-6, top+4); ctx.textAlign="left";
+  ctx.beginPath(); ctx.moveTo(0,bot);
+  for (let px=0; px<w; px++) ctx.lineTo(px*sx, bot-(bot-top)*vals[px]);
+  ctx.lineTo(W,bot); ctx.closePath();
+  ctx.globalAlpha=0.35; ctx.fillStyle=acc; ctx.fill(); ctx.globalAlpha=1;
+  ctx.beginPath();
+  for (let px=0; px<w; px++){ const y = bot-(bot-top)*vals[px]; if (px===0) ctx.moveTo(0,y); else ctx.lineTo(px*sx,y); }
+  ctx.strokeStyle=ink; ctx.lineWidth=1.5; ctx.stroke();
+  if (p.N>1){
+    ctx.beginPath(); ctx.setLineDash([5,4]);
+    for (let px=0; px<w; px++){ const y = bot-(bot-top)*envs[px]; if (px===0) ctx.moveTo(0,y); else ctx.lineTo(px*sx,y); }
+    ctx.strokeStyle=muted; ctx.lineWidth=1.2; ctx.stroke(); ctx.setLineDash([]);
+  }
+  let html = "";
+  const lobe = 2*lam*p.D/(p.b*1e-6)*1e3;
+  html += "<div>Largeur de la tache centrale de diffraction 2λD / b : <b>" + fr(lobe,2) + " mm</b></div>";
+  if (p.N>1){
+    const i = lam*p.D/(p.a*1e-6)*1e3;
+    html += "<div>Interfrange λD / a : <b>" + fr(i,3) + " mm</b></div>";
+    html += "<div>Franges brillantes dans la tache centrale : <b>" + (2*Math.ceil(p.a/p.b - 1e-6)-1) + "</b></div>";
+    const ratio = p.a/p.b;
+    if (Math.abs(ratio-Math.round(ratio))<0.02 && Math.round(ratio)>1) html += "<div>a / b = " + Math.round(ratio) + " : ordres manquants <b>" + Math.round(ratio) + ", " + 2*Math.round(ratio) + "…</b></div>";
+    if (p.N>2) html += "<div>Entre deux maxima principaux : <b>" + (p.N-1) + " zéros, " + (p.N-2) + " maxima secondaires</b></div>";
+  }
+  $("nsOut").innerHTML = html;
+}
+function niceStep(X){ const raw = X/4; const pw = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw/pw; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*pw; }
+["nsN","nsA","nsB","nsD","nsX"].forEach(function(id){ $(id).addEventListener("input", drawNS); });
+const presets = {
+  slit:{N:1,a:250,b:80,D:2,X:40},
+  young:{N:2,a:250,b:40,D:1,X:20},
+  grating:{N:12,a:100,b:25,D:1,X:25}
+};
+document.querySelectorAll("[data-preset]").forEach(function(b){
+  b.addEventListener("click", function(){
+    const p = presets[b.dataset.preset];
+    $("nsN").value=p.N; $("nsA").value=p.a; $("nsB").value=p.b; $("nsD").value=p.D; $("nsX").value=p.X; drawNS();
+  });
+});
+
+/* ---------- Rayleigh ---------- */
+function J1(x){
+  const ax = Math.abs(x); let ans;
+  if (ax < 8){
+    const y = x*x;
+    const a1 = x*(72362614232.0+y*(-7895059235.0+y*(242396853.1+y*(-2972611.439+y*(15704.48260+y*(-30.16036606))))));
+    const a2 = 144725228442.0+y*(2300535178.0+y*(18583304.74+y*(99447.43394+y*(376.9991397+y))));
+    ans = a1/a2;
+  } else {
+    const z = 8/ax, y = z*z, xx = ax-2.356194491;
+    const a1 = 1.0+y*(0.183105e-2+y*(-0.3516396496e-4+y*(0.2457520174e-5+y*(-0.240337019e-6))));
+    const a2 = 0.04687499995+y*(-0.2002690873e-3+y*(0.8449199096e-5+y*(-0.88228987e-6+y*0.105787412e-6)));
+    ans = Math.sqrt(0.636619772/ax)*(Math.cos(xx)*a1-z*Math.sin(xx)*a2);
+    if (x < 0) ans = -ans;
+  }
+  return ans;
+}
+function airy(u){ if (Math.abs(u)<1e-6) return 1; const v = 2*J1(u)/u; return v*v; }
+const U1 = 3.8317;
+function drawRay(){
+  const s = +$("raySep").value; $("raySepV").textContent = fr(s,2);
+  const u0 = s*U1/2, U = 16;
+  const col = wl2rgb(S.lambda);
+  const o = fit($("rayImg")); const w=o.w, h=o.h;
+  const img = o.ctx.createImageData(w,h);
+  const scale = 2*U/w;
+  let peak = 0;
+  for (let px=0; px<w; px++){ const u=(px-w/2)*scale; const v=airy(u-u0)+airy(u+u0); if (v>peak) peak=v; }
+  for (let py=0; py<h; py++){
+    const vy = (py-h/2)*scale;
+    for (let px=0; px<w; px++){
+      const ux = (px-w/2)*scale;
+      const r1 = Math.hypot(ux-u0, vy), r2 = Math.hypot(ux+u0, vy);
+      const v = Math.pow((airy(r1)+airy(r2))/peak, 0.6);
+      const i = (py*w+px)*4;
+      img.data[i]=col[0]*v; img.data[i+1]=col[1]*v; img.data[i+2]=col[2]*v; img.data[i+3]=255;
+    }
+  }
+  const tmp = document.createElement("canvas"); tmp.width=w; tmp.height=h; tmp.getContext("2d").putImageData(img,0,0);
+  o.ctx.drawImage(tmp,0,0,w,h);
+
+  const q = fit($("rayPlot")); const ctx=q.ctx, W=q.w, H=q.h;
+  const ink=css("--ink"), muted=css("--muted"), line=css("--line"), acc=css("--accent");
+  ctx.clearRect(0,0,W,H);
+  const top=10, bot=H-10;
+  ctx.strokeStyle=line; ctx.beginPath(); ctx.moveTo(0,bot); ctx.lineTo(W,bot); ctx.stroke();
+  const pts = [];
+  for (let px=0; px<=W; px++){ const u=(px-W/2)*2*U/W; pts.push([airy(u-u0), airy(u+u0)]); }
+  function tr(fn, style, width, dash){
+    ctx.beginPath(); ctx.setLineDash(dash||[]);
+    pts.forEach(function(p,px){ const y = bot-(bot-top)*fn(p)/peak; if (px===0) ctx.moveTo(px,y); else ctx.lineTo(px,y); });
+    ctx.strokeStyle=style; ctx.lineWidth=width; ctx.stroke(); ctx.setLineDash([]);
+  }
+  tr(function(p){return p[0];}, muted, 1.2, [5,4]);
+  tr(function(p){return p[1];}, muted, 1.2, [5,4]);
+  tr(function(p){return p[0]+p[1];}, ink, 4);
+  tr(function(p){return p[0]+p[1];}, acc, 2);
+  const mid = 2*airy(u0);
+  const dip = mid/peak;
+  let verdict = s >= 0.999 ? "Séparés selon Rayleigh" : "Non séparés selon Rayleigh";
+  $("rayOut").innerHTML = "<div>Intensité au milieu : <b>" + fr(Math.min(dip,1)*100,0) + " %</b> du maximum</div><div><b>" + verdict + "</b></div>";
+}
+$("raySep").addEventListener("input", drawRay);
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Ondes et chemin optique", r:[
+  ["λ = λ0 / n","La fréquence est conservée d'un milieu à l'autre ; vitesse et longueur d'onde sont divisées par n."],
+  ["L = n × d","Chemin optique (somme des n × d le long du trajet)."],
+  ["Δφ = 2π × δ / λ0","δ : différence de marche, en chemin optique."],
+  ["δ → δ + λ0 / 2","Réflexion sur un milieu plus réfringent (déphasage de π)."],
+  ["I = K × <E²>","Les détecteurs mesurent une moyenne temporelle, jamais E directement."]]},
+ {g:"Interférences à deux ondes", r:[
+  ["I = I1 + I2 + 2 × √(I1 × I2) × cos(Δφ)","Ondes cohérentes, polarisations non orthogonales."],
+  ["I = I1 + I2","Ondes incohérentes : le terme d'interférence se moyenne à zéro."],
+  ["C = (Imax − Imin) / (Imax + Imin) = 2 √(I1 I2) / (I1 + I2)","Contraste ; C = 1 si I1 = I2."],
+  ["Lc ≈ λ0² / Δλ","Longueur de cohérence ; franges visibles si |δ| < Lc."]]},
+ {g:"Fentes d'Young", r:[
+  ["δ = a × x / D","D très grand devant a et x."],
+  ["i = λ × D / a","Interfrange ; divisé par n si le dispositif est dans un milieu d'indice n."],
+  ["Δx = (n − 1) × e × D / a","Décalage dû à une lame devant une fente, vers la fente couverte."]]},
+ {g:"Lames minces et Michelson", r:[
+  ["δ = 2 × n × e × cos(r)  (+ λ0 / 2 éventuel)","Lame mince en réflexion ; r angle de réfraction dans la lame."],
+  ["δ = 2 × e × cos(i)","Michelson en lame d'air : anneaux d'égale inclinaison, localisés à l'infini."],
+  ["δ ≈ 2 × e(x)","Michelson en coin d'air : franges d'égale épaisseur, localisées sur les miroirs."],
+  ["Δe = λ0 / 2 par anneau","Un anneau qui apparaît ou disparaît au centre."],
+  ["e = λ0 / (4 × n),  n idéal ≈ √(n_verre)","Couche antireflet en incidence normale."]]},
+ {g:"Diffraction", r:[
+  ["I = I0 × sinc²(π × b × sin θ / λ)","Fente de largeur b, Fraunhofer ; sinc(u) = sin(u) / u."],
+  ["b × sin θ = m × λ,  m ≠ 0","Zéros de la figure d'une fente."],
+  ["demi-largeur ≈ λ / b ;  largeur sur écran ≈ 2 λ D / b","Lobe central, petits angles."],
+  ["sin θ = 1,22 × λ / D","Premier zéro de la tache d'Airy (ouverture circulaire)."],
+  ["distance ≫ b² / λ","Condition de Fraunhofer en espace libre."]]},
+ {g:"Réseaux", r:[
+  ["a × (sin θm − sin θi) = m × λ","Formule des réseaux en transmission ; a pas du réseau."],
+  ["I = I0 × sinc²(β) × [sin(Nα) / sin(α)]²","α = π a sin θ / λ,  β = π b sin θ / λ."],
+  ["R = λ / Δλ = m × N","Pouvoir de résolution."],
+  ["m × b / a entier non nul","Ordre manquant."],
+  ["2 × d × sin θ = n × λ","Loi de Bragg, θ angle rasant."]]},
+ {g:"Pouvoir séparateur", r:[
+  ["Δθ min = 1,22 × λ / D","Critère de Rayleigh, pupille circulaire."],
+  ["d min = 0,61 × λ / ON","Microscope ; ON = n × sin(u)."]]},
+ {g:"Polarisation", r:[
+  ["I = I0 × cos²(θ)","Loi de Malus."],
+  ["I = I0 / 2","Lumière naturelle à travers un polariseur idéal."],
+  ["tan θB = n2 / n1","Angle de Brewster : réfléchi polarisé perpendiculairement au plan d'incidence."],
+  ["rotation de 2α","Lame demi-onde sur une polarisation rectiligne à α de son axe."]]}
+];
+(function(){
+  const box = $("fList"); let html = "";
+  FORM.forEach(function(g){
+    html += '<div class="fgroup"><h3>'+g.g+'</h3>';
+    g.r.forEach(function(r){ html += '<div class="frow"><div class="fx">'+r[0].replace(/</g,"&lt;").replace(/>/g,"&gt;")+'</div><div class="fd">'+r[1]+'</div></div>'; });
+    html += '</div>';
+  });
+  box.innerHTML = html;
+  $("hideF").addEventListener("change", function(){
+    box.classList.toggle("hidef", this.checked);
+    box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); });
+  });
+  box.addEventListener("click", function(e){ const f = e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes mémoire ---------- */
+const CARDS = [
+ ["o1","Ondes","Comment varie la longueur d'onde quand la lumière passe du vide à un milieu d'indice n ?","λ = λ0 / n. La fréquence ne change pas ; c'est la vitesse (c / n), donc la longueur d'onde, qui change."],
+ ["o2","Ondes","Définition du chemin optique ?","L = n × d, ou la somme des n × d le long du trajet. C'est la distance que la lumière parcourrait dans le vide pendant la même durée."],
+ ["o3","Ondes","Lien entre différence de marche et déphasage ?","Δφ = 2π × δ / λ0, avec δ exprimée en chemin optique."],
+ ["o4","Ondes","Que se passe-t-il à la réflexion sur un milieu plus réfringent ?","Déphasage de π, soit λ0 / 2 ajouté à la différence de marche. Rien sur un milieu moins réfringent."],
+ ["i1","Interférences","Formule de Fresnel pour deux ondes cohérentes ?","I = I1 + I2 + 2 × √(I1 × I2) × cos(Δφ)."],
+ ["i2","Interférences","Conditions pour que deux ondes interfèrent ?","Même fréquence, déphasage stable dans le temps (en pratique issues d'une même source), polarisations non orthogonales, |δ| inférieure à la longueur de cohérence."],
+ ["i3","Interférences","Expression du contraste et condition pour qu'il vaille 1 ?","C = (Imax − Imin) / (Imax + Imin) = 2 √(I1 I2) / (I1 + I2). C = 1 si I1 = I2."],
+ ["i4","Interférences","Longueur de cohérence temporelle ?","Lc ≈ λ0² / Δλ. Au-delà de |δ| > Lc, les franges disparaissent."],
+ ["y1","Interférences","Différence de marche aux fentes d'Young ?","δ = a × x / D, avec a l'écart entre fentes, x la position sur l'écran, D la distance fentes-écran (D ≫ a, x)."],
+ ["y2","Interférences","Interfrange des fentes d'Young ?","i = λ × D / a. Dans un milieu d'indice n : i = λ0 × D / (n × a)."],
+ ["y3","Interférences","Effet d'une lame (n, e) devant une seule fente d'Young ?","δ augmente de (n − 1) × e : la figure se décale de (n − 1) × e × D / a vers la fente couverte ; l'interfrange est inchangé."],
+ ["l1","Interférences","Différence de marche d'une lame mince en réflexion ?","δ = 2 n e cos(r), plus λ0 / 2 si une seule des deux réflexions a lieu sur un milieu plus réfringent."],
+ ["l2","Interférences","Michelson en lame d'air : franges et localisation ?","Anneaux d'égale inclinaison, localisés à l'infini. δ = 2 e cos(i)."],
+ ["l3","Interférences","Michelson en coin d'air : franges et localisation ?","Franges rectilignes d'égale épaisseur, localisées au voisinage des miroirs. δ ≈ 2 e(x)."],
+ ["l4","Interférences","Épaisseur d'une couche antireflet ?","e = λ0 / (4 n), avec idéalement n ≈ √(n_substrat)."],
+ ["l5","Interférences","Variation d'épaisseur quand un anneau disparaît au centre d'un Michelson ?","Δe = λ0 / 2 (la lumière fait l'aller-retour, δ varie de λ0)."],
+ ["d1","Diffraction","Principe de Huygens-Fresnel ?","Chaque point d'une surface d'onde est une source secondaire ; ces sources sont cohérentes et leurs ondes interfèrent."],
+ ["d2","Diffraction","Zéros de diffraction d'une fente de largeur b ?","b × sin θ = m × λ, m entier non nul. Demi-largeur angulaire du lobe central ≈ λ / b."],
+ ["d3","Diffraction","Intensité diffractée par une fente (Fraunhofer) ?","I = I0 × sinc²(π b sin θ / λ), sinc(u) = sin(u) / u."],
+ ["d4","Diffraction","Premier zéro de la tache d'Airy ?","sin θ = 1,22 × λ / D pour une ouverture circulaire de diamètre D."],
+ ["d5","Diffraction","Fraunhofer ou Fresnel : quelle différence ?","Fraunhofer : à l'infini ou au foyer d'une lentille (distance ≫ b² / λ), la figure ne dépend que de la direction. Fresnel : distance finie, la figure dépend de la distance."],
+ ["r1","Réseaux","Formule des réseaux en transmission ?","a × (sin θm − sin θi) = m × λ, a étant le pas du réseau."],
+ ["r2","Réseaux","Pouvoir de résolution d'un réseau ?","R = λ / Δλ = m × N (ordre × nombre de traits éclairés)."],
+ ["r3","Réseaux","Qu'est-ce qu'un ordre manquant, et quand apparaît-il ?","Un maximum principal qui tombe sur un zéro de l'enveloppe de diffraction : quand m × b / a est un entier non nul. Par exemple a = 3b supprime les ordres 3, 6, 9."],
+ ["r4","Réseaux","Loi de Bragg ?","2 d sin θ = n λ, θ angle rasant entre le faisceau et les plans réticulaires, d leur espacement."],
+ ["r5","Réseaux","Combien de zéros et de maxima secondaires entre deux maxima principaux d'un réseau de N fentes ?","N − 1 zéros et N − 2 maxima secondaires."],
+ ["s1","Résolution","Critère de Rayleigh ?","Deux points sont séparés si le maximum de l'un tombe au-delà du premier zéro de l'autre : Δθ min = 1,22 λ / D."],
+ ["p1","Polarisation","Loi de Malus ?","I = I0 × cos²(θ), θ angle entre la polarisation incidente et l'axe du polariseur."],
+ ["p2","Polarisation","Angle de Brewster ?","tan θB = n2 / n1 ; le rayon réfléchi est polarisé rectilignement, perpendiculairement au plan d'incidence."],
+ ["p3","Polarisation","Lumière naturelle à travers un polariseur idéal ?","Elle ressort polarisée rectilignement, avec une intensité I0 / 2."]
+];
+let fcCur = null, fcFlipped = false;
+(function(){
+  const themes = ["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;}));
+  $("fcTheme").innerHTML = themes.map(function(t){ return '<option>'+t+'</option>'; }).join("");
+  $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); });
+})();
+function poolCards(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous" || c[1]===t; }); }
+function weight(id){ const b = S.cards[id]; if (b===undefined) return 3; return [6,3,2][b] || 0.5; }
+function pickCard(){
+  const pool = poolCards(); const cand = pool.length>1 ? pool.filter(function(c){ return !fcCur || c[0]!==fcCur[0]; }) : pool;
+  let tot = 0; cand.forEach(function(c){ tot += weight(c[0]); });
+  let r = Math.random()*tot;
+  for (const c of cand){ r -= weight(c[0]); if (r<=0) return c; }
+  return cand[cand.length-1];
+}
+function renderCard(){
+  if (!fcCur || poolCards().indexOf(fcCur)<0) fcCur = pickCard();
+  fcFlipped = false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent = fcCur[1]; $("fcQ").textContent = fcCur[2]; $("fcA").textContent = fcCur[3];
+  $("fcYes").disabled = true; $("fcNo").disabled = true;
+  renderBoxes();
+}
+function renderBoxes(){
+  const pool = poolCards(); let n=0,f=0,c=0,a=0;
+  pool.forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML = '<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped = !fcFlipped; $("fc").classList.toggle("flipped", fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click", flip);
+$("fc").addEventListener("keydown", function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click", flip);
+$("fcYes").addEventListener("click", function(){ const id=fcCur[0]; S.cards[id] = Math.min(3,(S.cards[id]||0)+1); save(); fcCur = pickCard(); renderCard(); });
+$("fcNo").addEventListener("click", function(){ S.cards[fcCur[0]] = 0; save(); fcCur = pickCard(); renderCard(); });
+$("fcReset").addEventListener("click", function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards = {}; save(); fcCur=null; renderCard(); } });
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1", axis:"Optique ondulatoire", pts:0.5, unit:"nm", ans:633, tol:0.02,
+  q:"Un interféromètre à deux bras est éclairé par un laser à 633 nm. On insère, sur un seul bras et en incidence normale, une lame de verre d'indice 1,50 traversée une seule fois. Quelle épaisseur minimale doit avoir la lame pour que les zones brillantes deviennent sombres et inversement ?",
+  c:"<p>La lame ne s'ajoute pas au trajet : elle remplace une épaisseur e d'air par une épaisseur e de verre. Le chemin optique augmente donc de (n − 1) × e, et non de n × e.</p><p>Inverser l'état d'interférence revient à ajouter un déphasage de π, soit une différence de marche de λ0 / 2 :</p><div class='fblock'>(n − 1) × e = λ0 / 2<br>e = 633 / (2 × 0,50) = 633 nm</div><p>Erreur fréquente : écrire n × e = λ0 / 2 donne 211 nm.</p>"},
+ {id:"e2", axis:"Interférences", pts:1, unit:"nm", ans:630, tol:0.02,
+  q:"Dans une expérience de fentes d'Young, les fentes sont séparées de 1,40 mm et l'écran est à 2,00 m. On compte 11 franges brillantes consécutives, la première et la dernière étant distantes de 9,0 mm. Quelle est la longueur d'onde de la source ?",
+  c:"<p>11 franges brillantes consécutives délimitent 10 interfranges, pas 11 :</p><div class='fblock'>i = 9,0 / 10 = 0,90 mm</div><p>L'interfrange vaut i = λ × D / a, d'où :</p><div class='fblock'>λ = i × a / D = 0,90×10^-3 × 1,40×10^-3 / 2,00 = 6,30×10^-7 m = 630 nm</div><p>Erreur fréquente : diviser par 11 donne 573 nm.</p>"},
+ {id:"e3", axis:"Interférences", pts:1, unit:"mm", ans:11.6, tol:0.02,
+  q:"Fentes d'Young séparées de 0,50 mm, écran à 1,00 m, lumière à 600 nm. On recouvre l'une des fentes d'une feuille de mica d'indice 1,58 et d'épaisseur 10,0 µm. De combien se déplace la frange centrale sur l'écran ?",
+  c:"<p>La frange centrale correspond à δ = 0. La lame ajoute (n − 1) × e au chemin optique du côté de la fente couverte. Sans lame, δ = a × x / D ; avec lame, il faut compenser :</p><div class='fblock'>a × Δx / D = (n − 1) × e<br>Δx = (n − 1) × e × D / a = 0,58 × 10,0×10^-6 × 1,00 / 0,50×10^-3 = 1,16×10^-2 m = 11,6 mm</div><p>Le déplacement se fait du côté de la fente recouverte. Cela représente (n − 1) × e / λ ≈ 9,7 franges défilées, ce qui montre que λ n'intervient pas dans le décalage lui-même mais seulement dans le nombre de franges.</p>"},
+ {id:"e4", axis:"Interférences", pts:1, unit:"nm", ans:99.6, tol:0.02,
+  q:"On dépose une couche de fluorure de magnésium (n = 1,38) sur un verre d'indice 1,52 pour réduire sa réflexion à 550 nm en incidence normale. Quelle est l'épaisseur minimale non nulle de la couche ?",
+  c:"<p>Deux réflexions interfèrent : air vers couche (1 vers 1,38) et couche vers verre (1,38 vers 1,52). Les deux ont lieu sur un milieu plus réfringent : chacune apporte λ0 / 2 et ces termes se compensent. Il reste δ = 2 n e.</p><p>Réduire la réflexion demande une interférence destructive :</p><div class='fblock'>2 × n × e = λ0 / 2<br>e = λ0 / (4 × n) = 550 / (4 × 1,38) = 99,6 nm</div><p>Erreur fréquente : ajouter un seul λ0 / 2 donne e = λ0 / (2n) = 199 nm, épaisseur qui renforce au contraire la réflexion. L'extinction n'est pas totale ici, car l'indice idéal serait √1,52 ≈ 1,23.</p>"},
+ {id:"e5", axis:"Interférences", pts:1, unit:"µm", ans:58.9, tol:0.02,
+  q:"Un Michelson réglé en lame d'air est éclairé par une lampe au sodium (589 nm). En translatant un miroir, on compte 200 anneaux qui disparaissent au centre de la figure. De combien le miroir s'est-il déplacé ?",
+  c:"<p>Au centre, i = 0 et δ = 2e. Un anneau qui disparaît correspond à une diminution de l'ordre au centre d'une unité, donc à une variation de δ de λ0 :</p><div class='fblock'>Δδ = 2 × Δe = N × λ0<br>Δe = N × λ0 / 2 = 200 × 589 / 2 = 58 900 nm = 58,9 µm</div><p>Les anneaux disparaissent : e diminue, le miroir se rapproche du contact optique. Erreur fréquente : oublier l'aller-retour donne 117,8 µm.</p>"},
+ {id:"e6", axis:"Interférences", pts:1, unit:"µm", ans:18, tol:0.06,
+  q:"Une lampe blanche filtrée par un filtre interférentiel centré sur 600 nm, de largeur spectrale 10 nm, éclaire un Michelson en lame d'air. En partant du contact optique, à partir de quel déplacement du miroir mobile les anneaux se brouillent-ils (ordre de grandeur) ?",
+  c:"<p>Les franges disparaissent quand la différence de marche dépasse la longueur de cohérence de la source :</p><div class='fblock'>Lc ≈ λ0² / Δλ = (600×10^-9)² / 10×10^-9 = 3,6×10^-5 m = 36 µm</div><p>Mais la différence de marche au centre d'un Michelson vaut δ = 2e :</p><div class='fblock'>2 × e ≈ Lc   donc   e ≈ 18 µm</div><p>Erreur fréquente : répondre 36 µm en confondant déplacement du miroir et différence de marche.</p>"},
+ {id:"e7", axis:"Diffraction & Réseaux", pts:1, unit:"µm", ans:500, tol:0.02,
+  q:"Un laser à 633 nm éclaire une fente fine. Sur un écran situé à 3,00 m, la tache centrale mesure 7,6 mm de large, d'un zéro à l'autre. Quelle est la largeur de la fente ?",
+  c:"<p>Les premiers zéros de part et d'autre du centre sont à b × sin θ = ± λ. Aux petits angles, leur position sur l'écran est x = ± λ D / b, donc la largeur totale de la tache vaut :</p><div class='fblock'>L = 2 × λ × D / b<br>b = 2 × λ × D / L = 2 × 633×10^-9 × 3,00 / 7,6×10^-3 = 5,0×10^-4 m = 500 µm</div><p>Erreur fréquente : prendre λ D / b pour la largeur totale donne 250 µm.</p>"},
+ {id:"e8", axis:"Diffraction & Réseaux", pts:1.5, unit:"mm", ans:0.82, tol:0.03,
+  q:"On veut séparer le doublet du sodium (589,0 nm et 589,6 nm) avec un réseau de 600 traits par mm en incidence normale, en utilisant l'ordre le plus élevé disponible. Quelle largeur minimale du réseau faut-il éclairer ?",
+  c:"<p>Première étape, trouver l'ordre maximal. Le pas vaut a = 1 / 600 mm = 1,667 µm, et |sin θ| ≤ 1 impose :</p><div class='fblock'>m ≤ a / λ = 1,667 / 0,589 = 2,83   donc   m max = 2</div><p>Deuxième étape, le pouvoir de résolution nécessaire :</p><div class='fblock'>R = λ / Δλ = 589,3 / 0,6 ≈ 982<br>R = m × N   donc   N = 982 / 2 ≈ 491 traits</div><p>Troisième étape, la largeur éclairée :</p><div class='fblock'>largeur = N × a = 491 / 600 mm ≈ 0,82 mm</div><p>Erreur fréquente : utiliser l'ordre 1 donne 1,64 mm.</p>"},
+ {id:"e9", axis:"Diffraction & Réseaux", pts:1, unit:"km", ans:9.7, tol:0.03,
+  q:"De nuit, la pupille mesure 5,0 mm. Les deux phares d'une voiture sont distants de 1,3 m. En ne tenant compte que de la diffraction à 550 nm, à quelle distance maximale peut-on encore distinguer les deux phares ?",
+  c:"<p>La pupille est une ouverture circulaire : la limite de séparation est donnée par le critère de Rayleigh.</p><div class='fblock'>Δθ min = 1,22 × λ / D = 1,22 × 550×10^-9 / 5,0×10^-3 = 1,34×10^-4 rad</div><p>Les phares, séparés de s, sont vus sous l'angle s / L :</p><div class='fblock'>L max = s / Δθ min = 1,3 / 1,34×10^-4 ≈ 9,7×10^3 m = 9,7 km</div><p>En réalité, la structure de la rétine et la turbulence atmosphérique réduisent cette distance.</p>"},
+ {id:"e10", axis:"Polarisation", pts:1, unit:"W/m²", ans:7.5, tol:0.02,
+  q:"Une lumière naturelle d'éclairement 80 W/m² traverse trois polariseurs idéaux successifs, dont les axes font respectivement 0°, 30° et 90° avec la verticale. Quel éclairement sort du troisième ?",
+  c:"<p>Le premier polariseur reçoit une lumière non polarisée : il en transmet la moitié, polarisée selon 0°.</p><div class='fblock'>I1 = 80 / 2 = 40 W/m²</div><p>Le deuxième est à 30° de la polarisation incidente (loi de Malus) :</p><div class='fblock'>I2 = 40 × cos²(30°) = 40 × 0,75 = 30 W/m²</div><p>La lumière est maintenant polarisée à 30° ; le troisième axe est à 90°, soit 60° d'écart :</p><div class='fblock'>I3 = 30 × cos²(60°) = 30 × 0,25 = 7,5 W/m²</div><p>Erreur fréquente : calculer l'angle du troisième par rapport au premier (90°) et trouver 0.</p>"}
+];
+const GF = {full:1, half:0.5, zero:0};
+function renderEx(){
+  $("exList").innerHTML = EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div>'+
+      '<div class="prose"><p>'+e.q+'</p></div>'+
+      '<div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div>'+
+      '<div class="verdict" role="status"></div>'+
+      '<div class="corr prose"><span class="part-t">Correction</span>'+e.c+
+      '<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e = EX.find(function(x){ return x.id===box.dataset.id; });
+    const inp = box.querySelector("input");
+    const st = S.ex[e.id];
+    if (st){ inp.value = st.v; check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click", function(){ check(box,e,true); });
+    inp.addEventListener("keydown", function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click", function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw = box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".");
+  const v = parseFloat(raw); const out = box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple 12,5."; return; }
+  const ok = Math.abs(v-e.ans)/Math.abs(e.ans) <= e.tol;
+  out.className = "verdict " + (ok?"ok":"no");
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction."
+                       : "Hors tolérance : la valeur attendue est " + fr(e.ans, e.ans%1?(String(e.ans).split(".")[1].length):0) + " " + e.unit + ". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id] = S.ex[e.id] || {}; S.ex[e.id].v = box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){
+  box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.g===g ? "true":"false"); });
+  S.ex[e.id] = S.ex[e.id] || {}; S.ex[e.id].g = g; if (user) save(); updScore();
+}
+function updScore(){
+  let s = 0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st && st.g) s += e.pts*GF[st.g]; });
+  $("exScore").textContent = fr(s, s%1?1:0) + " / 10";
+}
+$("exReset").addEventListener("click", function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex = {}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click", function(){
+  const axes = {};
+  EX.forEach(function(e){ axes[e.axis] = axes[e.axis] || {got:0,max:0}; axes[e.axis].max += e.pts; const st=S.ex[e.id]; if (st && st.g) axes[e.axis].got += e.pts*GF[st.g]; });
+  const scores = {}; Object.keys(axes).forEach(function(a){ scores[a] = Math.round(axes[a].got/axes[a].max*100); });
+  const d = new Date(); const date = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value = JSON.stringify({date:date, subject:"optique", scores:scores}, null, 2);
+  $("jsonZone").style.display = "block";
+});
+$("jsonCopy").addEventListener("click", function(){
+  const t = $("jsonOut"); t.select();
+  if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(function(){ $("jsonCopy").textContent="Copié"; }, function(){ document.execCommand("copy"); $("jsonCopy").textContent="Copié"; });
+  else { document.execCommand("copy"); $("jsonCopy").textContent="Copié"; }
+  setTimeout(function(){ $("jsonCopy").textContent="Copier"; }, 1500);
+});
+
+/* ---------- démarrage ---------- */
+renderEx();
+setLambda(S.lambda);
+showTab(S.tab || "concepts");
+let rT = null;
+window.addEventListener("resize", function(){ clearTimeout(rT); rT = setTimeout(function(){ drawHero(); if (S.tab==="labo"){ drawNS(); drawRay(); drawSup(); } }, 120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){ if (S.tab==="labo"){ drawNS(); drawRay(); drawSup(); } });
+})();
+</script>
+</body>
+</html>

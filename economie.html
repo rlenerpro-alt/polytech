@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Économie – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF1; --surface:#F8F9FA; --ink:#1A2230; --muted:#5A6576; --line:#CBD2DB; --soft:#DFE4EA;
+  --odd:#2F6FB3; --even:#C2571A; --ca:#6B4FA0; --cb:#B07A0A; --pos:#1F8A70; --neg:#B03A5B; --on:#1F8A70; --off:#9AA5B4; --ray:#D9480F; --img:#2F6FB3; --medium:#2F6FB3;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+    --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --on:#4CC3A0; --off:#5B6678; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+  --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --on:#4CC3A0; --off:#5B6678; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+canvas{display:block;width:100%;max-width:100%}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+header.hero{padding:40px 0 18px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.hero .heroplot{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.hero-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-row label{font-weight:600}
+.hero-row input{flex:1;min-width:200px;accent-color:var(--ink)}
+.hero-row .v{font-family:var(--mono);min-width:12ch}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:66ch}
+
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept.focus{border:2px solid var(--even)}
+.focus-tag{display:inline-block;font-size:.82rem;font-weight:600;color:var(--even);border:1px solid var(--even);border-radius:4px;padding:1px 8px;margin-bottom:10px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.92rem;background:var(--soft);padding:1px 6px;border-radius:4px}
+.fblock{font-family:var(--mono);font-size:.93rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.trap b{display:block;margin-bottom:2px;color:var(--even)}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Widgets */
+.wg{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0 18px;background:var(--bg);font-family:var(--ui)}
+.wg h4{margin:0 0 4px;font-size:1.02rem;font-weight:600}
+.wg .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem;max-width:66ch}
+.cv{background:var(--surface);border-radius:6px;margin-top:8px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:500;margin-bottom:4px;gap:8px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.ctl select{width:100%}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;font-size:.9rem}
+.readout b{font-family:var(--mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.82rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict-ok{color:var(--good);font-weight:600} .verdict-no{color:var(--bad);font-weight:600}
+.steps{margin:10px 0 0;padding:0;list-style:none;font-size:.92rem}
+.steps li{padding:6px 0;border-top:1px solid var(--line)}
+.steps li b{font-family:var(--mono);font-weight:500;margin-right:6px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.93rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+.cardzone{display:flex;flex-direction:column;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.15rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.02rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.ex{padding:18px 14px}.wg{padding:14px 12px}}
+
+.hero .stage{margin-top:22px;background:#0b0e14;border-radius:8px;overflow:hidden}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.presets .btn{padding:6px 12px;font-size:.9rem}
+
+/* tables de vérité */
+.ttwrap{overflow-x:auto;margin-top:10px}
+table.tt{border-collapse:collapse;font-family:var(--mono);font-size:.88rem;background:var(--surface);border-radius:8px}
+table.tt th{font-family:var(--ui);font-weight:600;font-size:.82rem;padding:6px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+table.tt td{padding:4px 10px;text-align:center;border-bottom:1px solid var(--soft)}
+table.tt .sep{border-left:2px solid var(--line)}
+table.tt .v1{color:var(--on);font-weight:600} table.tt .v0{color:var(--muted)}
+table.tt tr.cur td{background:var(--soft)}
+table.tt tr.bad td{background:color-mix(in srgb, var(--bad) 14%, transparent)}
+table.tt td.click{cursor:pointer} table.tt td.click:hover{outline:1px solid var(--ink)}
+table.tt .num{color:var(--muted)}
+.ov{display:inline-block;border-top:1.5px solid currentColor;padding-top:1px;line-height:1.1}
+.expr{font-family:var(--mono);font-size:.95rem}
+/* bits */
+.bits{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end;margin:8px 0}
+.bitcol{display:flex;flex-direction:column;align-items:center;gap:3px}
+.bitcol small{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+button.bit{width:32px;height:36px;border-radius:6px;border:1px solid var(--line);background:var(--surface);font-family:var(--mono);font-size:1rem;cursor:pointer;padding:0}
+button.bit.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button.bit.fs{box-shadow:inset 0 -4px 0 var(--neg)} button.bit.fe{box-shadow:inset 0 -4px 0 var(--odd)} button.bit.fm{box-shadow:inset 0 -4px 0 var(--pos)}
+button.bit.nib{margin-left:8px}
+.bits.small{gap:2px}
+.bits.small button.bit{width:20px;height:28px;font-size:.8rem}
+.bits.small button.bit.nib{margin-left:6px}
+.bits.small .bitcol small{font-size:.6rem}
+/* interrupteurs */
+.sws{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button.sw{font-family:var(--mono);font-size:.95rem;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;min-width:74px}
+button.sw.on{border-color:var(--on);color:var(--on);box-shadow:inset 0 0 0 1px var(--on)}
+input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:100%}
+.gates{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.gcard .t{font-size:.84rem;font-weight:600;display:flex;justify-content:space-between}
+.gcard .t b{font-family:var(--mono);font-size:1rem}
+.gcard .t b.v1{color:var(--on)} .gcard .t b.v0{color:var(--muted)}
+.gcard svg{width:100%;height:auto;display:block}
+.gcard .e{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.svgbox{background:var(--surface);border-radius:8px;margin-top:8px;padding:6px}
+.svgbox svg{width:100%;height:auto;display:block}
+.colrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:700px){.colrow{grid-template-columns:1fr}}
+.add{font-family:var(--mono);font-size:1rem;line-height:1.5;background:var(--surface);border-radius:8px;padding:10px 14px;display:inline-block}
+.add td{padding:0 5px;text-align:center}
+.add .cy{color:var(--even);font-size:.8rem}
+.add .res td{border-top:2px solid var(--ink)}
+.add .lost{color:var(--muted);text-decoration:line-through}
+.hero .stage{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.hero .reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.hero .reads div{background:var(--bg);border-radius:8px;padding:8px 12px;font-size:.85rem;color:var(--muted)}
+.hero .reads b{display:block;font-family:var(--mono);font-size:1.3rem;color:var(--ink);font-weight:500}
+
+/* économie */
+.gtable{width:100%;border-collapse:collapse;font-size:.9rem;background:var(--surface);border-radius:8px}
+.gtable th{text-align:left;font-weight:600;font-size:.82rem;padding:8px 10px;border-bottom:2px solid var(--line)}
+.gtable td{padding:6px 10px;border-bottom:1px solid var(--soft);vertical-align:top}
+.gtable td.num,.gtable th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.gtable select{width:100%;min-width:150px}
+.gtable tr.ok td{background:color-mix(in srgb, var(--good) 12%, transparent)}
+.gtable tr.ko td{background:color-mix(in srgb, var(--bad) 12%, transparent)}
+.gtable .why2{display:block;font-size:.82rem;color:var(--muted);margin-top:3px}
+.gtable input[type=number]{width:90px;font-family:var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:4px 6px;text-align:right}
+.gtable tr.tot td{border-top:2px solid var(--ink);font-weight:600}
+.tline{list-style:none;margin:10px 0 0;padding:0 0 0 18px;border-left:2px solid var(--line)}
+.tline li{position:relative;padding:6px 0 6px 10px}
+.tline li::before{content:"";position:absolute;left:-25px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--muted)}
+.tline li.k-pensee::before{border-color:var(--odd)} .tline li.k-histoire::before{border-color:var(--even)} .tline li.k-nobel::before{border-color:var(--pos)}
+.tline button{background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;color:inherit;width:100%}
+.tline .yr{font-family:var(--mono);font-weight:500;margin-right:8px}
+.tline .det{display:none;font-size:.9rem;color:var(--muted);margin-top:4px;font-family:var(--text)}
+.tline li.open .det{display:block}
+.tline li.open::before{background:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.88rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.card2{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:.92rem}
+.card2 h5{margin:0 0 6px;font-size:1rem}
+.card2 p{margin:4px 0}
+.stbar{position:relative;height:64px;margin:14px 6px 4px}
+.stbar .axis{position:absolute;left:0;right:0;top:30px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--soft),var(--muted))}
+.stbar button{position:absolute;top:0;transform:translateX(-50%);border:1px solid var(--line);background:var(--surface);border-radius:6px;font-size:.78rem;padding:2px 6px;cursor:pointer;white-space:nowrap}
+.stbar button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.stbar button.lo{top:42px}
+.stbar .ends{position:absolute;left:0;right:0;top:66px;display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)}
+.vbar{display:flex;height:34px;border-radius:6px;overflow:hidden;margin-top:10px;font-size:.75rem;font-family:var(--mono)}
+.vbar div{display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden;white-space:nowrap;min-width:0}
+.svgbox.wide{overflow-x:auto}
+.svgbox.wide svg{min-width:560px}
+.yrs{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px}
+.yrs label{font-size:.8rem;color:var(--muted);display:block}
+.yrs input{width:100%;font-family:var(--mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Économie : gérer la rareté</h1>
+  <p class="sub">Besoins illimités, ressources limitées : tout le cours part de là. Les écoles de pensée, les acteurs, la valeur ajoutée, le PIB et la croissance se manipulent ici avec des curseurs et des tableaux qui se recalculent.</p>
+  <div class="stage">
+    <div style="font-weight:600;font-size:.95rem">Un petit taux, de grands écarts : choisis un taux de croissance annuel du PIB</div>
+    <div class="hero-row"><label for="heroG">Taux</label><input type="range" id="heroG" min="-2" max="8" step="0.1" value="1.5"><span class="v" id="heroGv"></span></div>
+    <div class="reads" id="heroReads"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Dix blocs dans l'ordre de ton cours : la rareté et ses conséquences, les grandes écoles de pensée, puis les acteurs, la valeur ajoutée, le PIB et la croissance. L'outil interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées.</p>
+  <div class="progress-line"><span id="seenCount">0 / 10 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<!-- 1 RARETE -->
+<article class="concept" data-id="c1">
+  <h3><span class="n">1</span>La rareté : des besoins illimités, des moyens limités</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Si tout était abondant, il n'y aurait rien à gérer et pas d'économie. Toute la discipline naît d'une tension : nos besoins ne cessent de grandir, alors que la terre, le travail et les machines sont en quantité finie. Produire une chose, c'est donc renoncer à une autre. Ton cours le dit sans détour : quand la rareté n'est pas gérée, elle engendre des conflits.</p></div>
+  <div class="wg" data-w="fpp">
+    <h4>🔬 Une économie qui ne produit que deux choses</h4>
+    <p class="hint">La courbe verte est la frontière de ce que l'économie peut produire avec ses facteurs. Le point rouge représente les besoins. Répartis le travail entre nourriture et machines, puis augmente la population, le capital technique ou le progrès technique. La courbe pointillée grise est la situation de départ.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="base">Départ</button><button class="btn" type="button" data-pre="pop">Population en hausse</button><button class="btn" type="button" data-pre="tech">Progrès technique</button><button class="btn" type="button" data-pre="tout">Tout pour la nourriture</button></div>
+    <canvas class="cv" data-c="cv" style="height:300px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Travail disponible <span data-o="L"></span></label><input type="range" data-k="L" min="20" max="100" step="1" value="60"></div>
+      <div class="ctl"><label>Capital technique <span data-o="K"></span></label><input type="range" data-k="K" min="10" max="100" step="1" value="50"></div>
+      <div class="ctl"><label>Progrès technique <span data-o="tech"></span></label><input type="range" data-k="tech" min="1" max="2" step="0.1" value="1"></div>
+      <div class="ctl"><label>Part du travail vers la nourriture <span data-o="x"></span></label><input type="range" data-k="x" min="0" max="100" step="1" value="50"></div>
+    </div>
+    <div class="readout"><span>Nourriture : <b data-o="a"></b></span><span>Machines : <b data-o="b"></b></span><span>Coût d'une tonne de plus : <b data-o="oc"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu as 24 heures dans une journée. Chaque heure passée à réviser l'économie est une heure de moins pour l'optique ou pour tes loisirs. Ton envie de tout faire est illimitée, ton temps ne l'est pas : tu es obligé de choisir, et chaque choix a un prix caché, ce que tu as sacrifié.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>L'économie vient du grec <b>oikonomia</b> : <i>oikos</i>, la maison, et <i>nomos</i>, la règle.</p>
+    <div class="def"><b>Économie</b>Science de l'administration des ressources rares : elle étudie les comportements humains face à la tension entre des désirs illimités et des moyens limités.</div>
+    <p>Les besoins sont illimités parce que de nouveaux désirs deviennent des besoins : le progrès technique crée de nouveaux produits, la publicité transforme des désirs en besoins, et l'imitation les diffuse.</p>
+    <p>Pour produire, on dispose de trois <b>facteurs de production</b>.</p>
+    <div class="def"><b>Facteurs de production</b>Ressources qui permettent de produire : les ressources naturelles (terre, minerais), le travail (limité par la population et le temps de travail) et le capital technique (machines). Tous sont en quantité limitée, donc la production l'est aussi.</div>
+    <p>La courbe de l'outil s'appelle la <b>frontière des possibilités de production</b>.</p>
+    <div class="def"><b>Frontière des possibilités de production</b>Ensemble des combinaisons maximales de deux biens qu'une économie peut produire avec tous ses facteurs. Un point au-delà est inatteignable ; un point en dessous signifie des facteurs inemployés (chômage, machines à l'arrêt).</div>
+    <p>Se déplacer le long de la frontière a un <b>coût d'opportunité</b>.</p>
+    <div class="def"><b>Coût d'opportunité</b>Ce à quoi on renonce pour obtenir quelque chose : la quantité de l'autre bien qu'il faut sacrifier.</div>
+    <div class="fblock">coût d'opportunité de A = quantité de B perdue / quantité de A gagnée</div>
+    <p>La courbe est bombée vers l'extérieur car les rendements sont décroissants : les premiers travailleurs envoyés aux champs sont très productifs, les suivants le sont de moins en moins. Le coût d'une tonne de nourriture supplémentaire augmente donc à mesure qu'on se spécialise. Plus de travail, plus de capital ou du progrès technique repoussent la frontière, mais les besoins, eux, se déplacent aussi.</p>
+    <p>Ton cours ajoute qu'un <b>service</b> ne se stocke pas, alors qu'un bien si : on ne met pas une coupe de cheveux en réserve.</p>
+    <div class="def"><b>Service</b>Production immatérielle consommée au moment où elle est produite (transport, soin, enseignement). Elle ne peut pas être stockée.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Si un jour une technologie rendait l'énergie quasi gratuite, la rareté disparaîtrait-elle ? Qu'est-ce qui deviendrait rare à la place ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non : la frontière reculerait, mais les besoins continueraient de croître et d'autres facteurs resteraient limités (temps humain, terres, matières, attention). La rareté se déplace, elle ne disparaît pas. C'est pourquoi le cours dit que maîtriser une ressource rare enrichit : une fois maîtrisée, elle n'est plus rare et la richesse se déplace vers ce qui l'est encore.</div></details></div>
+    <div class="q"><p>Pourquoi un point situé sous la frontière est-il un gaspillage, alors qu'un point au-dessus est un rêve ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Sous la frontière, des facteurs restent inemployés : on pourrait produire plus de tout sans rien sacrifier (c'est la situation du chômage de masse de 1929). Au-dessus, il faudrait plus de facteurs qu'on n'en possède. Seuls les points de la frontière sont à la fois possibles et efficaces.</div></details></div>
+    <div class="q"><p>Ton temps de révision a un coût d'opportunité. Comment l'estimerais-tu, et pourquoi ce coût n'apparaît-il sur aucune facture ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est la valeur de la meilleure alternative sacrifiée : heures de travail rémunérées, repos, temps en famille. Il n'apparaît nulle part car aucun échange monétaire n'a lieu : c'est un coût implicite, que l'économiste prend pourtant en compte dans tout choix.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 2 VALEUR / PRIX -->
+<article class="concept" data-id="c2">
+  <h3><span class="n">2</span>Prix et valeur ne sont pas la même chose</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>L'eau est vitale et presque gratuite, un diamant est inutile et hors de prix. Comprendre pourquoi, c'est comprendre ce qui fixe un prix. C'est aussi ce qui sépare les classiques, pour qui la valeur vient du travail, des néoclassiques, pour qui elle vient de l'utilité.</p></div>
+  <div class="wg" data-w="util">
+    <h4>🔬 Le paradoxe de l'eau et du diamant</h4>
+    <p class="hint">Chaque barre représente l'utilité d'une unité de plus. La barre foncée est la dernière unité consommée, l'unité marginale : c'est elle qui fixe ce qu'on est prêt à payer. Change les quantités disponibles.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="ville">En ville, eau abondante</button><button class="btn" type="button" data-pre="desert">Perdu dans le désert</button><button class="btn" type="button" data-pre="mine">Découverte d'une mine de diamants</button></div>
+    <canvas class="cv" data-c="cv" style="height:220px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Eau disponible <span data-o="qe"></span></label><input type="range" data-k="qe" min="1" max="30" step="1" value="25"></div>
+      <div class="ctl"><label>Diamants disponibles <span data-o="qd"></span></label><input type="range" data-k="qd" min="1" max="10" step="1" value="2"></div>
+    </div>
+    <div class="readout"><span>Utilité totale de l'eau : <b data-o="te"></b></span><span>des diamants : <b data-o="td"></b></span><span>Utilité marginale de l'eau : <b data-o="me"></b></span><span>du diamant : <b data-o="md"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Le premier verre d'eau après un footing, tu donnerais n'importe quoi pour l'avoir. Le cinquième, tu le refuses. L'eau n'a pas changé, c'est ton besoin du verre suivant qui a fondu. Le prix se règle sur ce dernier verre, pas sur le premier.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Prix</b>Quantité de monnaie échangée contre un bien sur un marché, à un moment donné.</div>
+    <div class="def"><b>Valeur</b>Importance accordée à un bien. Selon les écoles, elle vient du travail nécessaire pour le produire (classiques, Marx) ou de l'utilité qu'il procure au consommateur (néoclassiques).</div>
+    <p>Les néoclassiques raisonnent à la marge, avec l'<b>utilité marginale</b>.</p>
+    <div class="def"><b>Utilité marginale</b>Satisfaction supplémentaire apportée par la dernière unité consommée. Elle décroît à mesure qu'on consomme.</div>
+    <div class="fblock">utilité totale = somme des utilités marginales de chaque unité
+modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
+    <p>L'eau a une utilité totale énorme mais une utilité marginale faible parce qu'elle est abondante. Le diamant a une utilité totale faible mais une utilité marginale élevée parce qu'il est rare. Le prix suit l'utilité marginale, donc la rareté. Dans le désert, l'ordre s'inverse. L'exemple du baril de pétrole de ton cours fonctionne de la même façon : son prix varie bien plus vite que sa « valeur » pour l'économie.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un tableau de maître ne coûte presque rien à produire en peinture et en toile. Que dirait un classique de sa valeur, et que dirait un néoclassique de son prix ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un classique chercherait la valeur dans le travail incorporé, ce qui explique mal un prix de plusieurs millions. Le néoclassique répond que l'œuvre est unique (rareté absolue) et que quelques acheteurs lui accordent une utilité marginale immense : le prix reflète cette demande, pas le coût.</div></details></div>
+    <div class="q"><p>Pourquoi dit-on que le prix est une information sur la rareté ? Que se passe-t-il si un État bloque un prix en dessous de ce niveau ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un prix qui monte signale que le bien est désiré et peu disponible : il incite à économiser le bien et à en produire plus. Si le prix est bloqué trop bas, ce signal disparaît : la demande dépasse l'offre, on voit apparaître des files d'attente, du rationnement ou un marché noir.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 3 BIENS -->
+<article class="concept" data-id="c3">
+  <h3><span class="n">3</span>Les biens économiques : trois catégories</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Pour mesurer la richesse produite sans compter deux fois la même chose, il faut savoir si un bien est consommé, s'il sert à produire, ou s'il disparaît dans un autre bien. Ce classement est la base du calcul de la valeur ajoutée et du PIB.</p></div>
+  <div class="wg" data-w="goods">
+    <h4>🔬 Classe chaque bien, puis corrige</h4>
+    <p class="hint">Attention, le classement ne dépend pas de l'objet mais de son usage : le même pneu change de catégorie selon qui l'achète.</p>
+    <div data-o="tab" class="ttwrap"></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" type="button" data-act="chk">Corriger</button><button class="btn" type="button" data-act="raz">Effacer</button><span data-o="score"></span></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Dans une cuisine de restaurant, les œufs qui finissent dans l'omelette sont des consommations intermédiaires : ils disparaissent dans le plat. La poêle est un bien de production : elle sert des milliers de fois. L'omelette servie au client est la consommation finale. Si tu facturais au client les œufs, puis l'omelette qui contient ces œufs, tu les lui ferais payer deux fois.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Les <b>biens économiques</b> sont rares et utiles, contrairement aux biens libres comme l'air.</p>
+    <div class="def"><b>Bien économique</b>Bien utile, disponible en quantité limitée, et qui nécessite donc un travail de production : il a un prix.</div>
+    <div class="def"><b>Bien de consommation finale</b>Bien acheté par un ménage pour son usage. Non durable s'il est détruit à la première utilisation (aliment, essence), durable s'il s'use progressivement (voiture, lave-linge).</div>
+    <div class="def"><b>Bien de production</b>Bien qui sert à fabriquer d'autres biens pendant plusieurs cycles de production sans y être incorporé (machine, bâtiment, camion). Il constitue le capital technique.</div>
+    <div class="def"><b>Consommation intermédiaire</b>Bien ou service incorporé dans un autre bien par transformation (farine dans le pain) ou détruit dans la production (énergie).</div>
+    <p>Tes notes associent la TVA à la consommation finale et le « hors taxes » aux deux autres catégories. C'est juste dans le résultat : les entreprises paient la TVA sur leurs achats mais la récupèrent, et c'est le consommateur final qui la supporte réellement.</p>
+    <div class="trap"><b>Précision sur ta note « pneus Michelin »</b>Un pneu vendu à Renault pour une voiture neuve est une consommation intermédiaire. Le même pneu acheté par un particulier au garage est un bien de consommation finale. C'est l'usage qui classe le bien, pas sa nature.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un ordinateur portable acheté par un étudiant et le même ordinateur acheté par un bureau d'études : est-ce le même bien pour l'économiste ? Pourquoi est-ce important pour mesurer la production d'un pays ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non. Pour l'étudiant, c'est une consommation finale durable ; pour le bureau d'études, c'est un bien de production (investissement). Le PIB ne compte que les productions finales et la valeur ajoutée : mal classer un bien conduirait à compter deux fois une même valeur ou à en oublier.</div></details></div>
+    <div class="q"><p>Pourquoi l'électricité d'une usine est-elle une consommation intermédiaire alors qu'on ne la « retrouve » pas dans le produit fini ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Parce qu'elle est détruite dans le processus de production : la catégorie comprend tout ce qui est transformé ou détruit pour produire, pas seulement ce qui reste visible dans l'objet final.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 4 MICRO MACRO + FRISE -->
+<article class="concept" data-id="c4">
+  <h3><span class="n">4</span>Micro, macro et 250 ans de pensée économique</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Les écoles de pensée ne sont pas nées dans le vide : chacune répond à une crise que la précédente n'expliquait pas. Placer les dates sur une frise permet de comprendre l'enchaînement plutôt que de l'apprendre par cœur.</p></div>
+  <div class="wg" data-w="timeline">
+    <h4>🔬 La frise : clique sur un événement pour le détail</h4>
+    <p class="hint">Bleu : idées et auteurs. Orange : crises et événements. Vert : prix Nobel cités dans ton polycopié.</p>
+    <div class="chips"><button class="chip" type="button" data-f="all" aria-pressed="true">Tout</button><button class="chip" type="button" data-f="pensee">Pensée</button><button class="chip" type="button" data-f="histoire">Histoire</button><button class="chip" type="button" data-f="nobel">Nobel</button></div>
+    <ul class="tline" data-o="list"></ul>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>La micro-économie, c'est le médecin qui examine un patient. La macro-économie, c'est l'épidémiologiste qui suit la santé de tout un pays avec des statistiques. Les deux regardent les mêmes humains, mais à des échelles différentes, et ce qui est vrai pour un individu ne l'est pas forcément pour l'ensemble.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Micro-économie</b>Étude des choix d'un acteur économique particulier : un consommateur, une entreprise, un marché.</div>
+    <div class="def"><b>Macro-économie</b>Étude de l'économie à l'échelle d'un pays à l'aide d'agrégats (PIB, chômage, inflation, investissement), pour poser un diagnostic d'ensemble.</div>
+    <div class="def"><b>Agrégat</b>Grandeur obtenue en additionnant les grandeurs de tous les acteurs : le PIB additionne les valeurs ajoutées de tous les producteurs.</div>
+    <p>Le passage de l'une à l'autre n'est pas une simple addition : c'est le <b>paradoxe de l'épargne</b>.</p>
+    <div class="def"><b>Paradoxe de l'épargne</b>Si un ménage épargne plus, il s'enrichit. Si tous les ménages le font en même temps, la consommation chute, les entreprises vendent moins, les revenus baissent, et l'épargne totale peut finalement diminuer.</div>
+    <p>Ton cours insiste aussi sur une distinction : le <b>modèle libéral</b> en économie n'est pas le <b>libéralisme politique</b>. Le premier dit que le marché régule l'économie ; le second concerne les libertés individuelles face au pouvoir. Un pays peut avoir une économie de marché sans être une démocratie, et inversement.</p>
+    <p>Les noms notés en marge de ta page 1 sont deux économistes français actuels qui illustrent le débat sur la place de l'État : Agnès Verdier-Molinié (Fondation iFRAP, d'orientation libérale, critique de la dépense publique) et Gaël Giraud (CNRS, critique de la finance dérégulée, travaux sur la transition écologique).</p>
+    <div class="trap"><b>Nuance page 1 : « naît avec le premier livre en 1776 »</b>La Richesse des nations d'Adam Smith est bien le texte fondateur de l'économie classique, mais ce n'est pas le premier livre d'économie : Cantillon (vers 1730) et les physiocrates de Quesnay (Tableau économique, 1758) l'ont précédé.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi ce qui est rationnel pour chaque individu peut-il être désastreux pour l'ensemble ? Trouve un exemple hors de l'économie.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Parce que les décisions individuelles ont des effets sur les autres, que chacun ignore. Exemple : au concert, chacun se lève pour mieux voir, et finalement tout le monde est debout et voit aussi mal qu'avant. En économie, c'est le paradoxe de l'épargne, ou les ventes en cascade de 1929.</div></details></div>
+    <div class="q"><p>Regarde la frise : quelle crise a fait naître le keynésianisme, et laquelle l'a mis en difficulté ? Qu'est-ce que ça dit du rapport entre théorie et réalité en économie ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La Grande Dépression de 1929 l'a fait naître ; la stagflation des années 70 l'a mis en difficulté. L'économie est une science dont le terrain change : une théorie se juge à sa capacité à expliquer les crises, et chaque échec en fait émerger une autre.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 5 ECOLES -->
+<article class="concept" data-id="c5">
+  <h3><span class="n">5</span>Classiques, néoclassiques, Keynes, Marx : la place de l'État</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Ton cours le résume en une phrase : les différents modèles se distinguent par la place de l'État. Il faut savoir expliquer chaque système. Le meilleur moyen est de les mettre face au même problème et de comparer leurs réponses.</p></div>
+  <div class="wg" data-w="schools">
+    <h4>🔬 Choisis une école sur l'axe, puis une situation</h4>
+    <p class="hint">L'axe va d'un État minimal à un État qui possède les moyens de production. Le tableau montre ce que chaque école dirait de la situation choisie.</p>
+    <div class="stbar" data-o="bar"></div>
+    <div style="height:22px"></div>
+    <div class="card2" data-o="card"></div>
+    <div class="controls"><div class="ctl" style="grid-column:1/-1"><label>Situation</label><select data-k="sit"><option value="s29">1929 : krach puis chômage de masse</option><option value="s70">Années 70 : inflation et chômage ensemble</option><option value="susine">Une grande usine ferme dans une région</option><option value="sbaril">Le prix du baril de pétrole double</option></select></div></div>
+    <div class="ttwrap" data-o="tab"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Imagine un match de foot. Pour les classiques, l'arbitre doit juste faire respecter les règles : le jeu s'organise seul. Pour Keynes, si les deux équipes sont épuisées et que plus personne ne joue, l'arbitre doit relancer le ballon lui-même. Pour Marx, le problème est que le stade, le ballon et les maillots appartiennent à une seule des deux équipes.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p><b>Les classiques</b> (premier modèle économique, Smith 1776) reposent sur trois piliers.</p>
+    <div class="def"><b>Individualisme</b>Chaque individu recherche son intérêt personnel et le maximum de satisfaction.</div>
+    <div class="def"><b>Liberté économique</b>Le marché est le meilleur régulateur ; l'État n'est là que pour supprimer les entraves au marché.</div>
+    <div class="def"><b>Équilibre économique permanent</b>La liberté conduit naturellement à l'équilibre : en cas de déséquilibre, les prix s'ajustent pour le rétablir.</div>
+    <p><b>Les néoclassiques</b> (à partir de 1870) gardent le libéralisme mais changent la théorie de la valeur.</p>
+    <div class="def"><b>Homo œconomicus</b>Modèle d'individu parfaitement rationnel qui compare coûts et bénéfices et n'agit que si le bénéfice dépasse le coût.</div>
+    <div class="def"><b>Équilibre général</b>Équilibre à double niveau, de chaque individu et de chaque marché en même temps (Walras).</div>
+    <p><b>Keynes</b> (après 1929) raisonne en macro-économie : un déséquilibre peut durer (chômage durable), et l'État doit alors se substituer aux entreprises défaillantes pour investir et embaucher. <b>Marx</b>, cité dans tes notes, pense que les crises sont inhérentes au capitalisme et prône l'appropriation collective des moyens de production.</p>
+    <p><b>Années 70</b> : l'opposition libéraux/keynésiens est dépassée et la recherche se diversifie : modèles mathématiques des marchés financiers (Merton et Scholes, Nobel 1997), bien-être et capabilités (Sen, 1998), psychologie du risque (Kahneman et Smith, 2002).</p>
+    <div class="trap"><b>Erreur page 1 : « néoclassique (capitalisme) »</b>Le néoclassicisme est une école de pensée, pas un système économique. Le capitalisme existait déjà au temps des classiques, qui le décrivent. Ce qui change en 1870, c'est la théorie : valeur fondée sur l'utilité marginale au lieu du travail, et équilibre général.</div>
+    <div class="trap"><b>Coquilles du polycopié, page 6</b>« Scholl » est Myron Scholes, « D Kanman » est Daniel Kahneman, « S Amarty a » est Amartya Sen. À l'écrit, ces noms mal orthographiés coûtent des points.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>L'homo œconomicus n'existe pas, tout le monde le sait. Pourquoi les économistes l'ont-ils quand même utilisé pendant un siècle, et qu'ont apporté Kahneman et Smith ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un modèle simplifié permet des calculs et des prédictions, comme le point matériel en mécanique : on ne dit pas qu'il est vrai, on dit qu'il suffit souvent. Kahneman et Smith ont mesuré par l'expérience les écarts systématiques (aversion à la perte, biais de jugement) et montré quand le modèle cesse de suffire.</div></details></div>
+    <div class="q"><p>Pourquoi l'école classique, qui fonctionnait bien pour décrire le XIXe siècle, n'avait-elle pas de réponse au chômage de masse des années 30 ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Elle postule que les prix et les salaires s'ajustent pour rétablir l'équilibre. Or en 1929 la baisse des salaires réduisait encore la demande, donc la production, donc l'emploi : l'ajustement aggravait le mal. Un équilibre de sous-emploi pouvait durer, ce que la théorie ne prévoyait pas.</div></details></div>
+    <div class="q"><p>Ton cours rappelle qu'un déséquilibre individuel peut devenir collectif (aides sociales, gilets jaunes). Comment chaque école interpréterait-elle ce passage ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le néoclassique y voit des incitations mal réglées (aides qui découragent le travail, prix des carburants). Le keynésien y voit une demande et un pouvoir d'achat insuffisants que l'État doit soutenir. Le marxiste y voit un conflit de répartition entre capital et travail. Savoir présenter ces trois lectures est exactement ce qu'on attend d'une copie.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 6 1929 -->
+<article class="concept focus" data-id="c6">
+  <span class="focus-tag">Deux raccourcis à corriger dans les notes, pages 1 et 2</span>
+  <h3><span class="n">6</span>1929 : le cercle vicieux et la réponse de Keynes</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La crise de 1929 est le cas d'école qui a fait basculer la pensée économique. Elle montre qu'un choc peut s'auto-entretenir : moins de revenus, moins de consommation, moins de production, donc encore moins de revenus. Keynes explique comment l'État peut casser ce cercle et pourquoi un euro dépensé par l'État peut créer plus d'un euro de PIB.</p></div>
+  <div class="wg" data-w="crise">
+    <h4>🔬 Provoque un krach, puis décide si l'État intervient</h4>
+    <p class="hint">Modèle simplifié : chaque année, les ménages dépensent une part c du revenu de l'année précédente, et les entreprises investissent. Le krach fait chuter l'investissement à partir de l'année 2. Courbe rouge : sans intervention. Courbe verte : avec grands travaux.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="krach">Krach, on attend</button><button class="btn" type="button" data-pre="newdeal">Relance qui compense</button><button class="btn" type="button" data-pre="faible">Relance trop timide</button><button class="btn" type="button" data-pre="tot">Relance immédiate</button><button class="btn" type="button" data-pre="depensiers">Ménages très dépensiers</button></div>
+    <canvas class="cv" data-c="cv" style="height:280px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Propension à consommer c <span data-o="c"></span></label><input type="range" data-k="c" min="0.5" max="0.95" step="0.01" value="0.8"></div>
+      <div class="ctl"><label>Chute de l'investissement <span data-o="choc"></span></label><input type="range" data-k="choc" min="0" max="80" step="5" value="40"></div>
+      <div class="ctl"><label>Dépenses publiques en plus <span data-o="dg"></span></label><input type="range" data-k="dg" min="0" max="20" step="1" value="0"></div>
+      <div class="ctl"><label>Début de la relance <span data-o="t0"></span></label><input type="range" data-k="t0" min="2" max="14" step="1" value="6"></div>
+    </div>
+    <div class="readout"><span>Multiplicateur k : <b data-o="k"></b></span><span>PIB avant crise : <b data-o="y0"></b></span><span>PIB final sans État : <b data-o="ya"></b></span><span>avec État : <b data-o="yb"></b></span><span>Relance qui compense exactement : <b data-o="need"></b></span></div>
+    <div class="svgbox wide" data-o="loop"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un village où tout le monde vit des achats des autres : le boulanger achète chez le cordonnier, qui achète chez le menuisier, qui achète chez le boulanger. Si le boulanger a peur et cesse d'acheter, le cordonnier gagne moins et achète moins au menuisier, et ainsi de suite : la peur se propage. Si le maire commande une nouvelle école au menuisier, l'argent se remet à circuler et chacun recommence à dépenser.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>L'enchaînement de tes notes : ventes en cascade, les épargnants perdent leur argent, ils consomment moins, les entreprises ont trop de stocks, produisent moins et licencient. Les libéraux attendent que le marché se régule ; Keynes propose que l'État commande des projets (barrages, autoroutes), quitte à s'endetter. Les entreprises réembauchent, la consommation repart, et les impôts rentrent ensuite pour rembourser.</p>
+    <p>Le mécanisme central est le <b>multiplicateur keynésien</b>, qui dépend de la <b>propension marginale à consommer</b>.</p>
+    <div class="def"><b>Propension marginale à consommer</b>Part c d'un euro de revenu supplémentaire que les ménages dépensent. Le reste, 1 − c, est épargné.</div>
+    <div class="def"><b>Multiplicateur keynésien</b>Rapport entre la hausse finale du PIB et la dépense initiale qui l'a provoquée. Chaque euro dépensé devient le revenu de quelqu'un, qui en redépense une part c, et ainsi de suite.</div>
+    <div class="fblock">ΔY = ΔG × (1 + c + c² + c³ + …) = ΔG / (1 − c)
+k = 1 / (1 − c)
+c = 0,8  →  k = 5 : 1 Md de grands travaux crée 5 Md de PIB à terme</div>
+    <p>La même logique joue à l'envers : une baisse de 8 Md de l'investissement fait perdre 40 Md de PIB. C'est ce que montre la courbe rouge. Plus les ménages consomment (c proche de 1), plus le multiplicateur est fort, dans les deux sens. Le modèle est volontairement simplifié : il ignore les importations, les impôts et les réactions des prix, qui réduisent le multiplicateur réel.</p>
+    <p>Tes notes relient ensuite la crise à l'arrivée d'Hitler : les déséquilibres individuels conduisent à des déséquilibres économiques, puis à des conflits.</p>
+    <div class="trap"><b>Raccourci page 1 : « les actions valent 0 » et « récession au bout de 3 mois »</b>Les actions n'ont pas valu zéro : le Dow Jones a perdu environ 89 % entre son sommet de septembre 1929 et juillet 1932, en trois ans de baisse. Et l'activité américaine ralentissait déjà depuis l'été 1929, avant le krach. Le krach a transformé un ralentissement en dépression, il ne l'a pas créé de toutes pièces.</div>
+    <div class="trap"><b>Raccourci page 2 : Keynes et le New Deal</b>Le New Deal de Roosevelt date de 1933, la Théorie générale de Keynes de 1936. Le New Deal n'est donc pas une application de la théorie de Keynes, même s'il va dans le même sens. De même, entre Versailles (1919) et Hitler (1933), le maillon décisif est la crise de 1929 : les capitaux américains se retirent d'Allemagne, qui compte environ 6 millions de chômeurs en 1932.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Dans l'outil, une relance qui arrive à l'année 2 ou à l'année 10 mène au même PIB final. Pourquoi le moment de l'intervention compte-t-il pourtant énormément pour la population ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Parce que l'aire entre la courbe et le niveau d'avant-crise représente toute la production perdue : des années de chômage, de faillites, de compétences perdues. Le modèle ignore aussi que des entreprises disparues ne reviennent pas toutes : en réalité, attendre abîme durablement la capacité de production.</div></details></div>
+    <div class="q"><p>Si chaque ménage, inquiet, décide d'épargner davantage pendant une crise, que devient le multiplicateur ? Est-ce un comportement irrationnel ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">c baisse, donc le multiplicateur baisse et chaque euro de relance a moins d'effet. Le comportement est rationnel individuellement (se protéger) mais nuisible collectivement : c'est le paradoxe de l'épargne, et c'est pour cela que Keynes confie la relance à l'État plutôt qu'aux ménages.</div></details></div>
+    <div class="q"><p>Keynes dit que l'État doit s'endetter en crise et rembourser une fois la croissance revenue. Qu'est-ce qui peut empêcher la seconde moitié du plan de se réaliser ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Il est politiquement plus facile de dépenser que d'augmenter les impôts ou de couper des dépenses en période favorable. Si l'État ne rembourse pas pendant les bonnes années, la dette s'accumule de crise en crise et réduit sa marge pour la suivante. C'est un argument central des libéraux contre la relance.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 7 ACTEURS -->
+<article class="concept focus" data-id="c7">
+  <span class="focus-tag">Une erreur dans les notes, page 2</span>
+  <h3><span class="n">7</span>Les acteurs de la vie économique et le circuit</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une économie n'est pas une liste d'acteurs isolés : c'est un circuit où ce que l'un dépense est le revenu d'un autre. Savoir qui fait quoi et ce qui circule entre eux, c'est la clé pour comprendre le PIB et les politiques économiques.</p></div>
+  <div class="wg" data-w="circuit">
+    <h4>🔬 Clique sur un acteur pour voir ses flux</h4>
+    <p class="hint">Orange : flux de monnaie. Bleu : flux réels (biens, services, travail). Chaque flux réel a son flux monétaire en sens inverse : le travail contre le salaire, les biens contre la consommation.</p>
+    <div class="controls"><div class="ctl"><label>Afficher</label><select data-k="mode"><option value="all">Tous les flux</option><option value="m">Flux monétaires</option><option value="r">Flux réels</option></select></div></div>
+    <div class="svgbox wide" data-o="svg"></div>
+    <div class="card2" data-o="card"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>C'est un circuit sanguin. La monnaie est le sang, qui irrigue chaque organe et revient toujours. Les entreprises sont les muscles qui produisent, les ménages fournissent l'énergie (le travail) et consomment, les banques sont le cœur qui fait circuler, l'État redistribue. Si le sang cesse de circuler à un endroit, tout le corps en souffre.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>La comptabilité nationale regroupe les acteurs en <b>secteurs institutionnels</b>.</p>
+    <div class="def"><b>Secteur institutionnel</b>Regroupement d'acteurs ayant la même fonction principale et les mêmes ressources.</div>
+    <div class="fblock">Sociétés non financières (SNF) : produire des biens et services marchands
+Sociétés financières : financer (banques), assurer
+Ménages : consommer, offrir leur travail ; inclut les entrepreneurs individuels
+Administrations publiques (APU) : services non marchands, redistribution
+ISBLSM : associations, syndicats, partis, Églises
+Reste du monde : agents non résidents</div>
+    <div class="def"><b>ISBLSM</b>Institutions sans but lucratif au service des ménages : associations, partis politiques, syndicats, Églises.</div>
+    <div class="def"><b>Production non marchande</b>Services fournis gratuitement ou à un prix très inférieur à leur coût (école publique, hôpital, police). Comme ils n'ont pas de prix de marché, on les évalue à leur coût de production.</div>
+    <div class="trap"><b>Erreur page 2 : « les entreprises créent de la richesse, les autres acteurs non »</b>En comptabilité nationale, tous les secteurs résidents qui produisent créent de la valeur ajoutée : les administrations (production non marchande comptée à son coût), les banques et assurances, les ISBLSM, et les ménages via les entrepreneurs individuels et les loyers. Ton propre graphique de la page 7 le montre : les « services principalement non marchands » représentent environ un cinquième de la valeur ajoutée. Ce qui est vrai : les entreprises sont le principal producteur de valeur ajoutée marchande.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un enseignant du public et un professeur de cours particuliers font le même travail. Pourquoi la comptabilité nationale les traite-t-elle différemment, et que penses-tu de cette différence ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le second vend son service à un prix de marché (production marchande, valeur = chiffre d'affaires). Le premier fournit un service gratuit, évalué à son coût (essentiellement son salaire). Les deux sont dans le PIB. La convention sous-estime peut-être la valeur réelle de l'enseignement public, puisqu'on suppose qu'il ne produit pas plus que ce qu'il coûte.</div></details></div>
+    <div class="q"><p>Dans le circuit, pourquoi les banques sont-elles indispensables, alors qu'elles ne fabriquent rien de tangible ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Elles transforment l'épargne des uns en crédit pour les autres : sans elles, l'épargne des ménages resterait inemployée et les entreprises ne pourraient pas investir. Un blocage bancaire, comme en 1929 ou en 2008, coupe ce flux et paralyse tout le circuit.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 8 VA PIB -->
+<article class="concept focus" data-id="c8">
+  <span class="focus-tag">Une formule à corriger, pages 2 et 3</span>
+  <h3><span class="n">8</span>Valeur ajoutée et PIB</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>On évalue la santé d'un pays par son PIB. Mais additionner les ventes de toutes les entreprises compterait plusieurs fois la même chose : le fil, puis le tissu qui contient le fil, puis la trousse qui contient le tissu. La valeur ajoutée résout ce problème : chaque entreprise ne compte que ce qu'elle a réellement ajouté.</p></div>
+  <div class="wg" data-w="va">
+    <h4>🔬 Suis la valeur le long d'une chaîne de production</h4>
+    <p class="hint">Modifie les prix de vente et les achats hors chaîne. Chaque entreprise achète le produit de l'étape précédente. La barre montre comment le prix final se découpe en valeurs ajoutées.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="trousse">Trousse (ton exemple)</button><button class="btn" type="button" data-pre="pain">Pain</button><button class="btn" type="button" data-pre="auto">Voiture</button></div>
+    <div class="controls" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+      <div class="ctl" style="grid-column:1/-1"><label>Chaîne</label><select data-k="ch"><option value="trousse">Trousse</option><option value="pain">Pain</option><option value="auto">Voiture</option></select></div>
+      <div class="ctl"><label>Prix étape 1</label><input class="txt" type="number" min="0" step="any" data-k="p1" value="1"></div>
+      <div class="ctl"><label>Prix étape 2</label><input class="txt" type="number" min="0" step="any" data-k="p2" value="3"></div>
+      <div class="ctl"><label>Prix étape 3</label><input class="txt" type="number" min="0" step="any" data-k="p3" value="10"></div>
+      <div class="ctl"><label>Achats hors chaîne 1</label><input class="txt" type="number" min="0" step="any" data-k="o1" value="0"></div>
+      <div class="ctl"><label>Achats hors chaîne 2</label><input class="txt" type="number" min="0" step="any" data-k="o2" value="0.5"></div>
+      <div class="ctl"><label>Achats hors chaîne 3</label><input class="txt" type="number" min="0" step="any" data-k="o3" value="1"></div>
+    </div>
+    <div class="ttwrap" data-o="tab"></div>
+    <div class="vbar" data-o="bar"></div>
+    <p class="hint" style="margin-top:10px" data-o="sum"></p>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un relais 4 × 100 m : on ne mesure pas la performance de l'équipe en additionnant la distance que le bâton a parcourue dans chaque main depuis le départ. Chaque coureur compte seulement ses 100 m. La valeur ajoutée, c'est la portion de course de chaque entreprise.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Chiffre d'affaires</b>Montant total des ventes d'une entreprise sur une période : prix × quantités vendues.</div>
+    <div class="def"><b>Valeur ajoutée</b>Richesse réellement créée par une entreprise : la valeur de sa production moins la valeur de tout ce qu'elle a acheté à d'autres entreprises et consommé pour produire.</div>
+    <div class="fblock">VA = production (≈ chiffre d'affaires) − consommations intermédiaires
+PIB = somme des VA des producteurs résidents (+ impôts sur les produits − subventions)
+Ton exemple : trousse vendue 10 €, tissu 3 €, fermeture éclair 1 €  →  VA = 10 − 4 = 6 €</div>
+    <div class="def"><b>PIB (produit intérieur brut)</b>Valeur de toutes les richesses produites sur le territoire d'un pays pendant une période, en général un an. C'est un flux, pas un stock : il mesure ce qui est produit dans l'année, pas ce qui est possédé.</div>
+    <div class="def"><b>Double comptage</b>Erreur qui consiste à additionner les chiffres d'affaires : la valeur des produits intermédiaires serait comptée à chaque étape où ils sont revendus.</div>
+    <div class="trap"><b>Formule page 2 : « VA = Σ prix de vente − coût matière première »</b>Tu l'as toi-même annotée « à revoir » : ce qu'on retire, ce sont toutes les consommations intermédiaires, pas seulement les matières premières. L'électricité, les emballages, la sous-traitance ou la publicité achetées à d'autres entreprises se retirent aussi. Le Σ est de trop pour une entreprise : il apparaît quand on additionne les VA de toutes les entreprises pour obtenir le PIB.</div>
+    <div class="trap"><b>Formule page 3 : « PIB = Σ VA »</b>C'est l'idée, mais la définition exacte de l'Insee ajoute les impôts sur les produits (TVA surtout) et retire les subventions sur les produits, car les VA sont mesurées hors de ces taxes. Et ta note page 7 « la VA n'est plus que le chiffre d'affaires » s'écrit plutôt : la VA est inférieure au chiffre d'affaires, puisqu'on en retire les consommations intermédiaires.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Une entreprise qui externalise son nettoyage et sa comptabilité voit sa valeur ajoutée baisser alors qu'elle produit autant. Le PIB du pays baisse-t-il ? Pourquoi ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non : la VA retirée réapparaît chez les entreprises de nettoyage et de comptabilité. Le PIB ne change pas, mais la VA passe de l'industrie aux services. C'est l'une des raisons de la tertiarisation que montre ton graphique de la page 7 : une partie est un changement d'étiquette, pas un changement de production.</div></details></div>
+    <div class="q"><p>Le PIB compte la réparation des dégâts d'une tempête comme une production. Qu'est-ce que cela révèle sur ce que mesure vraiment le PIB ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le PIB mesure une activité de production pendant l'année (un flux), pas une richesse possédée ni un bien-être. La destruction du stock (maisons) n'est pas retirée, alors que sa réparation est ajoutée. C'est la critique qui a conduit Sen à concevoir l'IDH, cité dans ton polycopié.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 9 VOLUME / VALEUR -->
+<article class="concept" data-id="c9">
+  <h3><span class="n">9</span>Valeur, volume et prix</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Si le PIB passe de 100 € à 200 €, le pays est-il deux fois plus riche ? Pas si les prix ont doublé. Ton cours le souligne : on travaille toujours en volume pour éviter l'effet des variations de prix, et il faut le préciser dans toute copie.</p></div>
+  <div class="wg" data-w="vol">
+    <h4>🔬 Deux biens, deux années : sépare la quantité du prix</h4>
+    <p class="hint">Saisis les quantités et les prix de deux biens en année N et N+1. Le volume revalorise les quantités de N+1 aux prix de l'année N, ceux de « l'année précédente ».</p>
+    <div class="presets"><button class="btn" type="button" data-pre="vol">P1 des notes : volume</button><button class="btn" type="button" data-pre="prix">P1' des notes : prix</button><button class="btn" type="button" data-pre="mix">Les deux</button><button class="btn" type="button" data-pre="masque">Inflation qui masque</button></div>
+    <div class="ttwrap"><table class="gtable"><thead><tr><th></th><th class="num">Quantité N</th><th class="num">Prix N</th><th class="num">Quantité N+1</th><th class="num">Prix N+1</th></tr></thead><tbody>
+      <tr><td>Bien A</td><td class="num"><input type="number" min="0" step="any" data-k="qa0" value="100"></td><td class="num"><input type="number" min="0" step="any" data-k="pa0" value="1"></td><td class="num"><input type="number" min="0" step="any" data-k="qa1" value="200"></td><td class="num"><input type="number" min="0" step="any" data-k="pa1" value="1"></td></tr>
+      <tr><td>Bien B</td><td class="num"><input type="number" min="0" step="any" data-k="qb0" value="0"></td><td class="num"><input type="number" min="0" step="any" data-k="pb0" value="1"></td><td class="num"><input type="number" min="0" step="any" data-k="qb1" value="0"></td><td class="num"><input type="number" min="0" step="any" data-k="pb1" value="1"></td></tr>
+    </tbody></table></div>
+    <div class="readout"><span>PIB N : <b data-o="v0"></b></span><span>PIB N+1 en valeur : <b data-o="v1"></b></span><span>PIB N+1 aux prix de N : <b data-o="vv"></b></span></div>
+    <div class="readout"><span>Croissance en valeur : <b data-o="gv"></b></span><span>en volume : <b data-o="gq"></b></span><span>effet prix : <b data-o="gp"></b></span></div>
+    <div class="fblock" data-o="chk" style="margin-top:10px"></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Ton salaire augmente de 3 % mais le prix de tout ce que tu achètes augmente de 3 % : ta fiche de paie est plus haute (valeur), ton caddie n'est pas plus rempli (volume). Les économistes veulent savoir si le caddie du pays s'est rempli.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>PIB en valeur (nominal)</b>Production mesurée aux prix de l'année même : il augmente si l'on produit plus ou si les prix montent.</div>
+    <div class="def"><b>PIB en volume (réel)</b>Production mesurée à prix fixes, ici ceux de l'année précédente : seules les quantités varient.</div>
+    <div class="def"><b>Déflateur du PIB</b>Indice de prix obtenu en divisant le PIB en valeur par le PIB en volume. Il mesure l'effet prix.</div>
+    <div class="fblock">valeur = volume × prix   (en rouge dans tes notes)
+volume N+1 aux prix de N = Σ (quantité N+1 × prix N)
+(1 + croissance en valeur) = (1 + croissance en volume) × (1 + effet prix)
+Notes : P0 = 100 × 1 € = 100 €
+        P1 = 200 × 1 € = 200 € : +100 % en volume
+        P1' = 100 × 2 € = 200 € : 0 % en volume, +100 % en prix</div>
+    <p>Pour de petits taux, on peut additionner : 3 % en valeur avec 2 % d'inflation donnent environ 1 % en volume. Mais pour de grands taux il faut multiplier, sinon l'erreur devient visible : 1,1 × 1,2 = 1,32, soit 32 % et non 30 %.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un pays connaît 10 % d'inflation et 8 % de croissance de son PIB en valeur. Un ministre annonce « une année record ». Que réponds-tu ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">En volume, 1,08 / 1,10 ≈ 0,982 : la production réelle a baissé d'environ 1,8 %. C'est une récession déguisée par l'inflation, exactement le piège du préréglage « Inflation qui masque ».</div></details></div>
+    <div class="q"><p>Pourquoi l'Insee mesure-t-il le volume aux prix de l'année précédente plutôt qu'aux prix d'une année de référence fixe comme 1950 ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les prix relatifs changent beaucoup avec le temps : un ordinateur valorisé aux prix de 1990 pèserait absurdement lourd aujourd'hui. Les prix de l'année précédente reflètent la structure actuelle de l'économie ; on enchaîne ensuite les taux d'une année sur l'autre (volumes « chaînés »).</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 10 CROISSANCE -->
+<article class="concept" data-id="c10">
+  <h3><span class="n">10</span>Croissance, récession, et commenter un graphique</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une erreur revient sans cesse : croire que la croissance « baisse » quand le PIB baisse. Un taux de croissance qui passe de 1,8 % à 1,2 % signifie que le PIB augmente moins vite, pas qu'il diminue. Bien lire ces taux, c'est la base du commentaire de graphique que ton prof te demandera.</p></div>
+  <div class="wg" data-w="growth">
+    <h4>🔬 Entre cinq taux de croissance, regarde le niveau du PIB</h4>
+    <p class="hint">Les barres sont les taux annuels (échelle de gauche), la ligne le niveau du PIB, base 100 (échelle de droite). Tant qu'une barre est au-dessus de zéro, la ligne monte, même si la barre rétrécit.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="acc">1,8 → 3 % : augmente</button><button class="btn" type="button" data-pre="ral">1,8 → 1,2 % : augmente moins vite</button><button class="btn" type="button" data-pre="rec">1,8 → −0,3 % : diminue</button><button class="btn" type="button" data-pre="g30">Trente Glorieuses</button></div>
+    <div class="yrs"><div><label>Année 1 (%)</label><input type="number" step="0.1" data-k="y1" value="1.8"></div><div><label>Année 2 (%)</label><input type="number" step="0.1" data-k="y2" value="1.2"></div><div><label>Année 3 (%)</label><input type="number" step="0.1" data-k="y3" value="0.8"></div><div><label>Année 4 (%)</label><input type="number" step="0.1" data-k="y4" value="0.5"></div><div><label>Année 5 (%)</label><input type="number" step="0.1" data-k="y5" value="0.3"></div></div>
+    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
+    <div class="readout"><span>PIB final : <b data-o="fin"></b></span><span>Taux moyen annuel : <b data-o="moy"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <div class="wg" data-w="share">
+    <h4>🔬 Part ou montant : l'agriculture de 1949 à aujourd'hui</h4>
+    <p class="hint">Ta note page 7 : les milliards des 2 % de l'agriculture actuelle peuvent valoir plus que les 18 % de 1949. Chaque carré a une aire proportionnelle au PIB ; le vert est la part de l'agriculture. En volume, le PIB français a été multiplié par environ 7 depuis 1950 (ordre de grandeur).</p>
+    <div class="presets"><button class="btn" type="button" data-pre="fr">France (ordre de grandeur)</button><button class="btn" type="button" data-pre="seuil">Seuil d'égalité</button></div>
+    <canvas class="cv" data-c="cv" style="height:220px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>PIB multiplié par <span data-o="m"></span></label><input type="range" data-k="m" min="1" max="12" step="0.5" value="7"></div>
+      <div class="ctl"><label>Part en 1949 <span data-o="s0"></span></label><input type="range" data-k="s0" min="1" max="40" step="1" value="18"></div>
+      <div class="ctl"><label>Part aujourd'hui <span data-o="s1"></span></label><input type="range" data-k="s1" min="1" max="40" step="1" value="2"></div>
+    </div>
+    <div class="readout"><span>VA agricole actuelle / VA de 1949 : <b data-o="r"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <div class="wg" data-w="dec">
+    <h4>🔬 La croissance française par décennie</h4>
+    <p class="hint">Moyennes annuelles du PIB en volume, arrondies à partir des séries de l'Insee : ce sont des ordres de grandeur pour s'entraîner à la méthode, pas des chiffres à citer. Applique les trois étapes ci-dessous à ce graphique.</p>
+    <label class="chk"><input type="checkbox" data-k="hl"> Mettre en évidence les Trente Glorieuses</label>
+    <canvas class="cv" data-c="cv" style="height:220px"></canvas>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une voiture qui passe de 130 à 90 km/h ralentit, mais elle avance toujours. Le taux de croissance, c'est la vitesse ; le PIB, c'est la distance parcourue. Seule une vitesse négative fait reculer la voiture : c'est la récession.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Croissance économique</b>Augmentation durable de la production d'un pays, mesurée par le taux de variation du PIB en volume.</div>
+    <div class="fblock">taux de croissance = (PIB N+1 − PIB N) / PIB N × 100
+PIB après n années à taux constant g : PIB × (1 + g)^n
+temps de doublement ≈ 70 / g (en %) : 5 % → 14 ans ; 1 % → 70 ans</div>
+    <div class="def"><b>Récession</b>Baisse du PIB en volume, c'est-à-dire un taux de croissance négatif. En conjoncture, on parle de récession après deux trimestres consécutifs de recul.</div>
+    <div class="def"><b>Tertiarisation</b>Augmentation de la part des services dans la valeur ajoutée et l'emploi : en France, ils passent d'environ 50 % à 80 % de la VA depuis 1950, selon ton graphique page 7.</div>
+    <p><b>Méthode du commentaire de graphique</b>, selon ton cours :</p>
+    <div class="fblock">1) Définir les concepts utilisés, le cadre et le contexte (source, unité, période)
+2) Dégager la tendance : le phénomène qu'on constate, avec des chiffres
+3) Analyser : expliquer ce qu'on en tire, les causes et les limites</div>
+    <p>Appliquée au graphique de la page 7, cela donne : (1) PIB en volume, croissance annuelle en %, Insee, 1950–2025 ; (2) la France crée toujours de la richesse, mais de moins en moins vite (de 5 à 6 % par an dans les années 1950–60 à environ 1 % aujourd'hui), avec des années de recul en 1975, 1993, 2009 et 2020 ; (3) la France continue de s'enrichir mais à un rythme ralenti : fin du rattrapage d'après-guerre, chocs pétroliers, tertiarisation où les gains de productivité sont plus faibles.</p>
+    <div class="trap"><b>Piège de lecture</b>Sur le graphique de la page 7 de répartition de la VA, les parts sont en pourcentage du total. Une part qui baisse ne veut pas dire une activité qui baisse : l'agriculture produit plus qu'en 1949, mais l'économie a crû bien plus vite qu'elle.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un journal titre « la croissance chute de moitié » quand elle passe de 2 % à 1 %. Les Français sont-ils plus pauvres ? Comment reformulerais-tu ce titre ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non : le PIB a augmenté de 1 % ; la production est plus élevée qu'avant, simplement elle progresse deux fois moins vite. Titre juste : « la croissance ralentit à 1 % ». Il faut aussi rapporter le PIB à la population : si celle-ci croît plus vite que le PIB, le PIB par habitant baisse.</div></details></div>
+    <div class="q"><p>À 5 % par an, le PIB double en 14 ans ; à 1 %, en 70 ans. Pourquoi une différence de quelques points de croissance change-t-elle la vie d'une génération ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Parce que la croissance est exponentielle : les écarts se composent. Une personne des Trente Glorieuses voyait le niveau de vie doubler en une quinzaine d'années ; aujourd'hui, ce doublement prend une vie entière. Le partage des richesses devient plus conflictuel quand le gâteau grossit lentement, ce qui rejoint le lien entre rareté et conflits du début du cours.</div></details></div>
+    <div class="q"><p>Pourquoi la part de l'agriculture dans la valeur ajoutée a-t-elle chuté alors que la France n'a jamais autant produit de nourriture ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les gains de productivité agricoles ont été énormes (machines, engrais) : on produit plus avec beaucoup moins de travail, et les prix agricoles ont baissé relativement aux autres. Pendant ce temps, la demande de services a explosé avec le niveau de vie. La part baisse parce que le reste croît plus vite, pas parce que l'agriculture s'effondre.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+</div></section>
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours avec les conditions d'usage. Le mode test floute les formules : retrouve-les, puis touche pour vérifier.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites.</p>
+  <div class="row"><label for="fcTheme">Thème</label><select id="fcTheme"></select><button class="btn" id="fcReset">Remettre à zéro</button></div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions"><button class="btn" id="fcFlip">Retourner</button><button class="btn bad" id="fcNo" disabled>Pas su</button><button class="btn good" id="fcYes" disabled>Su</button></div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
+</div></section>
+</main>
+<script>
+
+(function(){
+"use strict";
+const KEY="economie-v1";
+let S={seen:{},cards:{},ex:{},tab:"concepts"};
+try{ const r=localStorage.getItem(KEY); if(r) Object.assign(S,JSON.parse(r)); }catch(e){}
+let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} },150); }
+const $=function(id){ return document.getElementById(id); };
+const fr=function(x,d){ if(!isFinite(x)) return "∞"; if(Math.abs(x)<0.5*Math.pow(10,-d)) x=0; return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const D2R=Math.PI/180, R2D=180/Math.PI;
+function asinS(x){ return (x>1||x<-1)?NaN:Math.asin(x); }
+
+/* ---------- tracé ---------- */
+function fit(c){
+  const r=c.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+  if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){ c.width=Math.round(w*d); c.height=Math.round(h*d); }
+  const ctx=c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+/* monde : repère orthonormé ou non */
+function world(cv, xr, yr, equal){
+  const F=fit(cv), w=F.w, h=F.h, pad=10;
+  let sx=(w-2*pad)/(xr[1]-xr[0]), sy=(h-2*pad)/(yr[1]-yr[0]);
+  let ox=pad, oy=pad;
+  if(equal){ const s=Math.min(sx,sy); ox=(w-s*(xr[1]-xr[0]))/2; oy=(h-s*(yr[1]-yr[0]))/2; sx=sy=s; }
+  const X=function(x){ return ox+(x-xr[0])*sx; }, Y=function(y){ return oy+(yr[1]-y)*sy; };
+  const Xi=function(px){ return xr[0]+(px-ox)/sx; }, Yi=function(py){ return yr[1]-(py-oy)/sy; };
+  return {ctx:F.ctx,w:w,h:h,X:X,Y:Y,Xi:Xi,Yi:Yi,sx:sx,sy:sy,xr:xr,yr:yr};
+}
+function seg(g,x0,y0,x1,y1,color,wd,dash,alpha){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.globalAlpha=alpha===undefined?1:alpha; c.beginPath(); c.moveTo(g.X(x0),g.Y(y0)); c.lineTo(g.X(x1),g.Y(y1)); c.stroke(); c.restore(); }
+function arrowHead(g,x0,y0,x1,y1,color,size){ const c=g.ctx, a=[g.X(x0),g.Y(y0)], b=[g.X(x1),g.Y(y1)], ang=Math.atan2(b[1]-a[1],b[0]-a[0]), s=size||8; c.save(); c.fillStyle=color; c.beginPath(); c.moveTo(b[0],b[1]); c.lineTo(b[0]-s*Math.cos(ang-0.4),b[1]-s*Math.sin(ang-0.4)); c.lineTo(b[0]-s*Math.cos(ang+0.4),b[1]-s*Math.sin(ang+0.4)); c.closePath(); c.fill(); c.restore(); }
+function ray(g,x0,y0,x1,y1,color,wd,dash,alpha){ seg(g,x0,y0,x1,y1,color,wd,dash,alpha); const mx=x0+(x1-x0)*0.55, my=y0+(y1-y0)*0.55; if(!dash) arrowHead(g,x0,y0,mx,my,color,7); }
+function label(g,x,y,t,color,align,dy){ const c=g.ctx; c.save(); c.fillStyle=color||css("--ink"); c.font="12px "+css("--ui"); c.textAlign=align||"left"; c.fillText(t,g.X(x),g.Y(y)+(dy||0)); c.restore(); }
+function pt(g,x,y,color,r){ const c=g.ctx; c.fillStyle=color; c.beginPath(); c.arc(g.X(x),g.Y(y),r||3.5,0,2*Math.PI); c.fill(); }
+function arc(g,cx,cy,r,a0,a1,color){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=1.3; c.beginPath(); c.arc(g.X(cx),g.Y(cy),r,-a0,-a1,a1>a0); c.stroke(); c.restore(); }
+function tint(n){ return Math.max(0,Math.min(0.55,(n-1)/1.6)); }
+/* graphique cartésien simple */
+function fmtTick(v){ return Number.isInteger(v)?String(v).replace('-','−'):v.toLocaleString('fr-FR',{maximumFractionDigits:4}).replace('-','−'); }
+function chart(cv,xr,yr,o){
+  const F=fit(cv), ctx=F.ctx, w=F.w, h=F.h, pl=40, pr=10, pt_=10, pb=24;
+  const X=function(x){ return pl+(x-xr[0])/(xr[1]-xr[0])*(w-pl-pr); }, Y=function(y){ return pt_+(yr[1]-y)/(yr[1]-yr[0])*(h-pt_-pb); };
+  ctx.font="11px "+css("--ui"); ctx.strokeStyle=css("--line"); ctx.fillStyle=css("--muted"); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pl,pt_); ctx.lineTo(pl,h-pb); ctx.lineTo(w-pr,h-pb); ctx.stroke();
+  (o.xt||[]).forEach(function(v){ ctx.textAlign="center"; ctx.fillText(fmtTick(v)+(o.xu||""),X(v),h-pb+14); });
+  (o.yt||[]).forEach(function(v){ ctx.textAlign="right"; ctx.fillText(fmtTick(v)+(o.yu||""),pl-5,Y(v)+4); ctx.save(); ctx.globalAlpha=0.4; ctx.beginPath(); ctx.moveTo(pl,Y(v)); ctx.lineTo(w-pr,Y(v)); ctx.stroke(); ctx.restore(); });
+  if(o.xl){ ctx.textAlign="right"; ctx.fillText(o.xl,w-pr,h-pb-5); }
+  if(o.yl){ ctx.textAlign="left"; ctx.fillText(o.yl,pl+5,pt_+10); }
+  return {ctx:ctx,X:X,Y:Y,w:w,h:h,pl:pl,pr:pr,pt:pt_,pb:pb};
+}
+function curve(g,xs,fn,color,wd,dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.beginPath(); let on=false; xs.forEach(function(x){ const y=fn(x); if(!isFinite(y)){ on=false; return; } if(!on){ c.moveTo(g.X(x),g.Y(y)); on=true; } else c.lineTo(g.X(x),g.Y(y)); }); c.stroke(); c.restore(); }
+function lin(a,b,n){ const o=[]; for(let i=0;i<=n;i++) o.push(a+(b-a)*i/n); return o; }
+function wl2rgb(w){ let r=0,g=0,b=0; if(w<440){r=-(w-440)/60;b=1;} else if(w<490){g=(w-440)/50;b=1;} else if(w<510){g=1;b=-(w-510)/20;} else if(w<580){r=(w-510)/70;g=1;} else if(w<645){r=1;g=-(w-645)/65;} else r=1; return "rgb("+[r,g,b].map(function(c){return Math.round(255*Math.pow(c,0.8));}).join(",")+")"; }
+
+/* ---------- moteur de widgets ---------- */
+const widgets=[], IMPL={};
+function initWidgets(){
+  document.querySelectorAll(".wg[data-w]").forEach(function(root){
+    const W={root:root,type:root.dataset.w,k:{},o:{},c:{}};
+    root.querySelectorAll("[data-k]").forEach(function(el){ W.k[el.dataset.k]=el; el.addEventListener("input",function(){ draw(W); }); el.addEventListener("change",function(){ draw(W); }); });
+    root.querySelectorAll("[data-o]").forEach(function(el){ W.o[el.dataset.o]=el; });
+    root.querySelectorAll("canvas[data-c]").forEach(function(el){ W.c[el.dataset.c]=el; });
+    W.v=function(k){ const el=W.k[k]; if(el.type==="checkbox") return el.checked; if(el.type==="range") return +el.value; return el.value; };
+    W.set=function(o){ Object.keys(o).forEach(function(k){ if(W.k[k].type==="checkbox") W.k[k].checked=o[k]; else W.k[k].value=o[k]; }); draw(W); };
+    const P=IMPL[W.type].presets;
+    if(P) root.querySelectorAll("[data-pre]").forEach(function(b){ b.addEventListener("click",function(){ W.set(P[b.dataset.pre]); }); });
+    if(IMPL[W.type].init) IMPL[W.type].init(W);
+    widgets.push(W);
+  });
+}
+function visible(W){ return W.root.offsetParent!==null; }
+function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
+function drawAll(){ widgets.forEach(draw); drawHero(); }
+function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
+
+
+/* ---------- utilitaires éco ---------- */
+function pc(x,d){ d=d===undefined?1:d; return (x>0?"+":"")+fr(x,d).replace("-","−")+" %"; }
+function eur(x,d){ return fr(x,d||0)+" €"; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+/* ---------- hero : croissance composée ---------- */
+function drawHero(){
+  const g=+$("heroG").value, r=1+g/100;
+  $("heroGv").textContent=pc(g,1)+" / an";
+  const x30=Math.pow(r,30), x10=Math.pow(r,10);
+  let dbl;
+  if(g>0) dbl=fr(Math.log(2)/Math.log(r),0)+" ans";
+  else if(g<0) dbl="divisé par 2 en "+fr(Math.log(0.5)/Math.log(r),0)+" ans";
+  else dbl="jamais";
+  $("heroReads").innerHTML="<div>PIB après 10 ans<b>× "+fr(x10,2)+"</b></div><div>PIB après 30 ans<b>× "+fr(x30,2)+"</b></div><div>temps de doublement<b>"+dbl+"</b></div><div>repère<b style='font-size:1rem'>"+(g>=4?"rythme des Trente Glorieuses":g>=2?"croissance soutenue":g>0?"rythme français récent":g===0?"stagnation":"récession")+"</b></div>";
+}
+$("heroG").addEventListener("input",drawHero);
+
+/* ---------- 1. frontière des possibilités de production ---------- */
+IMPL.fpp={
+  presets:{base:{L:60,K:50,tech:1,x:50},pop:{L:90,K:50,tech:1,x:50},tech:{L:60,K:50,tech:1.6,x:50},tout:{L:60,K:50,tech:1,x:95}},
+  draw:function(W){
+    const L=W.v("L"),K=W.v("K"),t=W.v("tech"),x=W.v("x")/100;
+    W.o.L.textContent=L; W.o.K.textContent=K; W.o.tech.textContent="× "+fr(t,1); W.o.x.textContent=fr(x*100,0)+" %";
+    const f=function(L,K,t){ return t*Math.pow(K/50,0.3); };
+    const A=function(L,K,t,x){ return f(L,K,t)*20*Math.pow(L*x/10,0.7); };
+    const B=function(L,K,t,x){ return f(L,K,t)*10*Math.pow(L*(1-x)/10,0.7); };
+    const g=chart(W.c.cv,[0,180],[0,90],{xt:[0,30,60,90,120,150,180],yt:[0,15,30,45,60,75,90],xl:"nourriture (tonnes)",yl:"machines (unités)"});
+    const xs=lin(0,1,120), c=g.ctx;
+    // courbe de référence
+    c.save(); c.strokeStyle=css("--off"); c.lineWidth=1.5; c.setLineDash([5,4]); c.beginPath();
+    xs.forEach(function(u,i){ const px=g.X(A(60,50,1,u)), py=g.Y(B(60,50,1,u)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    // zone atteignable
+    c.save(); c.fillStyle=css("--pos"); c.globalAlpha=0.12; c.beginPath(); c.moveTo(g.X(0),g.Y(0));
+    xs.forEach(function(u){ c.lineTo(g.X(Math.min(180,A(L,K,t,u))),g.Y(Math.min(90,B(L,K,t,u)))); }); c.closePath(); c.fill(); c.restore();
+    c.save(); c.strokeStyle=css("--pos"); c.lineWidth=2.5; c.beginPath();
+    xs.forEach(function(u,i){ const px=g.X(Math.min(180,A(L,K,t,u))), py=g.Y(Math.min(90,B(L,K,t,u))); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    // besoins
+    const nA=150,nB=75;
+    c.fillStyle=css("--neg"); c.beginPath(); c.arc(g.X(nA),g.Y(nB),6,0,7); c.fill();
+    c.font="12px "+css("--ui"); c.textAlign="right"; c.fillText("besoins",g.X(nA)-10,g.Y(nB)+4);
+    // point choisi
+    const a=A(L,K,t,x), b=B(L,K,t,x);
+    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(Math.min(a,180)),g.Y(Math.min(b,90)),6,0,7); c.fill();
+    c.textAlign="left"; c.fillText("ton choix",g.X(Math.min(a,180))+9,g.Y(Math.min(b,90))-8);
+    const oc= x<=0.001?0: x>=0.999?Infinity: 0.5*Math.pow(x/(1-x),0.3);
+    W.o.a.textContent=fr(a,1)+" t"; W.o.b.textContent=fr(b,1);
+    W.o.oc.textContent=isFinite(oc)?fr(oc,2)+" machine"+(oc>=2?"s":""):"toutes";
+    const ok=a>=nA&&b>=nB;
+    W.o.verdict.innerHTML=ok?'<span class="verdict-ok">Les besoins seraient couverts… jusqu’à ce qu’ils grandissent encore.</span>':'<span class="verdict-no">Les besoins restent hors d’atteinte : il faut choisir. C’est la rareté.</span>';
+  }
+};
+
+/* ---------- 2. utilité marginale : eau et diamants ---------- */
+IMPL.util={
+  presets:{ville:{qe:25,qd:2},desert:{qe:1,qd:5},mine:{qe:25,qd:10}},
+  draw:function(W){
+    const qe=W.v("qe"),qd=W.v("qd");
+    W.o.qe.textContent=qe+" L"; W.o.qd.textContent=qd;
+    const ue=function(n){ return 100*Math.pow(0.8,n-1); }, ud=function(n){ return 40*Math.pow(0.9,n-1); };
+    const F=fit(W.c.cv), c=F.ctx, w=F.w, h=F.h, pad=26, mid=w*0.62;
+    c.font="11px "+css("--ui");
+    function panel(x0,x1,q,fn,col,name,nmax){
+      const bw=(x1-x0-8)/nmax, H=h-pad-18;
+      c.fillStyle=css("--muted"); c.textAlign="left"; c.fillText(name,x0,12);
+      for(let n=1;n<=nmax;n++){
+        const v=fn(n), bh=v/100*H, px=x0+(n-1)*bw;
+        c.globalAlpha=n<=q?(n===q?1:0.45):0.08; c.fillStyle=col; c.fillRect(px+1,h-pad-bh,Math.max(1,bw-2),bh);
+      }
+      c.globalAlpha=1; c.strokeStyle=css("--line"); c.beginPath(); c.moveTo(x0,h-pad); c.lineTo(x1,h-pad); c.stroke();
+      c.fillStyle=css("--muted"); c.textAlign="center"; c.fillText("unités consommées →",(x0+x1)/2,h-8);
+    }
+    panel(8,mid-14,qe,ue,css("--odd"),"Eau : utilité de chaque litre",30);
+    panel(mid+6,w-8,qd,ud,css("--cb"),"Diamants : utilité de chaque pierre",10);
+    const Te=100*(1-Math.pow(0.8,qe))/0.2, Td=40*(1-Math.pow(0.9,qd))/0.1, me=ue(qe), md=ud(qd);
+    W.o.te.textContent=fr(Te,0); W.o.td.textContent=fr(Td,0); W.o.me.textContent=fr(me,me<1?2:1); W.o.md.textContent=fr(md,1);
+    W.o.verdict.innerHTML= md>me?"Le dernier diamant est plus désiré que le dernier litre d’eau : le diamant est plus cher, alors que l’eau apporte "+(Te>Td?"bien plus":"autant")+" d’utilité totale.":"Ici l’eau est rare : son dernier litre vaut plus que le dernier diamant. Le prix suit la rareté, pas l’utilité totale.";
+  }
+};
+
+/* ---------- 3. classer les biens ---------- */
+const GOODS=[
+ ["Une baguette achetée par un ménage","fnd","Consommée (détruite) à la première utilisation par un consommateur final."],
+ ["La farine achetée par le boulanger","ci","Elle disparaît dans le pain : transformée et incorporée."],
+ ["Le four du boulanger","prod","Il sert à fabriquer d'autres biens pendant des années sans être incorporé."],
+ ["Un pneu Michelin acheté par Renault pour une voiture neuve","ci","Incorporé tel quel dans un autre bien, la voiture."],
+ ["Le même pneu acheté par toi au garage","fd","Même objet, autre acheteur : un ménage l'achète pour l'utiliser, il s'use progressivement."],
+ ["L'électricité consommée par une usine","ci","Détruite dans le processus de production : consommation intermédiaire par destruction."],
+ ["Un lave-linge acheté par un ménage","fd","Bien de consommation finale qui s'use progressivement."],
+ ["Une coupe chez le coiffeur","serv","Produite et consommée au même moment : on ne peut pas la stocker."],
+ ["Un robot de soudure dans l'usine Renault","prod","Capital technique : il produit d'autres biens."],
+ ["Le plein d'essence d'un particulier","fnd","Détruit à la première utilisation, par un consommateur final."],
+ ["Le tissu acheté par le fabricant de trousses","ci","Transformé et incorporé dans la trousse."],
+ ["La camionnette de livraison d'une entreprise","prod","Elle sert durablement à l'activité de l'entreprise : investissement."]
+];
+const GCAT={"":"— choisir —",fnd:"Consommation finale, non durable",fd:"Consommation finale, durable",prod:"Bien de production",ci:"Consommation intermédiaire",serv:"Service"};
+IMPL.goods={
+  init:function(W){
+    let h='<table class="gtable"><thead><tr><th>Bien ou service</th><th>Catégorie</th></tr></thead><tbody>';
+    GOODS.forEach(function(g,i){ h+='<tr data-i="'+i+'"><td>'+g[0]+'<span class="why2" hidden></span></td><td><select aria-label="Catégorie">'+Object.keys(GCAT).map(function(k){return '<option value="'+k+'">'+GCAT[k]+'</option>';}).join("")+'</select></td></tr>'; });
+    W.o.tab.innerHTML=h+'</tbody></table>';
+    W.root.querySelector("[data-act=chk]").addEventListener("click",function(){
+      let ok=0; W.o.tab.querySelectorAll("tr[data-i]").forEach(function(tr){ const g=GOODS[+tr.dataset.i], v=tr.querySelector("select").value, sp=tr.querySelector(".why2");
+        tr.classList.toggle("ok",v===g[1]); tr.classList.toggle("ko",v!==g[1]); if(v===g[1]) ok++;
+        sp.hidden=false; sp.textContent=(v===g[1]?"✓ ":"→ "+GCAT[g[1]]+". ")+g[2]; });
+      W.o.score.innerHTML="<b>"+ok+" / "+GOODS.length+"</b>"+(ok===GOODS.length?" : parfait.":ok>=9?" : presque. Relis les lignes rouges.":" : relis la règle « même objet, autre acheteur ».");
+    });
+    W.root.querySelector("[data-act=raz]").addEventListener("click",function(){ W.o.tab.querySelectorAll("tr[data-i]").forEach(function(tr){ tr.classList.remove("ok","ko"); tr.querySelector("select").value=""; tr.querySelector(".why2").hidden=true; }); W.o.score.textContent=""; });
+  },
+  draw:function(){}
+};
+
+/* ---------- 4. frise chronologique ---------- */
+const TL=[
+ [1758,"pensee","Quesnay, Tableau économique","Les physiocrates français décrivent déjà la circulation des richesses entre classes sociales : seule la terre serait productive."],
+ [1776,"pensee","Adam Smith, La Richesse des nations","Texte fondateur de l'école classique : division du travail, « main invisible » du marché, l'intérêt individuel sert l'intérêt collectif."],
+ [1817,"pensee","David Ricardo, Principes d'économie politique","Avantages comparatifs : chaque pays gagne à se spécialiser. Valeur fondée sur le travail."],
+ [1867,"pensee","Karl Marx, Le Capital","Critique du capitalisme : la plus-value vient du travail non payé ; les crises sont inhérentes au système."],
+ [1871,"pensee","Révolution marginaliste : Jevons, Menger, puis Walras (1874)","Naissance des néoclassiques : la valeur vient de l'utilité marginale, l'équilibre général relie tous les marchés."],
+ [1919,"histoire","Traité de Versailles","L'Allemagne doit payer des réparations. Keynes, qui y participe, en dénonce les risques dans « Les conséquences économiques de la paix »."],
+ [1929,"histoire","Krach d'octobre à Wall Street","Effondrement boursier, faillites bancaires en chaîne, chute de la demande : la Grande Dépression."],
+ [1933,"histoire","New Deal de Roosevelt ; Hitler chancelier","Grands travaux et régulation bancaire aux États-Unis. En Allemagne, 6 millions de chômeurs en 1932 nourrissent la montée du nazisme."],
+ [1936,"pensee","Keynes, Théorie générale","L'économie peut rester durablement en sous-emploi ; l'État doit soutenir la demande."],
+ [1945,"histoire","Trente Glorieuses (1945–1975)","Reconstruction, croissance d'environ 5 % par an en France, politiques keynésiennes."],
+ [1973,"histoire","Chocs pétroliers (1973, 1979)","Stagflation : chômage et inflation en même temps, ce que le keynésianisme expliquait mal. Retour des idées libérales (Friedman, Hayek)."],
+ [1997,"nobel","Nobel : Merton et Scholes","Mathématiques aléatoires en temps continu (intégrale d'Itô) appliquées aux marchés financiers : formule de Black-Scholes."],
+ [1998,"nobel","Nobel : Amartya Sen","Économie du bien-être, « capabilités », inspiration de l'Indice de développement humain (1990)."],
+ [2002,"nobel","Nobel : Kahneman et Smith","Psychologie et expérimentation : les décisions réelles s'écartent de l'homo œconomicus face au risque."],
+ [2008,"histoire","Crise des subprimes","Crise financière mondiale ; retour massif de l'intervention publique (plans de relance, sauvetage des banques)."],
+ [2014,"nobel","Nobel : Jean Tirole","Organisation industrielle : pouvoir de marché et régulation."],
+ [2019,"nobel","Nobel : Duflo, Banerjee, Kremer","Expérimentations de terrain pour lutter contre la pauvreté."],
+ [2020,"histoire","Crise du Covid","Récession d'environ 7,5 % en France ; « quoi qu'il en coûte » : l'État se substitue aux entreprises, logique keynésienne."],
+ [2025,"nobel","Nobel : Aghion, Howitt, Mokyr","Innovation, « destruction créatrice », concurrence et croissance de long terme."]
+];
+IMPL.timeline={
+  init:function(W){
+    W.f="all";
+    W.root.querySelectorAll(".chip").forEach(function(b){ b.addEventListener("click",function(){ W.f=b.dataset.f; W.root.querySelectorAll(".chip").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); }); IMPL.timeline.draw(W); }); });
+    W.o.list.addEventListener("click",function(e){ const li=e.target.closest("li"); if(li) li.classList.toggle("open"); });
+  },
+  draw:function(W){
+    W.o.list.innerHTML=TL.filter(function(t){ return W.f==="all"||t[1]===W.f; }).map(function(t){ return '<li class="k-'+t[1]+'"><button type="button"><span class="yr">'+t[0]+'</span>'+t[2]+'<div class="det">'+t[3]+'</div></button></li>'; }).join("");
+  }
+};
+
+/* ---------- 5. écoles de pensée et place de l'État ---------- */
+const SCH={
+ cla:{n:"Classiques",pos:12,ep:"fin XVIIIe – XIXe s.",au:"Smith, Ricardo, Say",val:"Valeur fondée sur le travail incorporé et les coûts de production.",eq:"Le marché revient seul à l'équilibre : les prix s'ajustent.",etat:"État gendarme : police, justice, armée, et supprimer les entraves au marché."},
+ neo:{n:"Néoclassiques",pos:24,ep:"à partir de 1870",au:"Walras, Jevons, Menger, Pareto",val:"Valeur fondée sur l'utilité marginale que le consommateur accorde au bien.",eq:"Équilibre général : chaque individu (homo œconomicus) et chaque marché à l'équilibre en même temps.",etat:"Minimal ; il corrige seulement ce qui empêche la concurrence de jouer."},
+ key:{n:"Keynes",pos:55,ep:"1936, puis Trente Glorieuses",au:"Keynes, puis les keynésiens",val:"Raisonne en agrégats : demande globale, investissement, emploi.",eq:"Un équilibre de sous-emploi peut durer : le marché ne se corrige pas forcément seul.",etat:"Intervention nécessaire en cas de crise : dépenses publiques, grands travaux, quitte à s'endetter."},
+ mar:{n:"Marx",pos:90,ep:"1867",au:"Marx, Engels",val:"Valeur-travail ; le profit vient de la plus-value prélevée sur le travail des salariés.",eq:"Pas d'équilibre durable : crises de surproduction inhérentes au capitalisme.",etat:"Appropriation collective des moyens de production."}
+};
+const SIT={
+ s29:{n:"1929 : krach puis chômage de masse",cla:"Laisser baisser les salaires et les prix : la demande repartira d'elle-même. Ne rien faire de plus.",neo:"Le chômage vient de rigidités (salaires trop hauts) : flexibiliser le marché du travail.",key:"La demande s'est effondrée ; personne n'investira. L'État doit dépenser (grands travaux) pour relancer l'emploi : le multiplicateur fera le reste.",mar:"La crise confirme les contradictions du capitalisme (surproduction, sous-consommation des salariés)."},
+ s70:{n:"Années 70 : inflation et chômage ensemble",cla:"L'inflation vient d'un excès de monnaie : la maîtriser, laisser le marché s'ajuster.",neo:"Retour en force avec les monétaristes (Friedman) : contrôler la masse monétaire, réduire le rôle de l'État.",key:"Le cas qui le met en difficulté : relancer la demande aggrave l'inflation sans réduire le chômage.",mar:"Crise de rentabilité du capital ; les salariés paient l'ajustement."},
+ susine:{n:"Une grande usine ferme dans une région",cla:"Les travailleurs et le capital se réallouent vers des activités plus rentables.",neo:"Chaque acteur réoptimise ; accompagner la mobilité, ne pas subventionner une activité non rentable.",key:"Risque d'effet en chaîne sur la demande locale : soutien public, investissements, formation.",mar:"Illustration de la mise en concurrence des travailleurs et de la concentration du capital."},
+ sbaril:{n:"Le prix du baril de pétrole double",cla:"Le prix signale la rareté : on consommera moins et on cherchera d'autres sources.",neo:"Chaque agent ajuste sa demande à l'utilité marginale ; nouveaux équilibres de prix.",key:"Choc qui réduit le pouvoir d'achat donc la demande : l'État peut amortir (aides ciblées).",mar:"Rente captée par les détenteurs de la ressource rare."}
+};
+IMPL.schools={
+  init:function(W){
+    let h=""; Object.keys(SCH).forEach(function(k,i){ h+='<button type="button" data-s="'+k+'" class="'+(i%2?"lo":"")+'" style="left:'+SCH[k].pos+'%">'+SCH[k].n+'</button>'; });
+    W.o.bar.innerHTML='<div class="axis"></div>'+h+'<div class="ends"><span>État minimal</span><span>État producteur</span></div>';
+    W.sel="key";
+    W.o.bar.addEventListener("click",function(e){ const b=e.target.closest("[data-s]"); if(b){ W.sel=b.dataset.s; IMPL.schools.draw(W); } });
+  },
+  draw:function(W){
+    W.o.bar.querySelectorAll("[data-s]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.s===W.sel?"true":"false"); });
+    const s=SCH[W.sel], st=SIT[W.v("sit")];
+    W.o.card.innerHTML='<h5>'+s.n+' <span style="font-weight:400;color:var(--muted)">('+s.ep+' ; '+s.au+')</span></h5><p><b>Valeur :</b> '+s.val+'</p><p><b>Équilibre :</b> '+s.eq+'</p><p><b>État :</b> '+s.etat+'</p>';
+    let t='<table class="gtable"><thead><tr><th>École</th><th>Face à : '+st.n+'</th></tr></thead><tbody>';
+    Object.keys(SCH).forEach(function(k){ t+='<tr'+(k===W.sel?' style="background:var(--soft)"':'')+'><td><b>'+SCH[k].n+'</b></td><td>'+st[k]+'</td></tr>'; });
+    W.o.tab.innerHTML=t+'</tbody></table>';
+  }
+};
+
+/* ---------- 6. 1929 et le multiplicateur ---------- */
+IMPL.crise={
+  init:function(W){ W.o.loop.innerHTML=loopSVG(); },
+  presets:{krach:{c:0.8,choc:40,dg:0,t0:6},newdeal:{c:0.8,choc:40,dg:8,t0:6},faible:{c:0.8,choc:40,dg:3,t0:6},tot:{c:0.8,choc:40,dg:8,t0:2},depensiers:{c:0.9,choc:40,dg:4,t0:6}},
+  draw:function(W){
+    const c=W.v("c"),choc=W.v("choc")/100,dg=W.v("dg"),t0=W.v("t0");
+    W.o.c.textContent=fr(c,2); W.o.choc.textContent="− "+fr(choc*100,0)+" %"; W.o.dg.textContent="+ "+fr(dg,0)+" Md"; W.o.t0.textContent="année "+t0;
+    const I0=20,G0=20,N=24, Y0=(I0+G0)/(1-c);
+    function path(withG){ const y=[Y0]; for(let t=1;t<=N;t++){ const I=t>=2?I0*(1-choc):I0, G=G0+(withG&&t>=t0?dg:0); y.push(c*y[t-1]+I+G); } return y; }
+    const a=path(false), b=path(true), ymax=Math.ceil(Math.max(Y0,b[N])*1.15/50)*50;
+    const g=chart(W.c.cv,[0,N],[0,ymax],{xt:[0,4,8,12,16,20,24],yt:lin(0,ymax,Math.round(ymax/50)).filter(function(v,i){return ymax<=300||i%2===0;}),xl:"années",yl:"PIB (Md)"});
+    const ctx=g.ctx;
+    ctx.save(); ctx.strokeStyle=css("--ink"); ctx.globalAlpha=0.35; ctx.setLineDash([2,4]); ctx.beginPath(); ctx.moveTo(g.X(0),g.Y(Y0)); ctx.lineTo(g.X(N),g.Y(Y0)); ctx.stroke(); ctx.restore();
+    ctx.fillStyle=css("--muted"); ctx.textAlign="right"; ctx.fillText("niveau d’avant-crise",g.X(N),g.Y(Y0)-5);
+    function line(y,col,dash){ ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.setLineDash(dash||[]); ctx.beginPath(); y.forEach(function(v,t){ if(t) ctx.lineTo(g.X(t),g.Y(v)); else ctx.moveTo(g.X(t),g.Y(v)); }); ctx.stroke(); ctx.restore(); }
+    line(a,css("--neg"),dg>0?[6,4]:[]); if(dg>0) line(b,css("--pos"));
+    if(dg>0){ ctx.fillStyle=css("--pos"); ctx.beginPath(); ctx.arc(g.X(t0),g.Y(b[t0]),4,0,7); ctx.fill(); ctx.textAlign="left"; ctx.fillText("relance",g.X(t0)+6,g.Y(b[t0])+14); }
+    const k=1/(1-c), Ya=(I0*(1-choc)+G0)/(1-c), Yb=(I0*(1-choc)+G0+dg)/(1-c);
+    W.o.k.textContent=fr(k,1); W.o.y0.textContent=fr(Y0,0)+" Md"; W.o.ya.textContent=fr(Ya,0)+" Md ("+pc((Ya/Y0-1)*100,0)+")";
+    W.o.yb.textContent=dg>0?fr(Yb,0)+" Md ("+pc((Yb/Y0-1)*100,0)+")":"pas de relance";
+    W.o.need.textContent=fr(I0*choc,0)+" Md";
+    W.o.loop.classList.toggle("on",dg>0);
+    const brk=W.o.loop.querySelector("[data-brk]"), nb=W.o.loop.querySelector("[data-nobrk]"); if(brk){ brk.style.display=dg>0?"":"none"; nb.style.display=dg>0?"none":""; }
+  }
+};
+function loopSVG(){
+  const B={k:[85,45,"Krach : la Bourse s'effondre"],e:[245,45,"Les ménages perdent leur épargne"],c1:[405,45,"Ils consomment moins"],c2:[571,131,"Les stocks s'accumulent"],c3:[508,271,"Les entreprises produisent moins"],c4:[302,271,"Elles licencient"],c5:[239,131,"Les revenus baissent"]};
+  const E=[["k","e"],["e","c1"],["c1","c2"],["c2","c3"],["c3","c4"],["c4","c5"],["c5","c1"]];
+  let s='<svg viewBox="0 0 660 320" role="img" aria-label="Cercle vicieux de la dépression">';
+  s+='<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--neg)"/></marker><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--pos)"/></marker></defs>';
+  function edge(p,q,col,mk){ let dx=q[0]-p[0], dy=q[1]-p[1]; const L=Math.hypot(dx,dy); dx/=L; dy/=L; const t=function(hw,hh){ return Math.min(hw/Math.max(Math.abs(dx),1e-9),hh/Math.max(Math.abs(dy),1e-9)); };
+    const a=t(72,22)+2, b=t(72,22)+5; return '<line x1="'+(p[0]+dx*a).toFixed(1)+'" y1="'+(p[1]+dy*a).toFixed(1)+'" x2="'+(q[0]-dx*b).toFixed(1)+'" y2="'+(q[1]-dy*b).toFixed(1)+'" style="stroke:'+col+';stroke-width:2.2" marker-end="url(#'+mk+')"/>'; }
+  E.forEach(function(e){ s+=edge(B[e[0]],B[e[1]],"var(--neg)","ah"); });
+  Object.keys(B).forEach(function(k){ const p=B[k], words=p[2].split(" "), lines=[]; let cur=""; words.forEach(function(w){ if((cur+" "+w).trim().length>20){ lines.push(cur.trim()); cur=w; } else cur+=" "+w; }); lines.push(cur.trim());
+    s+='<rect x="'+(p[0]-70)+'" y="'+(p[1]-20)+'" width="140" height="40" rx="7" style="fill:var(--surface);stroke:'+(k==="k"?"var(--neg)":"var(--line)")+'"/>';
+    lines.forEach(function(l,j){ s+='<text x="'+p[0]+'" y="'+(p[1]+4+(j-(lines.length-1)/2)*14)+'" text-anchor="middle" style="font:12px var(--ui);fill:var(--ink)">'+l+'</text>'; }); });
+  s+='<text x="405" y="168" text-anchor="middle" data-nobrk style="font:italic 12px var(--ui);fill:var(--neg)">le cercle s’auto-entretient</text>';
+  s+='<g data-brk style="display:none"><rect x="325" y="142" width="160" height="48" rx="8" style="fill:var(--surface);stroke:var(--pos);stroke-width:2"/><text x="405" y="162" text-anchor="middle" style="font:600 12px var(--ui);fill:var(--pos)">État : grands travaux</text><text x="405" y="178" text-anchor="middle" style="font:12px var(--ui);fill:var(--pos)">commandes → embauches</text>'+edge([405,166],B.c3,"var(--pos)","ah2")+'</g>';
+  return s+'</svg>';
+}
+
+/* ---------- 7. circuit économique ---------- */
+const ACT={
+ men:{n:"Ménages",x:90,y:190,f:"Consommer ; offrir leur travail ; épargner.",r:"Salaires, revenus du patrimoine, prestations sociales.",va:"Oui, en partie : les entrepreneurs individuels (artisan, agriculteur, médecin libéral) sont classés dans les ménages, et la comptabilité nationale compte un loyer « imputé » aux propriétaires qui occupent leur logement."},
+ snf:{n:"Entreprises (SNF)",x:470,y:190,f:"Produire des biens et services marchands.",r:"Ventes (chiffre d'affaires).",va:"Oui : principal producteur de valeur ajoutée marchande."},
+ apu:{n:"Administrations publiques",x:280,y:48,f:"Produire des services non marchands (école, hôpital, police) ; redistribuer.",r:"Impôts et cotisations sociales obligatoires.",va:"Oui : leur production non marchande est comptée à son coût (salaires des fonctionnaires, etc.) et entre dans le PIB."},
+ sf:{n:"Sociétés financières",x:300,y:332,f:"Financer l'économie : collecter l'épargne, accorder des crédits, assurer.",r:"Intérêts, commissions, primes d'assurance.",va:"Oui : la production de services financiers est comptée (marges d'intérêt, commissions)."},
+ isb:{n:"ISBLSM",x:90,y:332,f:"Associations, syndicats, partis, Églises : services non marchands aux ménages.",r:"Dons, cotisations volontaires, subventions.",va:"Oui, comme les administrations : production non marchande évaluée à son coût."},
+ rdm:{n:"Reste du monde",x:592,y:332,f:"Tous les agents non résidents qui échangent avec le pays.",r:"Achète nos exportations, nous vend nos importations.",va:"Sa valeur ajoutée n'entre pas dans le PIB français : le PIB ne compte que les producteurs résidents."}
+};
+const FLOW=[
+ ["men","snf","m","Consommation"],["snf","men","r","Biens et services"],
+ ["snf","men","m","Salaires"],["men","snf","r","Travail"],
+ ["men","apu","m","Impôts, cotisations"],["apu","men","m","Prestations, salaires"],
+ ["snf","apu","m","Impôts"],["apu","snf","m","Subventions, commandes"],
+ ["men","sf","m","Épargne"],["sf","snf","m","Crédits"],["sf","men","m","Crédits"],
+ ["snf","rdm","r","Exportations"],["rdm","snf","r","Importations"],
+ ["men","isb","m","Dons, cotisations"],["isb","men","r","Services associatifs"]
+];
+IMPL.circuit={
+  init:function(W){ W.sel="men"; W.o.svg.addEventListener("click",function(e){ const g=e.target.closest("[data-a]"); if(g){ W.sel=g.dataset.a; IMPL.circuit.draw(W); } }); },
+  draw:function(W){
+    const mode=W.v("mode"); let s='<svg viewBox="0 0 680 380" role="img" aria-label="Circuit économique">';
+    s+='<defs>'; ["m","r"].forEach(function(t){ ["on","off"].forEach(function(o){ s+='<marker id="ca'+t+o+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:'+(o==="off"?"var(--off)":t==="m"?"var(--even)":"var(--odd)")+'"/></marker>'; }); }); s+='</defs>';
+    const lab=[], shown=FLOW.filter(function(f){ return mode==="all"||f[2]===mode; }), grp={};
+    shown.forEach(function(f){ const key=[f[0],f[1]].sort().join("|"); (grp[key]=grp[key]||[]).push(f); });
+    shown.forEach(function(f){
+      const key=[f[0],f[1]].sort().join("|"), G=grp[key], kk=G.indexOf(f), n=G.length, ks=key.split("|");
+      const A=ACT[f[0]],B=ACT[f[1]], P=ACT[ks[0]], Q=ACT[ks[1]], on=f[0]===W.sel||f[1]===W.sel;
+      let cx=Q.x-P.x, cy=Q.y-P.y; const cl=Math.hypot(cx,cy); cx/=cl; cy/=cl; const off=(kk-(n-1)/2)*14, nx=-cy*off, ny=cx*off;
+      let dx=B.x-A.x, dy=B.y-A.y; const L=Math.hypot(dx,dy); dx/=L; dy/=L;
+      const tA=Math.min(82/Math.max(Math.abs(dx),1e-9), 26/Math.max(Math.abs(dy),1e-9));
+      const x1=A.x+dx*tA+nx, y1=A.y+dy*tA+ny, x2=B.x-dx*(tA+3)+nx, y2=B.y-dy*(tA+3)+ny;
+      const col=on?(f[2]==="m"?"var(--even)":"var(--odd)"):"var(--off)";
+      s+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" style="stroke:'+col+';stroke-width:'+(on?2.4:1.4)+';opacity:'+(on?1:0.55)+'" marker-end="url(#ca'+f[2]+(on?"on":"off")+')"/>';
+      const ed=Math.min(82/Math.max(Math.abs(cx),1e-9), 26/Math.max(Math.abs(cy),1e-9)), ff=n===1?0.5:(kk%2?0.75:0.25), dd=ed+(cl-2*ed)*ff, px=P.x+cx*dd+nx, py=P.y+cy*dd+ny;
+      if(on) lab.push([px,py,f[3],col]);
+    });
+    Object.keys(ACT).forEach(function(k){ const a=ACT[k], on=k===W.sel;
+      s+='<g data-a="'+k+'" style="cursor:pointer"><rect x="'+(a.x-80)+'" y="'+(a.y-24)+'" width="160" height="48" rx="9" style="fill:'+(on?"var(--ink)":"var(--surface)")+';stroke:var(--ink);stroke-width:1.5"/><text x="'+a.x+'" y="'+(a.y+5)+'" text-anchor="middle" style="font:600 12.5px var(--ui);fill:'+(on?"var(--surface)":"var(--ink)")+'">'+a.n+'</text></g>'; });
+    lab.forEach(function(l){ const w=l[2].length*6.4+10; s+='<rect x="'+(l[0]-w/2)+'" y="'+(l[1]-10)+'" width="'+w+'" height="18" rx="4" style="fill:var(--bg);opacity:.92"/><text x="'+l[0]+'" y="'+(l[1]+3)+'" text-anchor="middle" style="font:11px var(--ui);fill:'+l[3]+'">'+l[2]+'</text>'; });
+    W.o.svg.innerHTML=s+'</svg>';
+    const a=ACT[W.sel];
+    const out=FLOW.filter(function(f){return f[0]===W.sel;}).map(function(f){return f[3].toLowerCase()+" → "+ACT[f[1]].n;}), inn=FLOW.filter(function(f){return f[1]===W.sel;}).map(function(f){return f[3].toLowerCase()+" ← "+ACT[f[0]].n;});
+    W.o.card.innerHTML='<h5>'+a.n+'</h5><p><b>Fonction principale :</b> '+a.f+'</p><p><b>Il verse :</b> '+out.join(" ; ")+'</p><p><b>Il reçoit :</b> '+inn.join(" ; ")+'</p><p><b>Ressources :</b> '+a.r+'</p><p><b>Produit-il de la valeur ajoutée comptée dans le PIB ?</b> '+a.va+'</p>';
+  }
+};
+
+/* ---------- 8. valeur ajoutée le long d'une chaîne ---------- */
+const CHAINS={
+ trousse:{n:["Filature (fil)","Tisserand (tissu)","Fabricant de trousses"],p:[1,3,10],o:[0,0.5,1],on:["","énergie","fermeture éclair"]},
+ pain:{n:["Agriculteur (blé)","Meunier (farine)","Boulanger (pain)"],p:[100,250,600],o:[0,20,50],on:["","électricité","électricité, emballages"]},
+ auto:{n:["Aciérie (tôles)","Équipementier (pièces)","Constructeur (voiture)"],p:[3000,8000,20000],o:[1200,500,2500],on:["minerai, énergie","peinture, logiciels","pneus, sièges"]}
+};
+IMPL.va={
+  presets:{trousse:{ch:"trousse",p1:1,p2:3,p3:10,o1:0,o2:0.5,o3:1},pain:{ch:"pain",p1:100,p2:250,p3:600,o1:0,o2:20,o3:50},auto:{ch:"auto",p1:3000,p2:8000,p3:20000,o1:1200,o2:500,o3:2500}},
+  init:function(W){ W.k.ch.addEventListener("change",function(){ W.set(IMPL.va.presets[W.v("ch")]); }); },
+  draw:function(W){
+    const C=CHAINS[W.v("ch")], p=[+W.v("p1")||0,+W.v("p2")||0,+W.v("p3")||0], o=[+W.v("o1")||0,+W.v("o2")||0,+W.v("o3")||0];
+    const ci=[o[0],p[0]+o[1],p[1]+o[2]], va=p.map(function(x,i){ return x-ci[i]; });
+    const d=p[2]<20?2:0;
+    let h='<table class="gtable"><thead><tr><th>Entreprise</th><th class="num">Prix de vente</th><th class="num">Conso. intermédiaires</th><th class="num">Valeur ajoutée</th></tr></thead><tbody>';
+    C.n.forEach(function(n,i){ h+='<tr><td>'+n+'<span class="why2">achats : '+(i?"produit de l’étape "+i+(C.on[i]?" + "+C.on[i]:""):(C.on[i]||"aucun (simplification)"))+'</span></td><td class="num">'+eur(p[i],d)+'</td><td class="num">'+eur(ci[i],d)+'</td><td class="num" style="color:'+(va[i]<0?"var(--bad)":"var(--good)")+'">'+eur(va[i],d)+'</td></tr>'; });
+    const sva=va[0]+va[1]+va[2], sca=p[0]+p[1]+p[2], so=o[0]+o[1]+o[2];
+    h+='<tr class="tot"><td>Total</td><td class="num">'+eur(sca,d)+'</td><td class="num"></td><td class="num">'+eur(sva,d)+'</td></tr></tbody></table>';
+    W.o.tab.innerHTML=h;
+    const cols=[css("--odd"),css("--ca"),css("--pos")]; let b="";
+    va.forEach(function(v,i){ if(v>0) b+='<div style="flex:'+v+';background:'+cols[i]+'" title="'+C.n[i]+'">VA '+(i+1)+'</div>'; });
+    if(so>0) b+='<div style="flex:'+so+';background:'+css("--off")+'">autres</div>';
+    W.o.bar.innerHTML=b;
+    W.o.sum.innerHTML="Somme des VA de la chaîne : <b>"+eur(sva,d)+"</b> = prix final "+eur(p[2],d)+(so?" − achats hors chaîne "+eur(so,d):"")+". Additionner les chiffres d’affaires donnerait <b>"+eur(sca,d)+"</b> : le fil serait compté trois fois, c’est le double comptage."+(va.some(function(v){return v<0;})?' <span class="verdict-no">Une VA négative : cette entreprise vend moins cher qu’elle n’achète, elle détruit de la valeur.</span>':'');
+  }
+};
+
+/* ---------- 9. valeur, volume, prix ---------- */
+IMPL.vol={
+  presets:{vol:{qa0:100,pa0:1,qa1:200,pa1:1,qb0:0,pb0:1,qb1:0,pb1:1},prix:{qa0:100,pa0:1,qa1:100,pa1:2,qb0:0,pb0:1,qb1:0,pb1:1},mix:{qa0:100,pa0:1,qa1:110,pa1:1.2,qb0:50,pb0:4,qb1:50,pb1:4},masque:{qa0:100,pa0:2,qa1:96,pa1:2.14,qb0:20,pb0:10,qb1:20,pb1:10.5}},
+  draw:function(W){
+    const q=function(k){ return +W.v(k)||0; };
+    const V0=q("qa0")*q("pa0")+q("qb0")*q("pb0"), V1=q("qa1")*q("pa1")+q("qb1")*q("pb1"), Vv=q("qa1")*q("pa0")+q("qb1")*q("pb0");
+    const gv=(V1/V0-1)*100, gq=(Vv/V0-1)*100, gp=(V1/Vv-1)*100;
+    W.o.v0.textContent=eur(V0,2); W.o.v1.textContent=eur(V1,2); W.o.vv.textContent=eur(Vv,2);
+    W.o.gv.textContent=isFinite(gv)?pc(gv,1):"—"; W.o.gq.textContent=isFinite(gq)?pc(gq,1):"—"; W.o.gp.textContent=isFinite(gp)?pc(gp,1):"—";
+    W.o.chk.textContent=isFinite(gv)?"(1 "+(gq<0?"− ":"+ ")+fr(Math.abs(gq)/100,3)+") × (1 "+(gp<0?"− ":"+ ")+fr(Math.abs(gp)/100,3)+") = "+fr(V1/V0,3)+"  →  "+pc(gv,1)+" en valeur":"";
+    let v="";
+    if(!isFinite(gv)) v="Entre des quantités et des prix positifs pour l’année N.";
+    else if(gq>0.05&&gp<=0.05) v="Croissance réelle : on produit davantage, à prix constants. C’est le « meilleur scénario » de tes notes.";
+    else if(Math.abs(gq)<=0.05&&gp>0.05) v="Hausse purement nominale : rien de plus n’a été produit, seuls les prix ont monté.";
+    else if(gq<-0.05&&gv>0) v='<span class="verdict-no">Piège : la valeur monte mais le volume baisse. L’inflation masque une récession.</span>';
+    else v="Les deux effets se combinent : il faut séparer volume et prix pour savoir si l’économie produit vraiment plus.";
+    W.o.verdict.innerHTML=v;
+  }
+};
+
+/* ---------- 10. lire des taux de croissance ---------- */
+IMPL.growth={
+  presets:{acc:{y1:1.8,y2:3,y3:3,y4:3,y5:3},ral:{y1:1.8,y2:1.2,y3:0.8,y4:0.5,y5:0.3},rec:{y1:1.8,y2:-0.3,y3:-1,y4:0.5,y5:1.5},g30:{y1:5,y2:5,y3:5,y4:5,y5:5}},
+  draw:function(W){
+    const r=[1,2,3,4,5].map(function(i){ const v=parseFloat(String(W.v("y"+i)).replace(",",".")); return isFinite(v)?v:0; });
+    const lvl=[100]; r.forEach(function(g){ lvl.push(lvl[lvl.length-1]*(1+g/100)); });
+    const F=fit(W.c.cv), c=F.ctx, w=F.w, h=F.h, pl=40, pr=44, pt=16, pb=40;
+    const gmax=Math.max(6,Math.ceil(Math.max.apply(null,r.map(Math.abs)))), lmin=Math.min.apply(null,lvl), lmax=Math.max.apply(null,lvl);
+    const lo=Math.floor(Math.min(95,lmin)), hi=Math.ceil(Math.max(105,lmax));
+    const bw=(w-pl-pr)/6, X=function(i){ return pl+bw*(i+0.5); }, Yg=function(g){ return pt+(gmax-g)/(2*gmax)*(h-pt-pb); }, Yl=function(l){ return pt+(hi-l)/(hi-lo)*(h-pt-pb); };
+    c.font="11px "+css("--ui"); c.strokeStyle=css("--line"); c.lineWidth=1;
+    c.beginPath(); c.moveTo(pl,Yg(0)); c.lineTo(w-pr,Yg(0)); c.stroke();
+    c.fillStyle=css("--muted"); c.textAlign="right"; [gmax,0,-gmax].forEach(function(v){ c.fillText(pc(v,0),pl-4,Yg(v)+4); });
+    const nar=w<520; if(nar) c.font="10px "+css("--ui");
+    [lo,hi].forEach(function(v){ c.textAlign="left"; c.fillStyle=css("--ink"); c.fillText(fr(v,0),w-pr+4,Yl(v)+4); });
+    const lbl=[];
+    r.forEach(function(g,i){ const x=X(i+1); c.fillStyle=g<0?css("--neg"):css("--pos"); c.fillRect(x-bw*0.3,Math.min(Yg(0),Yg(g)),bw*0.6,Math.abs(Yg(g)-Yg(0)));
+      c.fillStyle=css("--ink"); c.textAlign="center"; c.fillText(nar?fr(g,1):pc(g,1),x,g<0?Yg(g)+13:Yg(g)-4);
+      const prev=i?r[i-1]:null; let t=g<0?"recul":prev===null?"":g>prev?"accélère":g<prev?"ralentit":"stable";
+      c.fillStyle=g<0?css("--neg"):css("--muted"); c.fillText(nar?({recul:"↓",accélère:"↗",ralentit:"↘",stable:"→"}[t]||""):t,x,h-pb+28); c.fillStyle=css("--muted"); c.fillText((nar?"":"an ")+(i+1),x,h-pb+14); lbl.push(t); });
+    c.fillStyle=css("--muted"); c.textAlign="center"; c.fillText(nar?"0":"départ",X(0),h-pb+14);
+    c.save(); c.strokeStyle=css("--ink"); c.lineWidth=2.4; c.beginPath(); lvl.forEach(function(l,i){ if(i) c.lineTo(X(i),Yl(l)); else c.moveTo(X(i),Yl(l)); }); c.stroke();
+    lvl.forEach(function(l,i){ c.fillStyle=css("--ink"); c.beginPath(); c.arc(X(i),Yl(l),3.5,0,7); c.fill(); }); c.restore();
+    const moy=(Math.pow(lvl[5]/100,1/5)-1)*100;
+    W.o.fin.textContent=fr(lvl[5],1); W.o.moy.textContent=pc(moy,2);
+    const neg=r.filter(function(g){return g<0;}).length, ral=lbl.filter(function(t){return t==="ralentit";}).length;
+    W.o.verdict.innerHTML=neg?'<span class="verdict-no">'+neg+' année'+(neg>1?"s":"")+' de recul : le niveau du PIB baisse vraiment.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque période.";
+  }
+};
+
+/* ---------- part ou montant ---------- */
+IMPL.share={
+  presets:{fr:{m:7,s0:18,s1:2},seuil:{m:9,s0:18,s1:2}},
+  draw:function(W){
+    const m=W.v("m"),s0=W.v("s0"),s1=W.v("s1");
+    W.o.m.textContent="× "+fr(m,1); W.o.s0.textContent=s0+" %"; W.o.s1.textContent=s1+" %";
+    const F=fit(W.c.cv), c=F.ctx, w=F.w, h=F.h;
+    const S=Math.min(h-30,(w-60)/(1+Math.sqrt(m)))/Math.sqrt(m), a=S, b=S*Math.sqrt(m), base=h-14;
+    function sq(x,side,share,lab){ c.fillStyle=css("--soft"); c.fillRect(x,base-side,side,side); c.strokeStyle=css("--line"); c.strokeRect(x,base-side,side,side);
+      c.fillStyle=css("--pos"); const hh=side*share/100; c.fillRect(x,base-hh,side,hh);
+      c.fillStyle=css("--ink"); c.font="12px "+css("--ui"); c.textAlign="left"; c.fillText(lab,x,base-side-6); }
+    sq(10,a,s0,"1949"); sq(10+a+40,b,s1,"aujourd’hui");
+    const ratio=m*s1/s0;
+    W.o.r.textContent=fr(ratio*100,0)+" %";
+    W.o.verdict.innerHTML=ratio>=1?'<span class="verdict-ok">La part a fondu, mais la valeur ajoutée agricole est '+(ratio>1.005?"plus grande":"égale")+' qu’en 1949 : le gâteau a tellement grossi.</span>':"Part et montant divergent : la VA agricole vaut "+fr(ratio*100,0)+" % de celle de 1949. Il faudrait un PIB multiplié par "+fr(s0/s1,1)+" pour l’égaler.";
+  }
+};
+
+/* ---------- croissance française par décennie (ordres de grandeur) ---------- */
+IMPL.dec={
+  draw:function(W){
+    const D=[["1950s",5],["1960s",5.6],["1970s",3.9],["1980s",2.4],["1990s",2],["2000s",1.4],["2010s",1.4],["2020–25",0.9]];
+    const g=chart(W.c.cv,[-0.5,D.length-0.5],[0,6.5],{xt:[],yt:[0,1,2,3,4,5,6],yu:" %"});
+    const c=g.ctx, bw=(g.X(1)-g.X(0))*0.6;
+    D.forEach(function(d,i){ c.fillStyle=css(W.v("hl")&&i<3?"--even":"--odd"); c.fillRect(g.X(i)-bw/2,g.Y(d[1]),bw,g.Y(0)-g.Y(d[1]));
+      c.fillStyle=css("--ink"); c.textAlign="center"; c.fillText(fr(d[1],1),g.X(i),g.Y(d[1])-4); c.fillStyle=css("--muted"); c.fillText(d[0],g.X(i),g.h-g.pb+14); });
+  }
+};
+/* ---------- onglets, concepts ---------- */
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="cartes") renderCard();
+  drawAll(); save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 10 concepts revus"; $("seenBar").style.width=(n/10*100)+"%"; }
+document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
+updSeen();
+
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Rareté et choix", r:[
+  ["besoins illimités  ×  facteurs de production limités  →  rareté","Le point de départ de toute l'économie."],
+  ["facteurs : ressources naturelles, travail, capital technique","Tous en quantité limitée."],
+  ["coût d'opportunité de A = quantité de B sacrifiée / quantité de A gagnée","Ce à quoi on renonce."],
+  ["prix ≠ valeur ;  prix ≈ utilité marginale (néoclassiques)","Paradoxe de l'eau et du diamant."]]},
+ {g:"Biens", r:[
+  ["consommation finale : non durable (détruit à la 1re utilisation) ou durable","Achetée par les ménages ; supporte la TVA."],
+  ["bien de production : sert à produire, sans être incorporé","Capital technique (machines)."],
+  ["consommation intermédiaire : incorporée (transformation) ou détruite","Farine, énergie. C'est l'usage qui classe, pas l'objet."],
+  ["service : ne se stocke pas","Produit et consommé en même temps."]]},
+ {g:"Écoles de pensée", r:[
+  ["Classiques (Smith 1776) : individualisme, liberté économique, équilibre permanent","État gendarme."],
+  ["Néoclassiques (1870) : utilité marginale, homo œconomicus, équilibre général","État minimal."],
+  ["Keynes (1936) : macro, déséquilibre durable possible, intervention de l'État","Relance par la dépense publique."],
+  ["Marx (1867) : valeur-travail, plus-value, crises inhérentes","Appropriation collective des moyens de production."],
+  ["micro : un acteur ;  macro : un pays, avec des agrégats","Le tout n'est pas la somme des parties (paradoxe de l'épargne)."]]},
+ {g:"Multiplicateur", r:[
+  ["k = 1 / (1 − c)","c : propension marginale à consommer."],
+  ["ΔY = k × ΔG","Une dépense publique crée plus que sa valeur en PIB (modèle simple, économie fermée)."]]},
+ {g:"Valeur ajoutée et PIB", r:[
+  ["VA = production − consommations intermédiaires","Toutes les CI, pas seulement les matières premières."],
+  ["PIB = Σ VA des producteurs résidents + impôts sur les produits − subventions","Flux annuel, pas un stock."],
+  ["Σ chiffres d'affaires > PIB","Double comptage des produits intermédiaires."],
+  ["acteurs : SNF, sociétés financières, ménages, APU, ISBLSM, reste du monde","Tous les producteurs résidents créent de la VA."]]},
+ {g:"Volume, prix, croissance", r:[
+  ["valeur = volume × prix","Notes, en rouge."],
+  ["volume N+1 = Σ quantité N+1 × prix N","Aux prix de l'année précédente."],
+  ["(1 + g valeur) = (1 + g volume) × (1 + g prix)","On multiplie ; additionner n'est qu'une approximation pour de petits taux."],
+  ["g = (PIB N+1 − PIB N) / PIB N","Taux de croissance."],
+  ["PIB × (1 + g)^n ;  doublement ≈ 70 / g(%)","Croissance composée."],
+  ["récession : g < 0 (conjoncture : 2 trimestres de baisse)","Taux qui baisse mais reste positif = ralentissement, pas récession."],
+  ["commentaire : 1) définir  2) tendance  3) analyse","Méthode du cours."]]}
+];
+(function(){
+  const box=$("fList"); let h="";
+  FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
+  box.innerHTML=h;
+  $("hideF").addEventListener("change", function(){ box.classList.toggle("hidef", this.checked); box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); }); });
+  box.addEventListener("click", function(e){ const f=e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes ---------- */
+const CARDS = [
+ ["r1","Rareté","D'où vient la rareté ?","De la tension entre des besoins illimités et des facteurs de production limités."],
+ ["r2","Rareté","Quels sont les trois facteurs de production ?","Les ressources naturelles, le travail et le capital technique."],
+ ["r3","Rareté","Pourquoi les besoins sont-ils illimités ?","Progrès technique, publicité qui transforme les désirs en besoins, imitation."],
+ ["r4","Rareté","Qu'est-ce que le coût d'opportunité ?","Ce à quoi on renonce pour obtenir quelque chose : la meilleure alternative sacrifiée."],
+ ["r5","Rareté","Étymologie du mot économie ?","Oikonomia : oikos, la maison, et nomos, la règle."],
+ ["v1","Valeur","Pourquoi l'eau est-elle bon marché et le diamant cher ?","Le prix suit l'utilité marginale : l'eau abondante a une faible utilité marginale, le diamant rare une forte."],
+ ["v2","Valeur","Différence entre bien et service ?","Un bien se stocke, un service non : il est consommé au moment où il est produit."],
+ ["b1","Biens","Qu'est-ce qu'une consommation intermédiaire ?","Un bien ou service incorporé dans un autre (transformation) ou détruit dans la production."],
+ ["b2","Biens","Bien durable ou non durable ?","Non durable : détruit à la première utilisation. Durable : s'use progressivement."],
+ ["b3","Biens","Un pneu est-il une consommation intermédiaire ?","Acheté par un constructeur pour une voiture neuve, oui ; acheté par un ménage au garage, c'est une consommation finale."],
+ ["p1","Pensée","Les trois piliers de la pensée libérale classique ?","L'individualisme, la liberté économique (le marché régule), l'équilibre économique permanent."],
+ ["p2","Pensée","Qu'apportent les néoclassiques ?","La valeur vient de l'utilité marginale, l'homo œconomicus, l'équilibre général (individus et marchés)."],
+ ["p3","Pensée","Les trois axes de la pensée de Keynes ?","Analyse macro-économique, déséquilibre durable possible (chômage), intervention nécessaire de l'État."],
+ ["p4","Pensée","Qu'est-ce que l'homo œconomicus ?","Un individu parfaitement rationnel qui n'agit que si le bénéfice dépasse le coût."],
+ ["p5","Pensée","Micro et macro-économie ?","Micro : un acteur (consommateur, entreprise). Macro : l'économie d'un pays, avec des agrégats."],
+ ["p6","Pensée","Qu'est-ce qui distingue les différents modèles économiques ?","La place qu'ils donnent à l'État."],
+ ["p7","Pensée","Nobel 1998, Amartya Sen ?","Économie du bien-être, capabilités ; inspiration de l'IDH (1990)."],
+ ["p8","Pensée","Nobel 2025 ?","Aghion, Howitt et Mokyr : innovation, concurrence et croissance de long terme."],
+ ["p9","Pensée","Nobel 2002 ?","Kahneman et Vernon Smith : psychologie et décision en environnement incertain."],
+ ["k1","Crise","Formule du multiplicateur keynésien ?","k = 1 / (1 − c), c étant la propension marginale à consommer."],
+ ["k2","Crise","Le cercle vicieux de 1929 ?","Krach, pertes des ménages, baisse de consommation, stocks, baisse de production, licenciements, baisse des revenus."],
+ ["k3","Crise","Paradoxe de l'épargne ?","Si tous épargnent plus en même temps, la demande chute, les revenus baissent, et l'épargne totale peut diminuer."],
+ ["a1","Acteurs","Les six secteurs institutionnels ?","SNF, sociétés financières, ménages, administrations publiques, ISBLSM, reste du monde."],
+ ["a2","Acteurs","Que signifie ISBLSM ?","Institutions sans but lucratif au service des ménages : associations, syndicats, partis, Églises."],
+ ["a3","Acteurs","Seules les entreprises créent-elles de la valeur ajoutée ?","Non : les APU (production non marchande au coût), banques, ISBLSM et ménages (entrepreneurs individuels) aussi."],
+ ["c1","Comptabilité","Définition de la valeur ajoutée ?","Production moins consommations intermédiaires."],
+ ["c2","Comptabilité","Définition du PIB ?","Somme des valeurs ajoutées des producteurs résidents sur un an (+ impôts − subventions sur les produits). C'est un flux."],
+ ["c3","Comptabilité","Pourquoi ne pas additionner les chiffres d'affaires ?","On compterait plusieurs fois les produits intermédiaires : double comptage."],
+ ["c4","Comptabilité","Volume ou valeur ?","Valeur : aux prix courants. Volume : aux prix de l'année précédente, seules les quantités changent."],
+ ["c5","Comptabilité","Lien entre croissance en valeur, volume et prix ?","(1 + valeur) = (1 + volume) × (1 + prix)."],
+ ["g1","Croissance","Définition d'une récession ?","Un taux de croissance du PIB négatif (en conjoncture : deux trimestres consécutifs)."],
+ ["g2","Croissance","La croissance passe de 1,8 % à 1,2 % : le PIB baisse-t-il ?","Non, il augmente moins vite."],
+ ["g3","Croissance","Temps de doublement du PIB à 2 % par an ?","Environ 35 ans (70 / 2)."],
+ ["g4","Croissance","Méthode du commentaire de graphique ?","1) définir les concepts et le contexte, 2) dégager la tendance, 3) analyser."]
+];
+let fcCur=null, fcFlipped=false;
+(function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
+function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
+function weight(id){ const b=S.cards[id]; if (b===undefined) return 3; return [6,3,2][b]||0.5; }
+function pick(){ const p=pool(); const cand=p.length>1?p.filter(function(c){return !fcCur||c[0]!==fcCur[0];}):p; let tot=0; cand.forEach(function(c){tot+=weight(c[0]);}); let r=Math.random()*tot; for (const c of cand){ r-=weight(c[0]); if (r<=0) return c; } return cand[cand.length-1]; }
+function renderCard(){
+  if (!fcCur||pool().indexOf(fcCur)<0) fcCur=pick();
+  fcFlipped=false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent=fcCur[1]; $("fcQ").textContent=fcCur[2]; $("fcA").textContent=fcCur[3];
+  $("fcYes").disabled=true; $("fcNo").disabled=true;
+  let n=0,f=0,c=0,a=0; pool().forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML='<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped=!fcFlipped; $("fc").classList.toggle("flipped",fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click",flip);
+$("fc").addEventListener("keydown",function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click",flip);
+$("fcYes").addEventListener("click",function(){ const id=fcCur[0]; S.cards[id]=Math.min(3,(S.cards[id]||0)+1); save(); fcCur=pick(); renderCard(); });
+$("fcNo").addEventListener("click",function(){ S.cards[fcCur[0]]=0; save(); fcCur=pick(); renderCard(); });
+$("fcReset").addEventListener("click",function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards={}; save(); fcCur=null; renderCard(); } });
+
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1",axis:"Comptabilité nationale",pts:0.5,unit:"€",ans:6,tol:0,
+  q:"Un fabricant achète un morceau de tissu 3 € et une fermeture éclair 1 €, et vend la trousse 10 €. Quelle est sa valeur ajoutée ?",
+  c:"<div class='fblock'>VA = production − consommations intermédiaires = 10 − (3 + 1) = 6 €</div><p>Erreur fréquente : ne retirer que le tissu (matière première) et trouver 7 €. La fermeture éclair est aussi une consommation intermédiaire.</p>"},
+ {id:"e2",axis:"Comptabilité nationale",pts:1,unit:"€",ans:600,tol:0,
+  q:"Un agriculteur vend son blé 100 € à un meunier (sans rien acheter lui-même), le meunier vend la farine 250 € au boulanger, qui vend son pain 600 € aux ménages. Quelle est la contribution de cette chaîne au PIB ?",
+  c:"<div class='fblock'>VA agriculteur = 100 − 0 = 100\nVA meunier = 250 − 100 = 150\nVA boulanger = 600 − 250 = 350\nPIB = 100 + 150 + 350 = 600 €</div><p>On retrouve le prix du bien final. Additionner les chiffres d'affaires donnerait 950 € : c'est le double comptage.</p>"},
+ {id:"e3",axis:"Comptabilité nationale",pts:1,unit:"€",ans:300,tol:0,
+  q:"Même chaîne, mais le boulanger paie aussi 50 € d'électricité à un fournisseur. Quelle est la valeur ajoutée du boulanger ?",
+  c:"<div class='fblock'>CI du boulanger = farine 250 + électricité 50 = 300\nVA = 600 − 300 = 300 €</div><p>L'électricité est détruite dans la production : c'est une consommation intermédiaire, même si ce n'est pas une matière première. C'est la raison de la correction de la formule de tes notes.</p>"},
+ {id:"e4",axis:"Analyse des données",pts:1,unit:"%",ans:10,tol:0.01,
+  q:"Une économie produit 100 unités vendues 1 € en année N, puis 110 unités vendues 1,20 € en N+1. Quel est le taux de croissance en volume ?",
+  c:"<div class='fblock'>volume N+1 aux prix de N = 110 × 1 = 110 €\ncroissance en volume = (110 − 100) / 100 = +10 %</div><p>En valeur, 110 × 1,2 = 132 € : +32 %. Ce chiffre mélange quantité et prix ; seul le volume dit si l'on produit plus.</p>"},
+ {id:"e5",axis:"Analyse des données",pts:1,unit:"%",ans:20,tol:0.01,
+  q:"Même économie. Quel est l'effet prix (hausse du déflateur), en % ?",
+  c:"<div class='fblock'>(1 + valeur) = (1 + volume) × (1 + prix)\n1,32 = 1,10 × (1 + prix)   →   1 + prix = 1,2   →   +20 %</div><p>Erreur fréquente : faire 32 − 10 = 22 %. La soustraction n'est qu'une approximation, valable pour de petits taux.</p>"},
+ {id:"e6",axis:"Analyse des données",pts:1,unit:"Md€",ans:2019.6,tol:0.0001,
+  q:"Un PIB de 2000 Md€ croît de 2 % une année, puis de −1 % l'année suivante. Quel est le PIB au bout des deux ans ?",
+  c:"<div class='fblock'>2000 × 1,02 = 2040\n2040 × 0,99 = 2019,6 Md€</div><p>Erreur fréquente : additionner les taux (+1 %) et trouver 2020 Md€. Les taux se multiplient, et le −1 % s'applique à une base plus grande.</p>"},
+ {id:"e7",axis:"Analyse des données",pts:1.5,unit:"ans",ans:14.2,tol:0.03,
+  q:"Pendant les Trente Glorieuses, le PIB français croît d'environ 5 % par an. En combien d'années double-t-il ?",
+  c:"<div class='fblock'>1,05^n = 2   →   n = ln 2 / ln 1,05 = 0,693 / 0,0488 ≈ 14,2 ans\nRègle rapide : 70 / 5 = 14 ans</div><p>À 1 % par an, il faudrait 70 ans : la génération des Trente Glorieuses voyait la production doubler en moins de quinze ans.</p>"},
+ {id:"e8",axis:"Concepts et pensée économique",pts:0.5,unit:"t",ans:5,tol:0,
+  q:"Dans un pays, un travailleur produit soit 5 tonnes de blé, soit 1 tracteur par an. Quel est le coût d'opportunité d'un tracteur, en tonnes de blé ?",
+  c:"<div class='fblock'>1 tracteur de plus = 1 travailleur retiré du blé = 5 t de blé en moins\ncoût d'opportunité = 5 t / 1 tracteur = 5 t</div><p>Ce coût n'apparaît sur aucune facture : c'est la production sacrifiée. Ici la frontière est une droite, car on suppose tous les travailleurs identiques.</p>"},
+ {id:"e9",axis:"Concepts et pensée économique",pts:1.5,unit:"Md€",ans:80,tol:0,
+  q:"Les ménages dépensent 75 % de tout revenu supplémentaire. L'État lance 20 Md€ de grands travaux. Selon le multiplicateur keynésien simple, de combien le PIB augmente-t-il à terme ?",
+  c:"<div class='fblock'>k = 1 / (1 − c) = 1 / (1 − 0,75) = 4\nΔY = 4 × 20 = 80 Md€</div><p>Les 20 Md deviennent des revenus, dont 15 sont dépensés, dont 11,25 sont dépensés, et ainsi de suite : 20 × (1 + 0,75 + 0,75² + …) = 80. Vérifie avec l'outil du concept 6 (c = 0,75).</p>"},
+ {id:"e10",axis:"Analyse des données",pts:1,unit:"",ans:9,tol:0,
+  q:"L'agriculture représentait 18 % de la VA en 1949 et 2 % aujourd'hui. Par combien le PIB doit-il avoir été multiplié pour que la VA agricole actuelle égale celle de 1949 ?",
+  c:"<div class='fblock'>0,02 × m × PIB 1949 = 0,18 × PIB 1949\nm = 0,18 / 0,02 = 9</div><p>Avec un PIB multiplié par environ 7 en volume, la VA agricole actuelle vaut environ 7 × 2 / 18 ≈ 78 % de celle de 1949 : ta note de la page 7 est juste dans l'esprit (une petite part d'un gros gâteau peut peser lourd), mais les ordres de grandeur sont proches du seuil. Teste-le dans l'outil du concept 10.</p>"}
+];
+const GF={full:1,half:0.5,zero:0};
+function renderEx(){
+  $("exList").innerHTML=EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e=EX.find(function(x){return x.id===box.dataset.id;}); const inp=box.querySelector("input"); const st=S.ex[e.id];
+    if (st){ inp.value=st.v||""; if (st.v) check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click",function(){ check(box,e,true); });
+    inp.addEventListener("keydown",function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click",function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw=box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".").replace("−","-");
+  const v=parseFloat(raw), out=box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple 6 ou 14,2."; return; }
+  const ok=Math.abs(v-e.ans)<=Math.abs(e.ans)*e.tol+1e-9;
+  out.className="verdict "+(ok?"ok":"no");
+  const dec = String(e.ans).indexOf(".")>=0 ? String(e.ans).split(".")[1].length : 0;
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction." : "Hors tolérance : la valeur attendue est "+fr(e.ans,dec)+(e.unit?" "+e.unit:"")+". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].v=box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+$("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click",function(){
+  const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
+  const sc={}; Object.keys(ax).forEach(function(a){ sc[a]=Math.round(ax[a].got/ax[a].max*100); });
+  const d=new Date(), date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value=JSON.stringify({date:date,subject:"economie",scores:sc},null,2); $("jsonZone").style.display="block";
+});
+$("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
+
+/* ---------- démarrage ---------- */
+initWidgets();
+renderEx();
+showTab(S.tab||"concepts");
+let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script></body></html>

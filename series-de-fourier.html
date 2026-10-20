@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Séries de Fourier – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF1; --surface:#F8F9FA; --ink:#1A2230; --muted:#5A6576; --line:#CBD2DB; --soft:#DFE4EA;
+  --odd:#2F6FB3; --even:#C2571A; --ca:#6B4FA0; --cb:#B07A0A; --pos:#1F8A70; --neg:#B03A5B;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+    --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+  --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+canvas{display:block;width:100%;max-width:100%}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+header.hero{padding:40px 0 18px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.hero .heroplot{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.hero-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-row label{font-weight:600}
+.hero-row input{flex:1;min-width:200px;accent-color:var(--ink)}
+.hero-row .v{font-family:var(--mono);min-width:12ch}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:66ch}
+
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept.focus{border:2px solid var(--even)}
+.focus-tag{display:inline-block;font-size:.82rem;font-weight:600;color:var(--even);border:1px solid var(--even);border-radius:4px;padding:1px 8px;margin-bottom:10px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.92rem;background:var(--soft);padding:1px 6px;border-radius:4px}
+.fblock{font-family:var(--mono);font-size:.93rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.trap b{display:block;margin-bottom:2px;color:var(--even)}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Widgets */
+.wg{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0 18px;background:var(--bg);font-family:var(--ui)}
+.wg h4{margin:0 0 4px;font-size:1.02rem;font-weight:600}
+.wg .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem;max-width:66ch}
+.cv{background:var(--surface);border-radius:6px;margin-top:8px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:500;margin-bottom:4px;gap:8px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.ctl select{width:100%}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;font-size:.9rem}
+.readout b{font-family:var(--mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.82rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict-ok{color:var(--good);font-weight:600} .verdict-no{color:var(--bad);font-weight:600}
+.steps{margin:10px 0 0;padding:0;list-style:none;font-size:.92rem}
+.steps li{padding:6px 0;border-top:1px solid var(--line)}
+.steps li b{font-family:var(--mono);font-weight:500;margin-right:6px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.93rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+.cardzone{display:flex;flex-direction:column;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.15rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.02rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.ex{padding:18px 14px}.wg{padding:14px 12px}}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Séries de Fourier</h1>
+  <p class="sub">Chaque formule du cours avec un graphique à manipuler pour voir ce que fait chacun de ses termes. Les deux points où tu as bloqué, la symétrie de glissement et la relation entre Cn et C₋n, sont encadrés en orange.</p>
+  <div class="heroplot"><canvas id="heroCv" style="height:170px"></canvas></div>
+  <div class="hero-row"><label for="heroN">Nombre d'harmoniques N</label><input type="range" id="heroN" min="1" max="41" step="2" value="5"><span class="v" id="heroV"></span></div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Huit blocs, dans l'ordre du cours. Les graphiques sont dans la partie 🎓 Version ingénieur, juste sous chaque formule : déplie-la (bouton +) quand tu as essayé de reconstruire la formule de tête. Pour la symétrie de glissement, elle est déjà ouverte. Tous les signaux ont une période T = 1, donc ω = 2π.</p>
+  <div class="progress-line"><span id="seenCount">0 / 8 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<!-- 1 -->
+<article class="concept" data-id="c1">
+  <h3><span class="n">1</span>Décomposer un signal : a0, an, bn</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Un système linéaire sait très bien traiter une sinusoïde : il la multiplie par un gain et la déphase. Si l'on sait écrire n'importe quel signal périodique comme une somme de sinusoïdes, on sait prévoir la réponse du système à ce signal, harmonique par harmonique.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un smoothie est fait de fraises, de bananes et de mangues. Pour savoir combien il y a de fraise dedans, tu le goûtes en cherchant spécifiquement le goût de fraise. Chaque coefficient, c'est la même chose : on « goûte » le signal avec une sinusoïde précise, et la quantité trouvée est l'amplitude de cet ingrédient.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">a0 = (1/T) × ∫[T] f(t) dt
+an = (2/T) × ∫[T] f(t) × cos(nωt) dt     (n ≥ 1)
+bn = (2/T) × ∫[T] f(t) × sin(nωt) dt     (n ≥ 1)
+SN(t) = a0 + Σ(n=1 à N) [an × cos(nωt) + bn × sin(nωt)]</div>
+    <div class="def"><b>Valeur moyenne a0</b>Constante autour de laquelle le signal oscille. Son facteur est 1/T et non 2/T : la « base » associée est la constante 1, dont le carré a pour moyenne 1 et non 1/2.</div>
+    <div class="def"><b>Harmonique de rang n</b>Terme an × cos(nωt) + bn × sin(nωt), de période T/n. Le rang 1 est le fondamental.</div>
+    <p>Rôle de chaque morceau de la formule de an : le produit f(t) × cos(nωt) est positif là où le signal « ressemble » à la cosinusoïde et négatif ailleurs ; l'intégrale fait le bilan sur une période ; le facteur 2/T normalise, parce que la moyenne de cos²(nωt) vaut 1/2.</p>
+    <div class="wg" data-w="coef">
+      <h4>Mesurer un coefficient</h4>
+      <p class="hint">En haut, le signal et la fonction de base. En bas, leur produit : la surface verte compte en plus, la surface rose en moins. Le coefficient est ce bilan multiplié par le facteur de normalisation.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,crenOff,tri,scie,redr,imp,asym"></select></div>
+        <div class="ctl"><label>Coefficient</label><select data-k="type"><option value="a0">a0 (base 1)</option><option value="an" selected>an (base cos)</option><option value="bn">bn (base sin)</option></select></div>
+        <div class="ctl"><label>Rang n <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="10" value="1"></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:150px"></canvas>
+      <canvas class="cv" data-c="bot" style="height:150px"></canvas>
+      <div class="legend"><span><i style="background:var(--ink)"></i>f(t)</span><span><i style="background:var(--ca)"></i>fonction de base</span><span><i style="background:var(--pos)"></i>produit positif</span><span><i style="background:var(--neg)"></i>produit négatif</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+    <div class="wg" data-w="synth">
+      <h4>Reconstruire le signal, terme par terme</h4>
+      <p class="hint">Chaque barre est l'amplitude √(an² + bn²) d'une harmonique. Touche une barre pour retirer ou remettre cette harmonique et voir ce qu'elle apporte à SN(t).</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,tri,scie,redr,imp,asym,crenOff"></select></div>
+        <div class="ctl"><label>Rang maximal N <span data-o="n"></span></label><input type="range" data-k="N" min="1" max="15" value="5"></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:160px"></canvas>
+      <canvas class="cv" data-c="mid" style="height:120px"></canvas>
+      <canvas class="cv" data-c="bars" style="height:120px;cursor:pointer"></canvas>
+      <div class="legend"><span><i style="background:var(--muted)"></i>f(t)</span><span><i style="background:var(--ink)"></i>SN(t)</span><span><i style="background:var(--odd)"></i>rang impair</span><span><i style="background:var(--even)"></i>rang pair</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi le produit f(t) × cos(nωt) intégré sur une période isole-t-il la seule harmonique de rang n, sans être pollué par les autres ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Parce que les sinusoïdes de rangs différents sont orthogonales : la moyenne sur une période de cos(nωt) × cos(mωt) est nulle si n ≠ m, tout comme celle de cos(nωt) × sin(mωt). Dans le produit, seule la composante de même rang et même type garde une moyenne non nulle ; toutes les autres oscillent autant au-dessus qu'en dessous de zéro.</div></details></div>
+    <div class="q"><p>Qu'est-ce qui justifie physiquement le facteur 1/T pour a0 alors que an et bn prennent 2/T ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Si f contient an × cos(nωt), l'intégrale de f × cos(nωt) vaut an × T/2, puisque cos² a pour moyenne 1/2 ; il faut donc multiplier par 2/T pour retrouver an. Pour a0, la « base » vaut 1, dont le carré a pour moyenne 1 : l'intégrale vaut a0 × T et c'est 1/T qui convient. a0 est simplement la moyenne du signal.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 2 -->
+<article class="concept" data-id="c2">
+  <h3><span class="n">2</span>Parité : quelle famille de coefficients disparaît</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Repérer une parité avant de calculer, c'est supprimer la moitié des intégrales et diviser le domaine d'intégration par deux pour l'autre moitié.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu plies une feuille le long d'un axe. Si le dessin d'un côté est exactement le reflet de l'autre, il suffit de dessiner une moitié. Si le dessin d'un côté est le reflet de l'autre mais « à l'envers », les deux moitiés s'annulent quand on les additionne.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">paire × paire = paire     impaire × paire = impaire     impaire × impaire = paire
+∫(−a à a) impaire = 0     ∫(−a à a) paire = 2 × ∫(0 à a)
+
+f impaire :  a0 = 0,  an = 0,  bn = (4/T) × ∫(0 à T/2) f(t) × sin(nωt) dt
+f paire   :  bn = 0,  a0 = (2/T) × ∫(0 à T/2) f(t) dt,  an = (4/T) × ∫(0 à T/2) f(t) × cos(nωt) dt</div>
+    <div class="def"><b>Fonction paire</b>f(−t) = f(t) : courbe symétrique par rapport à l'axe vertical t = 0. Exemple : cos.</div>
+    <div class="def"><b>Fonction impaire</b>f(−t) = −f(t) : courbe symétrique par rapport à l'origine. Exemple : sin. Une moyenne nulle est nécessaire mais pas suffisante.</div>
+    <div class="wg" data-w="par">
+      <h4>Tester la parité en décalant l'origine des temps</h4>
+      <p class="hint">Le trait plein est f(t), le pointillé est f(−t). Pair si les deux coïncident, impair si f(−t) coïncide avec −f(t). Décale le signal : la parité dépend du choix de l'origine.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,tri,scie,redr,imp,asym"></select></div>
+        <div class="ctl"><label>Décalage t0 <span data-o="t0"></span></label><input type="range" data-k="t0" min="-0.5" max="0.5" step="0.01" value="0"></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:160px"></canvas>
+      <canvas class="cv" data-c="bars" style="height:130px"></canvas>
+      <div class="legend"><span><i style="background:var(--ink)"></i>f(t)</span><span><i style="background:var(--muted)"></i>f(−t)</span><span><i style="background:var(--ca)"></i>an</span><span><i style="background:var(--cb)"></i>bn</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Un signal impair devient-il un autre signal quand on déplace l'origine des temps ? Qu'est-ce qui change alors dans ses coefficients, et qu'est-ce qui ne change pas ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est le même signal physique, observé depuis une autre origine. La répartition entre an et bn change (la parité n'est pas une propriété intrinsèque), mais l'amplitude √(an² + bn²) de chaque harmonique reste la même. On le retrouve plus loin avec la translation temporelle : seul le module de Cn est invariant.</div></details></div>
+    <div class="q"><p>Pourquoi, pour une fonction paire, a-t-on le droit de ne calculer l'intégrale que sur [0, T/2] ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">f × cos(nωt) est alors paire, donc son intégrale sur [−T/2, T/2] vaut deux fois celle sur [0, T/2]. Le facteur 2/T devient 4/T. Et l'intervalle [−T/2, T/2] est légitime parce que n'importe quel intervalle de longueur T donne le même résultat pour une fonction T-périodique.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 3 -->
+<article class="concept" data-id="c3">
+  <h3><span class="n">3</span>L'exemple du cours : le créneau impair</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>C'est le calcul de référence : il réunit la parité, l'intégration sur une demi-période et l'apparition d'un facteur (−1)^n qui élimine un rang sur deux.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un interrupteur que l'on allume et éteint régulièrement. Pour imiter ce « tout ou rien » avec des vagues douces, il faut empiler des vagues de plus en plus rapides, chacune plus petite que la précédente.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">f = +A sur [0, T/2[,  −A sur [−T/2, 0[     → impaire : a0 = 0, an = 0
+bn = (4/T) × ∫(0 à T/2) A × sin(nωt) dt = (2A / (nπ)) × [1 − cos(nπ)]
+cos(nπ) = (−1)^n   →   bn = 0 si n pair,   bn = 4A / (nπ) si n impair
+SN(t) = Σ(p ≥ 0) [4A / ((2p+1)π)] × sin((2p+1)ωt)</div>
+    <div class="wg" data-w="cren">
+      <h4>Les deux facteurs de bn</h4>
+      <p class="hint">bn est le produit d'une amplitude qui décroît en 1/n et d'un facteur 1 − cos(nπ) qui vaut 0 ou 2. Le premier fixe la décroissance, le second le tri entre rangs pairs et impairs.</p>
+      <div class="controls"><div class="ctl"><label>Amplitude A <span data-o="A"></span></label><input type="range" data-k="A" min="0.5" max="3" step="0.1" value="1"></div></div>
+      <canvas class="cv" data-c="r1" style="height:100px"></canvas>
+      <canvas class="cv" data-c="r2" style="height:80px"></canvas>
+      <canvas class="cv" data-c="r3" style="height:110px"></canvas>
+      <div class="legend"><span>Ligne 1 : 2A / (nπ)</span><span>Ligne 2 : 1 − cos(nπ)</span><span>Ligne 3 : bn, leur produit</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>D'où vient physiquement le fait que les amplitudes décroissent seulement en 1/n pour le créneau, alors que pour le triangle elles décroissent en 1/n² ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La vitesse de décroissance reflète la régularité du signal. Le créneau a des sauts : il faut beaucoup d'énergie haute fréquence pour les reproduire. Le triangle est continu, seule sa pente saute. Comme le triangle est une primitive du créneau, ses coefficients sont ceux du créneau divisés par nω, d'où le 1/n².</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 4 -->
+<article class="concept" data-id="c4">
+  <h3><span class="n">4</span>Théorème de Dirichlet et phénomène de Gibbs</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Calculer des coefficients ne sert à rien si la série ne converge pas vers le signal. Dirichlet dit quand elle converge, et vers quoi elle converge là où le signal saute.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu essaies de sauter une marche d'escalier en patins à roulettes. Tu arrives au milieu de la marche, puis tu dépasses un peu en haut avant de te stabiliser. Plus tu t'entraînes, plus le dépassement est bref, mais il ne disparaît jamais.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">Si f et f' sont continues par morceaux sur une période :
+  S(t) = f(t)                       là où f est continue
+  S(t0) = [f(t0⁻) + f(t0⁺)] / 2     à un saut</div>
+    <div class="def"><b>Phénomène de Gibbs</b>Au voisinage d'un saut, SN dépasse la valeur du signal d'environ 9 % de la hauteur du saut. Quand N augmente, le dépassement se resserre vers le saut mais son amplitude ne diminue pas.</div>
+    <div class="wg" data-w="gibbs">
+      <h4>Convergence au saut et dépassement</h4>
+      <p class="hint">Le point marque SN à l'instant du saut : pour ces trois signaux, il reste exactement au milieu quel que soit N. Le graphique du bas zoome sur le saut pour mesurer le dépassement.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,crenOff,scie"></select></div>
+        <div class="ctl"><label>Rang maximal N <span data-o="n"></span></label><input type="range" data-k="N" min="1" max="81" value="9"></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:160px"></canvas>
+      <canvas class="cv" data-c="zoom" style="height:150px"></canvas>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la série « choisit »-elle la moyenne des deux limites au saut, et pas l'une ou l'autre ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Chaque SN est une somme de sinusoïdes, donc une fonction continue : elle ne peut pas sauter et doit traverser la zone intermédiaire. Plus précisément, SN(t0) est une moyenne pondérée des valeurs de f autour de t0, avec un poids symétrique : autant à gauche qu'à droite. Quand N grandit, seules les valeurs très proches de t0 comptent encore, soit f(t0⁻) d'un côté et f(t0⁺) de l'autre, à parts égales.</div></details></div>
+    <div class="q"><p>Si le dépassement de Gibbs ne disparaît jamais, en quel sens peut-on dire que la série converge vers f ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La convergence est ponctuelle : en tout point t fixé où f est continue, SN(t) finit par tendre vers f(t), car la zone de dépassement se resserre et finit par passer à côté de ce point. Ce qui ne converge pas, c'est le maximum de l'écart sur une période : la convergence n'est pas uniforme près d'un saut.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+<!-- 5 GLISSEMENT -->
+<article class="concept focus" data-id="c5">
+  <span class="focus-tag">Point à renforcer</span>
+  <h3><span class="n">5</span>Symétrie de glissement : quels rangs disparaissent</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La parité dit quelle famille (an ou bn) est nulle. Le glissement dit autre chose : quels rangs n sont nuls. C'est un critère indépendant, qui marche même pour un signal ni pair ni impair, et qui survit à un décalage de l'origine des temps alors que la parité, elle, disparaît.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une balançoire : pendant la première moitié du mouvement elle va vers l'avant, pendant la seconde elle refait exactement le même trajet mais vers l'arrière. Une chanson qui a ce même « pouls », une moitié à l'endroit puis la même à l'envers, ne peut contenir que des notes qui, elles aussi, changent de sens à chaque demi-tour. Les notes qui reviennent au même endroit après une demi-période ne peuvent pas suivre ce mouvement : elles disparaissent.</p>
+  </div></details>
+  <details class="fold" open><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">g(t) = f(t) − a0
+Glissement :  g(t + T/2) = −g(t)   pour tout t
+Conséquence : an = 0 et bn = 0 pour tout n PAIR (n = 2, 4, 6…)
+              les rangs impairs restent, jusqu'à l'infini</div>
+    <div class="def"><b>Symétrie de glissement</b>La seconde demi-période du signal centré est l'opposée exacte de la première. Graphiquement : on décale la courbe de T/2 et on la retourne ; si elle retombe sur elle-même, il y a glissement.</div>
+    <div class="trap"><b>Trois pièges déjà rencontrés</b>Le glissement ne « plafonne » pas les harmoniques : il en retire une sur deux, sans limite de rang. Il se teste sur g = f − a0, pas sur f : un créneau entre 0 et 1 n'a pas de glissement sur f, mais en a sur g. Enfin, il ne dit rien sur an contre bn : c'est le rôle de la parité.</div>
+    <p>Ordre des critères avant tout calcul : 1) calculer a0 et former g = f − a0 ; 2) tester le glissement sur g, qui décide des rangs ; 3) tester la parité sur g, qui décide de la famille. Les deux conclusions se combinent.</p>
+    <div class="wg" data-w="glanim">
+      <h4>Schéma : décaler d'une demi-période, puis retourner</h4>
+      <p class="hint">On prend la première moitié du motif (en vert), on la fait glisser de T/2, puis on la retourne. S'il y a glissement, elle retombe exactement sur la seconde moitié. Fais avancer les deux étapes avec le curseur, ou lance l'animation.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,crenOff,tri,asym,scie,redr,imp"></select></div>
+        <div class="ctl"><label>Étape <span data-o="st"></span></label><input type="range" data-k="k" min="0" max="100" value="0"></div>
+        <div class="ctl" style="display:flex;align-items:end"><button class="btn" type="button" data-play>Lancer l'animation</button></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:200px"></canvas>
+      <div class="legend"><span><i style="background:var(--muted)"></i>g(t) = f(t) − a0</span><span><i style="background:var(--pos)"></i>première moitié</span><span><i style="background:var(--odd)"></i>sa copie décalée puis retournée</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+
+    <div class="wg" data-w="glgal">
+      <h4>Exemples : avec ou sans glissement</h4>
+      <p class="hint">Pour chaque signal, g(t) en trait plein et −g(t + T/2) en pointillé. Là où ils se superposent, les rangs pairs sont nuls ; là où ils diffèrent, la zone rose est exactement deux fois la partie « rangs pairs » du signal.</p>
+      <div data-o="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px"></div>
+    </div>
+
+    <div class="wg" data-w="glbuild">
+      <h4>Construire un signal avec an et bn</h4>
+      <p class="hint">Règle les coefficients des rangs 1 à 4. Tant que les rangs pairs (en orange) sont à zéro, le signal a une symétrie de glissement, quelle que soit sa forme et même s'il n'a aucune parité. Dès qu'un coefficient pair n'est plus nul, la zone rose apparaît : c'est l'écart g(t) + g(t + T/2), qui vaut deux fois la somme des harmoniques paires.</p>
+      <div class="presets" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <button class="btn" type="button" data-pre="odd">Rangs impairs seulement</button>
+        <button class="btn" type="button" data-pre="noparity">Ni pair ni impair, avec glissement</button>
+        <button class="btn" type="button" data-pre="break">Casser avec un peu de a2</button>
+        <button class="btn" type="button" data-pre="zero">Tout à zéro</button>
+      </div>
+      <div class="controls" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        <div class="ctl"><label>a0 <span data-o="va0"></span></label><input type="range" data-k="a0" min="-1" max="1" step="0.05" value="0.5"></div>
+        <div class="ctl"><label style="color:var(--odd)">a1 <span data-o="va1"></span></label><input type="range" data-k="a1" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="ctl"><label style="color:var(--odd)">b1 <span data-o="vb1"></span></label><input type="range" data-k="b1" min="-1" max="1" step="0.05" value="1"></div>
+        <div class="ctl"><label style="color:var(--even)">a2 <span data-o="va2"></span></label><input type="range" data-k="a2" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="ctl"><label style="color:var(--even)">b2 <span data-o="vb2"></span></label><input type="range" data-k="b2" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="ctl"><label style="color:var(--odd)">a3 <span data-o="va3"></span></label><input type="range" data-k="a3" min="-1" max="1" step="0.05" value="0.4"></div>
+        <div class="ctl"><label style="color:var(--odd)">b3 <span data-o="vb3"></span></label><input type="range" data-k="b3" min="-1" max="1" step="0.05" value="0.3"></div>
+        <div class="ctl"><label style="color:var(--even)">a4 <span data-o="va4"></span></label><input type="range" data-k="a4" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="ctl"><label style="color:var(--even)">b4 <span data-o="vb4"></span></label><input type="range" data-k="b4" min="-1" max="1" step="0.05" value="0"></div>
+        <div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="sub" checked> Retirer a0</label></div>
+      </div>
+      <canvas class="cv" data-c="f" style="height:140px"></canvas>
+      <canvas class="cv" data-c="g" style="height:170px"></canvas>
+      <canvas class="cv" data-c="bars" style="height:110px"></canvas>
+      <div class="legend"><span><i style="background:var(--muted)"></i>f(t)</span><span><i style="background:var(--ink)"></i>g(t)</span><span><i style="background:var(--odd)"></i>−g(t + T/2)</span><span><i style="background:var(--neg)"></i>défaut de glissement</span><span><i style="background:var(--odd)"></i>rang impair</span><span><i style="background:var(--even)"></i>rang pair</span></div>
+      <ol class="steps" data-o="steps"></ol>
+    </div>
+
+    <div class="wg" data-w="gl">
+      <h4>Le test visuel du glissement</h4>
+      <p class="hint">Trait plein : g(t). Pointillé : −g(t + T/2), c'est-à-dire la courbe décalée d'une demi-période puis retournée. Glissement si les deux se superposent. Décale l'origine : la parité se perd, pas le glissement. Décoche « retirer a0 » pour voir pourquoi on teste g et non f.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,crenOff,tri,asym,scie,redr,imp"></select></div>
+        <div class="ctl"><label>Décalage t0 <span data-o="t0"></span></label><input type="range" data-k="t0" min="-0.5" max="0.5" step="0.01" value="0"></div>
+        <div class="ctl" style="display:flex;align-items:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="sub" checked> Retirer a0</label></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:170px"></canvas>
+      <canvas class="cv" data-c="bars" style="height:130px"></canvas>
+      <div class="legend"><span><i style="background:var(--ink)"></i>g(t)</span><span><i style="background:var(--odd)"></i>−g(t + T/2)</span><span><i style="background:var(--odd)"></i>amplitude, rang impair</span><span><i style="background:var(--even)"></i>amplitude, rang pair</span></div>
+      <ol class="steps" data-o="steps"></ol>
+    </div>
+    <p>Pourquoi les rangs pairs s'annulent : après une demi-période, cos(nω(t + T/2)) = cos(nωt + nπ) = (−1)^n × cos(nωt). Pour n pair, la fonction de base revient identique alors que g a changé de signe : le produit g × cos change de signe entre les deux moitiés et l'intégrale s'annule. Pour n impair, les deux changent de signe, le produit se répète et les deux moitiés s'additionnent.</p>
+    <div class="wg" data-w="gl2">
+      <h4>Pourquoi les deux moitiés s'annulent</h4>
+      <p class="hint">Produit g(t) × base de rang n sur une période. La seconde moitié est reportée en pointillé sous la première : pour n pair elle en est l'opposée, pour n impair elle en est la copie.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal (avec glissement)</label><select data-k="sig" data-sigs="asym,cren,crenOff,tri"></select></div>
+        <div class="ctl"><label>Base</label><select data-k="type"><option value="cos">cos(nωt)</option><option value="sin" selected>sin(nωt)</option></select></div>
+        <div class="ctl"><label>Rang n <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="8" value="2"></div>
+      </div>
+      <canvas class="cv" data-c="full" style="height:140px"></canvas>
+      <canvas class="cv" data-c="fold" style="height:140px"></canvas>
+      <div class="legend"><span><i style="background:var(--pos)"></i>première moitié [0, T/2]</span><span><i style="background:var(--even)"></i>seconde moitié [T/2, T], reportée</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Qu'apporte le glissement comme information que la parité seule ne peut pas donner ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La parité trie par famille : elle annule tous les an ou tous les bn. Le glissement trie par rang : il annule an et bn pour tous les n pairs. Les deux critères sont indépendants et se combinent : un créneau impair a an = 0 (parité) et b2k = 0 (glissement), il ne reste que les b de rang impair.</div></details></div>
+    <div class="q"><p>On décale un créneau impair de T/4. Il n'est plus impair. Contient-il désormais des harmoniques paires ? Justifie sans utiliser la parité.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non. Le test g(t + T/2) = −g(t) porte sur la forme du motif, pas sur la position de l'origine : décaler le signal décale aussi −g(t + T/2) de la même quantité, donc l'égalité reste vraie. Il ne contient toujours que des rangs impairs. Ce qui change, c'est la répartition entre an et bn : décalé de T/4 il devient pair, donc tout passe en cosinus.</div></details></div>
+    <div class="q"><p>Un signal vaut 0 sur [0, T/2[ et 5 V sur [T/2, T[. Comment savoir, sans rien intégrer, quels rangs de sa série sont nuls ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Sa moyenne vaut 2,5 V ; g = f − 2,5 vaut −2,5 puis +2,5, et g(t + T/2) = −g(t). Tous les rangs pairs sont nuls. Tester directement f aurait donné f(t + T/2) ≠ −f(t) et une conclusion fausse : c'est pour cela qu'on retire a0 en premier.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 6 COMPLEXE -->
+<article class="concept focus" data-id="c6">
+  <span class="focus-tag">Point à renforcer : Cn et C₋n</span>
+  <h3><span class="n">6</span>Forme complexe : les coefficients Cn</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une seule formule d'intégrale au lieu de deux, un seul coefficient par fréquence, et des propriétés (dérivation, translation) qui deviennent de simples multiplications. Le prix à payer : des fréquences négatives, qui n'ont pas de sens physique seules mais sont indispensables par paires.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Deux enfants tournent sur un manège, l'un dans le sens des aiguilles d'une montre, l'autre en sens inverse, à la même vitesse, en partant de positions symétriques. Si tu regardes leurs ombres sur le mur du fond, leurs mouvements de côté s'annulent toujours, et il ne reste qu'un va-et-vient. Chaque enfant seul tourne ; les deux ensemble oscillent sur une ligne.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">cos(θ) = (e^(jθ) + e^(−jθ)) / 2
+sin(θ) = (e^(jθ) − e^(−jθ)) / (2j)        (un signe moins, et 2j au dénominateur)</div>
+    <div class="wg" data-w="euler">
+      <h4>Euler : deux vecteurs tournants</h4>
+      <p class="hint">e^(jθ) tourne dans le sens direct, e^(−jθ) en sens inverse. Leur somme reste sur l'axe réel (2 cos θ), leur différence sur l'axe imaginaire (2j sin θ) : c'est pour cela qu'il faut diviser par 2j pour obtenir sin.</p>
+      <div class="controls"><div class="ctl"><label>Angle θ <span data-o="th"></span></label><input type="range" data-k="th" min="0" max="360" value="40"></div></div>
+      <canvas class="cv" data-c="plane" style="height:280px"></canvas>
+      <div class="legend"><span><i style="background:var(--odd)"></i>e^(jθ)</span><span><i style="background:var(--even)"></i>e^(−jθ)</span><span><i style="background:var(--ink)"></i>somme</span><span><i style="background:var(--muted)"></i>différence</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+    <div class="fblock">C0 = a0      Cn = (an − j × bn) / 2      C₋n = (an + j × bn) / 2
+SN(t) = Σ(n = −N à N) Cn × e^(jnωt)
+Cn = (1/T) × ∫[T] f(t) × e^(−jnωt) dt
+an = Cn + C₋n      bn = j × (Cn − C₋n)
+f réelle  ⟺  C₋n = conjugué(Cn),  soit aussi conjugué(Cn) = C₋n
+|Cn| = |C₋n| = (1/2) × √(an² + bn²)     an = 2 × Re(Cn)     bn = −2 × Im(Cn)</div>
+    <div class="trap"><b>Une correction à reprendre</b>Le 25, tu as écrit « Cn* = C₋n pour une fonction réelle » et on t'a répondu que c'était l'inverse de la bonne relation. C'était une erreur de notre part : conjugué(Cn) = C₋n et C₋n = conjugué(Cn) sont exactement la même égalité, puisque conjuguer deux fois redonne le nombre de départ. Ta première réponse était juste.</div>
+    <div class="wg" data-w="cn">
+      <h4>Cn et C₋n : une paire qui fabrique un signal réel</h4>
+      <p class="hint">À gauche, le plan complexe : Cn × e^(jωt) tourne dans un sens, C₋n × e^(−jωt) dans l'autre, mis bout à bout. Leur somme reste toujours sur l'axe réel : c'est la valeur du signal, reportée à droite. Les points fixes montrent Cn et C₋n, symétriques par rapport à l'axe réel. Décoche « signal réel » pour casser cette symétrie et voir la somme quitter l'axe réel.</p>
+      <div class="controls">
+        <div class="ctl"><label>an <span data-o="a"></span></label><input type="range" data-k="a" min="-2" max="2" step="0.1" value="1"></div>
+        <div class="ctl"><label>bn <span data-o="b"></span></label><input type="range" data-k="b" min="-2" max="2" step="0.1" value="1.2"></div>
+        <div class="ctl" style="display:flex;align-items:end;gap:16px;flex-wrap:wrap"><label class="chk" style="margin:0"><input type="checkbox" data-k="real" checked> Signal réel</label><label class="chk" style="margin:0"><input type="checkbox" data-k="play" checked> Animation</label></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:10px">
+        <canvas class="cv" data-c="plane" style="height:260px"></canvas>
+        <canvas class="cv" data-c="time" style="height:260px"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:var(--odd)"></i>Cn × e^(jωt)</span><span><i style="background:var(--even)"></i>C₋n × e^(−jωt)</span><span><i style="background:var(--ink)"></i>somme</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+    <div class="wg" data-w="spec">
+      <h4>Spectre bilatéral et spectre unilatéral</h4>
+      <p class="hint">Le spectre des |Cn| est symétrique pour un signal réel : chaque harmonique physique est partagée à parts égales entre +n et −n. Le spectre unilatéral replie les deux moitiés : son amplitude est 2 × |Cn|.</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,tri,scie,redr,imp,asym"></select></div>
+        <div class="ctl"><label>Représentation</label><select data-k="mode"><option value="bi">bilatérale : |Cn|, n de −10 à 10</option><option value="uni">unilatérale : √(an² + bn²)</option></select></div>
+      </div>
+      <canvas class="cv" data-c="bars" style="height:160px"></canvas>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi ne peut-on pas reconstruire l'harmonique physique de rang n d'un signal réel avec Cn seul ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Cn × e^(jnωt) seul est un vecteur qui tourne : il a une partie imaginaire qui varie dans le temps. Ce n'est un signal réel qu'une fois associé à C₋n × e^(−jnωt), qui tourne en sens inverse et annule exactement cette partie imaginaire. La somme vaut 2 × Re(Cn × e^(jnωt)) = an × cos(nωt) + bn × sin(nωt).</div></details></div>
+    <div class="q"><p>Sur quoi repose le fait que C₋n soit le conjugué de Cn quand f est réelle ? Retrouve-le à partir de la formule intégrale de Cn.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C₋n = (1/T) ∫ f(t) e^(+jnωt) dt. Si f est réelle, conjuguer l'intégrale ne change que l'exponentielle : conjugué(Cn) = (1/T) ∫ f(t) e^(+jnωt) dt = C₋n. Tout repose sur f = conjugué(f).</div></details></div>
+    <div class="q"><p>Dans sin(θ) = (e^(jθ) − e^(−jθ)) / (2j), à quoi sert le j du dénominateur, vu sur le schéma d'Euler ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La différence des deux vecteurs est portée par l'axe imaginaire : elle vaut 2j × sin θ. Diviser par 2j ramène ce nombre imaginaire pur à la valeur réelle sin θ.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 7 PROPRIETES -->
+<article class="concept" data-id="c7">
+  <h3><span class="n">7</span>Propriétés : translation, dérivation, intégration</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Avec ces règles, on obtient les coefficients d'un signal à partir de ceux d'un signal déjà connu, sans refaire d'intégrale. Retarder, dériver ou intégrer devient une simple multiplication des Cn.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une chorale chante un morceau. Si elle commence deux secondes plus tard, chaque voix garde le même volume, seul le moment où elle démarre change. Si tu passes le morceau dans un filtre qui renforce les aigus, les voix aiguës ressortent plus fort : c'est ce que fait la dérivation.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">Translation :  f(t − t0)  →  Cn × e^(−jnωt0)     |Cn| inchangé, phase tournée de −nωt0
+Dérivation  :  Cn(f') = j × nω × Cn(f)      an(f') = nω × bn,  bn(f') = −nω × an,  a0(f') = 0
+Intégration :  Cn(F) = Cn(f) / (j × nω)     (n ≠ 0, f de moyenne nulle ; C0(F) dépend de la primitive)
+Linéarité   :  coefficients de λf1 + μf2 = λ × coefficients de f1 + μ × coefficients de f2</div>
+    <div class="wg" data-w="trans">
+      <h4>Translation : le module ne bouge pas, la phase tourne</h4>
+      <p class="hint">Décale le signal. Les barres de |Cn| restent immobiles ; seules les phases changent, d'autant plus vite que le rang est élevé (−nωt0).</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="scie,cren,tri,imp,asym"></select></div>
+        <div class="ctl"><label>Retard t0 <span data-o="t0"></span></label><input type="range" data-k="t0" min="0" max="1" step="0.01" value="0"></div>
+      </div>
+      <canvas class="cv" data-c="top" style="height:130px"></canvas>
+      <canvas class="cv" data-c="mod" style="height:110px"></canvas>
+      <canvas class="cv" data-c="ph" style="height:120px"></canvas>
+      <div class="legend"><span>Ligne 2 : |Cn|, n = 1 à 10</span><span>Ligne 3 : phase de Cn, entre −π et π</span></div>
+    </div>
+    <div class="wg" data-w="deriv">
+      <h4>Dérivation : chaque rang est multiplié par nω</h4>
+      <p class="hint">En haut, f et sa dérivée. En bas, |Cn(f)| et |Cn(f')| / ω : la dérivation multiplie le rang n par n, donc elle amplifie les rangs élevés. L'intégration fait l'inverse et lisse le signal.</p>
+      <div class="controls"><div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="tri,asym,redr"></select></div></div>
+      <canvas class="cv" data-c="top" style="height:150px"></canvas>
+      <canvas class="cv" data-c="bars" style="height:130px"></canvas>
+      <div class="legend"><span><i style="background:var(--ink)"></i>f et |Cn(f)|</span><span><i style="background:var(--odd)"></i>f' et |Cn(f')| / ω</span></div>
+      <div class="readout" data-o="out"></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la phase de Cn tourne-t-elle d'autant plus vite que n est grand quand on retarde le signal ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un même retard t0 représente une fraction de période plus grande pour une harmonique rapide : l'harmonique de rang n a une période T/n, donc un retard t0 correspond à un déphasage n fois plus grand, nωt0.</div></details></div>
+    <div class="q"><p>Pourquoi l'intégration exige-t-elle une fonction de moyenne nulle pour que F soit encore périodique ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Si f a une moyenne a0 non nulle, sa primitive gagne a0 × T à chaque période : elle contient une rampe et n'est plus périodique. Ce terme correspondrait à une division par jnω avec n = 0, impossible.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 8 PARSEVAL -->
+<article class="concept" data-id="c8">
+  <h3><span class="n">8</span>Identité de Parseval</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Elle répartit l'énergie du signal entre ses harmoniques. On sait donc combien d'harmoniques garder pour atteindre une fidélité donnée, et on peut calculer des sommes de séries numériques.</p></div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une cagnotte alimentée par plusieurs enfants. Le total se retrouve en additionnant ce que chacun a mis. Parseval dit la même chose pour l'énergie : l'énergie totale est la somme des énergies de chaque harmonique, sans « pertes » ni termes croisés.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">E = (1/T) × ∫[T] |f(t)|² dt
+E = a0² + (1/2) × Σ(n ≥ 1) (an² + bn²) = Σ(n = −∞ à +∞) |Cn|²
+Énergie de l'harmonique n : En = (an² + bn²) / 2        En électronique : Veff² = Vmoy² + Σ Veff,n²</div>
+    <div class="def"><b>Énergie moyenne E</b>Moyenne du carré du signal sur une période ; en électronique, le carré de la valeur efficace.</div>
+    <p>Pourquoi un facteur 1/2 : la moyenne de an² × cos²(nωt) vaut an²/2. Les termes croisés entre harmoniques différentes ont une moyenne nulle, par orthogonalité : c'est ce qui permet d'additionner simplement.</p>
+    <div class="wg" data-w="pars">
+      <h4>Énergie capturée par les N premières harmoniques</h4>
+      <p class="hint">Chaque barre est l'énergie d'un terme (a0² pour n = 0). La courbe cumule ces énergies en pourcentage de l'énergie totale, calculée directement par l'intégrale de f².</p>
+      <div class="controls">
+        <div class="ctl"><label>Signal</label><select data-k="sig" data-sigs="cren,tri,scie,redr,imp,crenOff"></select></div>
+        <div class="ctl"><label>Rang maximal N <span data-o="n"></span></label><input type="range" data-k="N" min="0" max="15" value="3"></div>
+      </div>
+      <canvas class="cv" data-c="bars" style="height:180px"></canvas>
+      <div class="readout" data-o="out"></div>
+    </div>
+    <div class="trap"><b>Piège</b>C'est le carré des coefficients qui compte, pas leur valeur : une harmonique d'amplitude moitié porte quatre fois moins d'énergie.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi l'énergie totale est-elle la somme des énergies des harmoniques, alors que (a + b)² n'est pas égal à a² + b² en général ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">En développant le carré de la série, on obtient bien des doubles produits entre harmoniques de rangs différents. Mais leur moyenne sur une période est nulle, par orthogonalité des sinusoïdes de rangs différents. Seuls les carrés survivent à la moyenne.</div></details></div>
+    <div class="q"><p>Le fondamental du créneau porte environ 81 % de l'énergie, alors qu'on voit bien que sin(ωt) seul ne ressemble pas à un créneau. Comment concilier les deux ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">L'énergie mesure un écart quadratique moyen : 81 % captés signifie que l'erreur quadratique moyenne ne vaut plus que 19 % de l'énergie. Mais ce qui fait l'aspect « créneau », les angles et les fronts raides, est porté par les harmoniques élevées, qui pèsent peu en énergie. Fidélité énergétique et fidélité de forme ne sont pas la même chose.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+</div></section>
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours avec les conditions d'usage. Le mode test floute les formules : retrouve-les, puis touche pour vérifier.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites.</p>
+  <div class="row"><label for="fcTheme">Thème</label><select id="fcTheme"></select><button class="btn" id="fcReset">Remettre à zéro</button></div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions"><button class="btn" id="fcFlip">Retourner</button><button class="btn bad" id="fcNo" disabled>Pas su</button><button class="btn good" id="fcYes" disabled>Su</button></div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
+</div></section>
+</main>
+<footer class="wrap">Ta progression (concepts revus, cartes, exercices) est enregistrée dans ce navigateur uniquement.</footer>
+<script>
+(function(){
+"use strict";
+const KEY = "fourier-revision-v1";
+let S = {seen:{}, cards:{}, ex:{}, tab:"concepts"};
+try { const raw = localStorage.getItem(KEY); if (raw) Object.assign(S, JSON.parse(raw)); } catch(e) {}
+let saveT=null;
+function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} },150); }
+const $ = function(id){ return document.getElementById(id); };
+const fr = function(x,d){ if (!isFinite(x)) return "–"; if (Math.abs(x) < 0.5*Math.pow(10,-d)) x = 0; return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const TAU = 2*Math.PI;
+
+/* ---------- signaux (T = 1) ---------- */
+function wrap(t){ return t - Math.floor(t); }
+function cen(t){ return wrap(t+0.5)-0.5; }
+const SIG = {
+  cren:{name:"Créneau impair ±1", f:function(t){ return wrap(t)<0.5?1:-1; }, jump:0},
+  crenOff:{name:"Créneau entre 0 et 1", f:function(t){ return wrap(t)<0.5?1:0; }, jump:0},
+  tri:{name:"Triangle pair", f:function(t){ return 1-4*Math.abs(cen(t)); }},
+  scie:{name:"Dent de scie", f:function(t){ return 2*cen(t); }, jump:0.5},
+  redr:{name:"Sinus redressé |sin(πt)|", f:function(t){ return Math.abs(Math.sin(Math.PI*t)); }},
+  imp:{name:"Impulsion, 25 % du temps", f:function(t){ return wrap(t)<0.25?1:0; }},
+  asym:{name:"Signal sans parité, avec glissement", f:function(t){ return Math.sin(TAU*t)+0.6*Math.sin(3*TAU*t+1)+0.35*Math.cos(5*TAU*t+0.4); }}
+};
+const cache = {};
+function coefs(key, N, t0){
+  t0 = t0||0;
+  const id = key+"|"+N+"|"+t0.toFixed(4);
+  if (cache[id]) return cache[id];
+  const f = SIG[key].f, M = 2048;
+  const a = new Float64Array(N+1), b = new Float64Array(N+1);
+  let a0=0, E=0;
+  for (let k=0;k<M;k++){
+    const t=(k+0.5)/M, v=f(t-t0);
+    a0+=v; E+=v*v;
+    for (let n=1;n<=N;n++){ const ph=TAU*n*t; a[n]+=v*Math.cos(ph); b[n]+=v*Math.sin(ph); }
+  }
+  for (let n=1;n<=N;n++){ a[n]*=2/M; b[n]*=2/M; }
+  const r = {a0:a0/M, a:a, b:b, E:E/M, N:N};
+  cache[id]=r; return r;
+}
+function SN(c, t, N, mask){
+  let s = c.a0;
+  for (let n=1;n<=Math.min(N,c.N);n++){ if (mask && mask[n]) continue; s += c.a[n]*Math.cos(TAU*n*t) + c.b[n]*Math.sin(TAU*n*t); }
+  return s;
+}
+function amp(c,n){ return Math.hypot(c.a[n], c.b[n]); }
+function rms(fn){ let s=0; const M=1000; for (let k=0;k<M;k++){ const v=fn((k+0.5)/M); s+=v*v; } return Math.sqrt(s/M); }
+
+/* ---------- tracé ---------- */
+function fit(c){
+  const r=c.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+  if (c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){ c.width=Math.round(w*d); c.height=Math.round(h*d); }
+  const ctx=c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+function frame(cv, xr, yr, o){
+  o = o||{};
+  const F = fit(cv), ctx=F.ctx, w=F.w, h=F.h;
+  const pl = o.pl!==undefined?o.pl:38, pr=8, pt=8, pb=o.noX?6:20;
+  const X = function(x){ return pl+(x-xr[0])/(xr[1]-xr[0])*(w-pl-pr); };
+  const Y = function(y){ return pt+(yr[1]-y)/(yr[1]-yr[0])*(h-pt-pb); };
+  const Xi = function(px){ return xr[0]+(px-pl)/(w-pl-pr)*(xr[1]-xr[0]); };
+  const muted=css("--muted"), line=css("--line");
+  ctx.font="11px "+css("--ui"); ctx.fillStyle=muted; ctx.strokeStyle=line; ctx.lineWidth=1;
+  if (yr[0]<0 && yr[1]>0){ ctx.beginPath(); ctx.moveTo(pl,Y(0)); ctx.lineTo(w-pr,Y(0)); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(pl,pt); ctx.lineTo(pl,h-pb); ctx.stroke();
+  (o.yt||[]).forEach(function(t){ const y=Y(t[0]); ctx.beginPath(); ctx.moveTo(pl-3,y); ctx.lineTo(pl,y); ctx.stroke(); ctx.textAlign="right"; ctx.fillText(t[1], pl-5, y+4); });
+  if (!o.noX){
+    ctx.beginPath(); ctx.moveTo(pl,h-pb); ctx.lineTo(w-pr,h-pb); ctx.stroke();
+    (o.xt||[]).forEach(function(t){ const x=X(t[0]); ctx.beginPath(); ctx.moveTo(x,h-pb); ctx.lineTo(x,h-pb+3); ctx.stroke(); ctx.textAlign="center"; ctx.fillText(t[1], x, h-pb+14); });
+  }
+  if (o.title){ ctx.textAlign="left"; ctx.fillText(o.title, pl+6, pt+11); }
+  ctx.textAlign="left";
+  return {ctx:ctx,w:w,h:h,X:X,Y:Y,Xi:Xi,pl:pl,pr:pr,pt:pt,pb:pb,xr:xr,yr:yr};
+}
+function line(g, fn, color, wd, dash, alpha, x0, x1){
+  const ctx=g.ctx; x0 = x0===undefined?g.xr[0]:x0; x1 = x1===undefined?g.xr[1]:x1;
+  const p0=g.X(x0), p1=g.X(x1), steps=Math.max(2,Math.round((p1-p0)*1.5));
+  ctx.save(); ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=wd||2; ctx.setLineDash(dash||[]); ctx.globalAlpha=alpha||1;
+  for (let i=0;i<=steps;i++){ const x=x0+(x1-x0)*i/steps; const y=g.Y(fn(x)); if (i===0) ctx.moveTo(g.X(x),y); else ctx.lineTo(g.X(x),y); }
+  ctx.stroke(); ctx.restore();
+}
+function fill(g, fn, cpos, cneg, alpha, x0, x1){
+  const ctx=g.ctx; x0 = x0===undefined?g.xr[0]:x0; x1 = x1===undefined?g.xr[1]:x1;
+  const p0=Math.round(g.X(x0)), p1=Math.round(g.X(x1)), y0=g.Y(0);
+  ctx.save(); ctx.globalAlpha=alpha||0.35;
+  for (let px=p0; px<p1; px++){ const v=fn(g.Xi(px+0.5)); ctx.fillStyle = v>=0?cpos:cneg; const y=g.Y(v); ctx.fillRect(px, Math.min(y,y0), 1, Math.abs(y-y0)); }
+  ctx.restore();
+}
+function bars(g, items, bw){
+  const ctx=g.ctx, y0=g.Y(0);
+  items.forEach(function(it){
+    const x=g.X(it.x-bw/2), x2=g.X(it.x+bw/2), y=g.Y(it.v);
+    if (!it.outline && Math.abs(y-y0) < 0.6) return;
+    ctx.save(); ctx.globalAlpha = it.alpha===undefined?1:it.alpha;
+    if (it.outline){ ctx.strokeStyle=it.color; ctx.lineWidth=1.5; ctx.setLineDash([3,3]); ctx.strokeRect(x+0.5, Math.min(y,y0), x2-x-1, Math.max(1,Math.abs(y-y0))); }
+    else { ctx.fillStyle=it.color; ctx.fillRect(x, Math.min(y,y0), Math.max(1,x2-x), Math.max(1,Math.abs(y-y0))); }
+    ctx.restore();
+  });
+}
+function vline(g, x, color, dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.setLineDash(dash||[4,4]); c.beginPath(); c.moveTo(g.X(x),g.pt); c.lineTo(g.X(x),g.h-g.pb); c.stroke(); c.restore(); }
+function hline(g, y, color, dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.setLineDash(dash||[4,4]); c.beginPath(); c.moveTo(g.pl,g.Y(y)); c.lineTo(g.w-g.pr,g.Y(y)); c.stroke(); c.restore(); }
+function dot(g, x, y, color, r){ const c=g.ctx; c.fillStyle=color; c.beginPath(); c.arc(g.X(x),g.Y(y),r||4,0,TAU); c.fill(); }
+function range(fn, x0, x1, padFrac){ let mn=Infinity,mx=-Infinity; for (let i=0;i<=400;i++){ const v=fn(x0+(x1-x0)*i/400); if (v<mn) mn=v; if (v>mx) mx=v; } const p=(mx-mn||1)*(padFrac||0.12); return [mn-p, mx+p]; }
+function sym(r){ const m=Math.max(Math.abs(r[0]),Math.abs(r[1]))||1; return [-m,m]; }
+const TX1 = [[0,"0"],[0.25,"T/4"],[0.5,"T/2"],[0.75,"3T/4"],[1,"T"]];
+function tticks(x0,x1){ const out=[]; for (let k=Math.ceil(x0*4);k<=Math.floor(x1*4);k++){ const v=k/4; const lab = v===0?"0": (Number.isInteger(v)? (v===1?"T":v===-1?"−T":fr(v,0)+"T") : (fr(v,2).replace(/,?0+$/,"")+"T")); out.push([v, lab.replace("0,5T","T/2").replace("−0,5T","−T/2").replace("0,25T","T/4").replace("−0,25T","−T/4").replace("0,75T","3T/4").replace("1,5T","3T/2")]); } return out; }
+function nt(n0,n1){ const o=[]; for (let n=n0;n<=n1;n++) o.push([n,String(n)]); return o; }
+function yt(r){ const m=Math.max(Math.abs(r[0]),Math.abs(r[1])); const s = m>2?1:m>1?0.5:m>0.4?0.25:0.1; const o=[]; for (let v=Math.ceil(r[0]/s)*s; v<=r[1]+1e-9; v+=s){ if (Math.abs(v)<1e-9) v=0; o.push([v, fr(v, s<0.25?1:s<1?2:0).replace(/,00$/,"").replace(/,50$/,",5")]); } return o.length>7? o.filter(function(_,i){return i%2===0;}) : o; }
+function parityOf(fn){
+  const r = rms(fn)||1;
+  const ev = rms(function(t){ return fn(t)-fn(-t); })/r, od = rms(function(t){ return fn(t)+fn(-t); })/r;
+  return ev<0.02?"paire": od<0.02?"impaire":"aucune";
+}
+function colN(n){ return n===0?css("--ink"): (n%2?css("--odd"):css("--even")); }
+
+/* ---------- moteur de widgets ---------- */
+const widgets = [];
+const IMPL = {};
+function initWidgets(){
+  document.querySelectorAll(".wg[data-w]").forEach(function(root){
+    const W = {root:root, type:root.dataset.w, k:{}, o:{}, c:{}};
+    root.querySelectorAll("[data-sigs]").forEach(function(sel){ sel.innerHTML = sel.dataset.sigs.split(",").map(function(s){ return '<option value="'+s+'">'+SIG[s].name+'</option>'; }).join(""); });
+    root.querySelectorAll("[data-k]").forEach(function(el){ W.k[el.dataset.k]=el; el.addEventListener("input", function(){ if (W.onChange) W.onChange(el.dataset.k); draw(W); }); el.addEventListener("change", function(){ draw(W); }); });
+    root.querySelectorAll("[data-o]").forEach(function(el){ W.o[el.dataset.o]=el; });
+    root.querySelectorAll("canvas[data-c]").forEach(function(el){ W.c[el.dataset.c]=el; });
+    W.v = function(k){ const el=W.k[k]; if (el.type==="checkbox") return el.checked; if (el.type==="range") return +el.value; return el.value; };
+    if (IMPL[W.type].init) IMPL[W.type].init(W);
+    widgets.push(W);
+  });
+}
+function visible(W){ return W.root.offsetParent !== null; }
+function draw(W){ if (visible(W)) IMPL[W.type].draw(W); }
+function drawAll(){ widgets.forEach(draw); drawHero(); }
+
+/* ---------- widgets ---------- */
+IMPL.coef = {draw:function(W){
+  const s=W.v("sig"), type=W.v("type"), n=W.v("n"), f=SIG[s].f;
+  W.k.n.disabled = type==="a0"; W.o.n.textContent = type==="a0"?"–":n;
+  const base = type==="a0"? function(){return 1;} : type==="an"? function(t){return Math.cos(TAU*n*t);} : function(t){return Math.sin(TAU*n*t);};
+  const yr = range(function(t){ return f(t); },0,1); yr[0]=Math.min(yr[0],-1.15); yr[1]=Math.max(yr[1],1.15);
+  const g1 = frame(W.c.top,[0,1],yr,{xt:TX1,yt:yt(yr)});
+  line(g1, base, css("--ca"), 2, [6,4]);
+  line(g1, f, css("--ink"), 2);
+  const p = function(t){ return f(t)*base(t); };
+  const yr2 = sym(range(p,0,1,0.1));
+  const g2 = frame(W.c.bot,[0,1],yr2,{xt:TX1,yt:yt(yr2)});
+  fill(g2, p, css("--pos"), css("--neg"), 0.45);
+  line(g2, p, css("--ink"), 1.2);
+  let I=0; const M=4000; for (let k=0;k<M;k++) I+=p((k+0.5)/M); I/=M;
+  const fac = type==="a0"?1:2, nm = type==="a0"?"a0":(type==="an"?"a":"b")+n;
+  W.o.out.innerHTML = "<div>Bilan des surfaces ∫[T] : <b>"+fr(I,3)+"</b></div><div>× "+(type==="a0"?"1/T":"2/T")+" : <b>"+nm+" = "+fr(fac*I,3)+"</b></div>";
+}};
+
+IMPL.synth = {init:function(W){
+  W.mask = {};
+  W.onChange = function(k){ if (k==="sig") W.mask={}; };
+  W.c.bars.addEventListener("click", function(e){
+    if (!W.g) return; const r=W.c.bars.getBoundingClientRect(); const n=Math.round(W.g.Xi(e.clientX-r.left));
+    if (n>=1 && n<=W.v("N")){ W.mask[n]=!W.mask[n]; draw(W); }
+  });
+}, draw:function(W){
+  const s=W.v("sig"), N=W.v("N"), f=SIG[s].f, c=coefs(s,15);
+  W.o.n.textContent=N;
+  const S = function(t){ return SN(c,t,N,W.mask); };
+  const yr = range(f,0,1); yr[0]=Math.min(yr[0],range(S,0,1)[0]); yr[1]=Math.max(yr[1],range(S,0,1)[1]);
+  const g1=frame(W.c.top,[0,2],yr,{xt:tticks(0,2),yt:yt(yr)});
+  line(g1,f,css("--muted"),2); line(g1,S,css("--ink"),2.2);
+  let mx=0.3; for (let n=1;n<=N;n++) mx=Math.max(mx,amp(c,n));
+  const g2=frame(W.c.mid,[0,2],[-mx*1.1,mx*1.1],{xt:tticks(0,2),yt:[[0,"0"]]});
+  for (let n=1;n<=N;n++){ if (W.mask[n]||amp(c,n)<1e-3) continue; (function(n){ line(g2,function(t){ return c.a[n]*Math.cos(TAU*n*t)+c.b[n]*Math.sin(TAU*n*t); }, colN(n), 1.4, null, 0.85); })(n); }
+  let ma=0.1; for (let n=1;n<=15;n++) ma=Math.max(ma,amp(c,n));
+  const g3=frame(W.c.bars,[0.3,15.7],[0,ma*1.15],{xt:nt(1,15),yt:[[0,"0"],[ma,fr(ma,2)]]}); W.g=g3;
+  bars(g3, Array.from({length:15},function(_,i){ const n=i+1; return {x:n, v:amp(c,n), color:colN(n), alpha: n>N?0.2:1, outline: !!W.mask[n] && n<=N}; }), 0.6);
+  const err = rms(function(t){ return f(t)-S(t); }), fr0 = rms(function(t){ return f(t)-c.a0; });
+  const off = Object.keys(W.mask).filter(function(k){ return W.mask[k] && +k<=N; });
+  W.o.out.innerHTML = "<div>a0 = <b>"+fr(c.a0,3)+"</b></div><div>Écart quadratique moyen entre f et SN : <b>"+fr(err,3)+"</b> (sans aucune harmonique : "+fr(fr0,3)+")</div>"+(off.length?"<div>Harmoniques retirées : <b>"+off.join(", ")+"</b></div>":"");
+}};
+
+IMPL.par = {draw:function(W){
+  const s=W.v("sig"), t0=W.v("t0"), f0=SIG[s].f; const f=function(t){ return f0(t-t0); };
+  W.o.t0.textContent = fr(t0,2)+" T";
+  const yr = range(f,-1,1); yr[0]=Math.min(yr[0],-range(f,-1,1)[1]); 
+  const g=frame(W.c.top,[-1,1],yr,{xt:tticks(-1,1),yt:yt(yr)});
+  vline(g,0,css("--line"),[]);
+  line(g,function(t){ return f(-t); },css("--muted"),2,[6,4]);
+  line(g,f,css("--ink"),2);
+  const c=coefs(s,10,t0);
+  let m=0.1; for (let n=1;n<=10;n++) m=Math.max(m,Math.abs(c.a[n]),Math.abs(c.b[n]));
+  const g2=frame(W.c.bars,[0.4,10.6],[-m*1.15,m*1.15],{xt:nt(1,10),yt:[[0,"0"]]});
+  const it=[]; for (let n=1;n<=10;n++){ it.push({x:n-0.17,v:c.a[n],color:css("--ca")}); it.push({x:n+0.17,v:c.b[n],color:css("--cb")}); }
+  bars(g2,it,0.3);
+  const p = parityOf(f);
+  const msg = p==="paire"?"f paire : tous les bn sont nuls": p==="impaire"?"f impaire : a0 et tous les an sont nuls":"ni paire ni impaire : an et bn coexistent";
+  W.o.out.innerHTML = "<div class='"+(p==="aucune"?"verdict-no":"verdict-ok")+"'>"+msg+"</div><div>a0 = <b>"+fr(c.a0,3)+"</b></div>";
+}};
+
+IMPL.cren = {draw:function(W){
+  const A=W.v("A"); W.o.A.textContent=fr(A,1);
+  const N=15, r1=[], r2=[], r3=[];
+  for (let n=1;n<=N;n++){ const k=2*A/(n*Math.PI), q=1-Math.cos(n*Math.PI); r1.push({x:n,v:k,color:css("--muted")}); r2.push({x:n,v:q,color:colN(n)}); r3.push({x:n,v:k*q,color:colN(n)}); }
+  const m=4*A/Math.PI*1.1;
+  const g1=frame(W.c.r1,[0.3,15.7],[0,m/2],{noX:true,yt:[[0,"0"],[2*A/Math.PI,fr(2*A/Math.PI,2)]],title:"2A / (nπ)"}); bars(g1,r1,0.6);
+  line(g1,function(n){ return 2*A/(n*Math.PI); },css("--muted"),1,[3,3],1,0.6,15.7);
+  const g2=frame(W.c.r2,[0.3,15.7],[0,2.4],{noX:true,yt:[[0,"0"],[2,"2"]],title:"1 − cos(nπ)"}); bars(g2,r2,0.6);
+  const g3=frame(W.c.r3,[0.3,15.7],[0,m],{xt:nt(1,15),yt:[[0,"0"],[4*A/Math.PI,fr(4*A/Math.PI,2)]],title:"bn"}); bars(g3,r3,0.6);
+  W.o.out.innerHTML = "<div>b1 = <b>"+fr(4*A/Math.PI,3)+"</b></div><div>b2 = <b>0</b></div><div>b3 = <b>"+fr(4*A/(3*Math.PI),3)+"</b></div><div>b5 = <b>"+fr(4*A/(5*Math.PI),3)+"</b></div>";
+}};
+
+IMPL.gibbs = {draw:function(W){
+  const s=W.v("sig"), N=W.v("N"), f=SIG[s].f, J=SIG[s].jump, c=coefs(s,81);
+  W.o.n.textContent=N;
+  const S=function(t){ return SN(c,t,N); };
+  const fL=f(J-1e-9), fR=f(J+1e-9), mid=(fL+fR)/2;
+  const yr=[Math.min(fL,fR)-0.45, Math.max(fL,fR)+0.45];
+  const g=frame(W.c.top,[J-0.6,J+0.6],yr,{xt:tticks(J-0.6,J+0.6),yt:yt(yr)});
+  hline(g,mid,css("--line")); line(g,f,css("--muted"),2); line(g,S,css("--ink"),2);
+  dot(g,J,S(J),css("--odd"),5);
+  const z=0.1;
+  const g2=frame(W.c.zoom,[J-z,J+z],yr,{xt:[[J-z,"−0,1T"],[J,"saut"],[J+z,"+0,1T"]],yt:yt(yr)});
+  hline(g2,mid,css("--line")); hline(g2,Math.max(fL,fR),css("--line")); hline(g2,Math.min(fL,fR),css("--line"));
+  line(g2,f,css("--muted"),2); line(g2,S,css("--ink"),2); dot(g2,J,S(J),css("--odd"),5);
+  const d=Math.sign(fR-fL); let ov=0, at=J; for (let i=1;i<=600;i++){ const t=J+0.3*i/600; const e=d*(S(t)-f(t)); if (e>ov){ ov=e; at=t; } }
+  const H=Math.abs(fR-fL);
+  W.o.out.innerHTML = "<div>f(t0⁻) = <b>"+fr(fL,2)+"</b>, f(t0⁺) = <b>"+fr(fR,2)+"</b></div><div>Moyenne des limites : <b>"+fr(mid,3)+"</b></div><div>SN(t0) : <b>"+fr(S(J),3)+"</b></div><div>Dépassement : <b>"+fr(ov/H*100,1)+" %</b> du saut, à "+fr((at-J),3)+" T du saut</div>";
+}};
+
+IMPL.gl = {draw:function(W){
+  const s=W.v("sig"), t0=W.v("t0"), sub=W.v("sub"), f0=SIG[s].f;
+  W.o.t0.textContent=fr(t0,2)+" T";
+  const c=coefs(s,15,t0), a0=c.a0;
+  const g = function(t){ return f0(t-t0) - (sub?a0:0); };
+  const mg = function(t){ return -g(t+0.5); };
+  const r1=range(g,0,1.5), r2=range(mg,0,1.5); const yr=[Math.min(r1[0],r2[0]),Math.max(r1[1],r2[1])];
+  const G=frame(W.c.top,[0,1.5],yr,{xt:tticks(0,1.5),yt:yt(yr)});
+  line(G,g,css("--ink"),2.4); line(G,mg,css("--odd"),2,[7,5]);
+  const r=rms(g)||1, gl = rms(function(t){ return g(t)+g(t+0.5); })/r < 0.02;
+  const gc=function(t){ return f0(t-t0)-a0; };
+  const glTrue = rms(function(t){ return gc(t)+gc(t+0.5); })/(rms(gc)||1) < 0.02;
+  const par = parityOf(gc);
+  let m=0.1; for (let n=1;n<=15;n++) m=Math.max(m,amp(c,n));
+  const G2=frame(W.c.bars,[0.3,15.7],[0,m*1.15],{xt:nt(1,15),yt:[[0,"0"]]});
+  bars(G2, Array.from({length:15},function(_,i){ const n=i+1; return {x:n,v:amp(c,n),color:colN(n)}; }),0.6);
+  let st = "";
+  st += "<li><b>1.</b>Valeur moyenne a0 = "+fr(a0,3)+(sub?" : on teste g = f − a0.":(Math.abs(a0)>1e-3?" : non retirée, on teste f lui-même.":" : nulle, g = f."))+"</li>";
+  if (!sub && Math.abs(a0)>1e-3 && !gl && glTrue) st += "<li><b>2.</b><span class='verdict-no'>Le test échoue sur f</span>, alors que les rangs pairs sont bien nuls sur le spectre : la moyenne fausse le test. Recoche « retirer a0 ».</li>";
+  else st += "<li><b>2.</b>Glissement : "+(gl?"<span class='verdict-ok'>oui</span>, les deux courbes se superposent → an = bn = 0 pour tout n pair":"<span class='verdict-no'>non</span> → aucun rang éliminé par ce critère")+"</li>";
+  st += "<li><b>3.</b>Parité de g : "+(par==="paire"?"paire → bn = 0":par==="impaire"?"impaire → an = 0":"aucune → an et bn présents")+"</li>";
+  const fam = par==="paire"?"les an":par==="impaire"?"les bn":"les an et les bn";
+  st += "<li><b>Bilan.</b>Il reste "+fam+(glTrue?" de rang impair seulement.":" de tous les rangs.")+"</li>";
+  W.o.steps.innerHTML = st;
+}};
+
+IMPL.gl2 = {draw:function(W){
+  const s=W.v("sig"), type=W.v("type"), n=W.v("n"), f=SIG[s].f, a0=coefs(s,1).a0;
+  W.o.n.textContent=n;
+  const base = type==="cos"? function(t){return Math.cos(TAU*n*t);} : function(t){return Math.sin(TAU*n*t);};
+  const p=function(t){ return (f(t)-a0)*base(t); };
+  const yr=sym(range(p,0,1,0.12));
+  const G=frame(W.c.full,[0,1],yr,{xt:TX1,yt:yt(yr)});
+  fill(G,p,css("--pos"),css("--pos"),0.4,0,0.5); fill(G,p,css("--even"),css("--even"),0.4,0.5,1);
+  vline(G,0.5,css("--muted")); line(G,p,css("--ink"),1.3);
+  const G2=frame(W.c.fold,[0,0.5],yr,{xt:[[0,"0"],[0.25,"T/4"],[0.5,"T/2"]],yt:yt(yr)});
+  fill(G2,p,css("--pos"),css("--pos"),0.3); line(G2,p,css("--pos"),2);
+  line(G2,function(t){ return p(t+0.5); },css("--even"),2,[6,4]);
+  let I1=0,I2=0; const M=4000; for (let k=0;k<M;k++){ const t=(k+0.5)/M; if (t<0.5) I1+=p(t); else I2+=p(t); } I1/=M; I2/=M;
+  const same = Math.abs(I1-I2) < 1e-3 + 1e-3*Math.abs(I1), opp = Math.abs(I1+I2) < 1e-3 + 1e-3*Math.abs(I1);
+  const nm=(type==="cos"?"a":"b")+n;
+  let msg = n%2===0 ? "n pair : la base revient identique après T/2 alors que g change de signe. La seconde moitié est l'opposée de la première, elles s'annulent." : "n impair : la base change de signe après T/2, comme g. Le produit se répète et les deux moitiés s'additionnent.";
+  W.o.out.innerHTML = "<div>∫ sur [0, T/2] : <b>"+fr(I1,3)+"</b></div><div>∫ sur [T/2, T] : <b>"+fr(I2,3)+"</b></div><div>"+nm+" = 2 × somme = <b>"+fr(2*(I1+I2),3)+"</b></div><div style='flex-basis:100%'>"+msg+"</div>";
+}};
+
+function plane(cv, R){
+  const F=fit(cv), ctx=F.ctx, w=F.w, h=F.h, sc=Math.min(w,h)/(2*R), cx=w/2, cy=h/2;
+  const P=function(x,y){ return [cx+x*sc, cy-y*sc]; };
+  ctx.strokeStyle=css("--line"); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+  ctx.fillStyle=css("--muted"); ctx.font="11px "+css("--ui"); ctx.fillText("Re", w-20, cy-6); ctx.fillText("Im", cx+6, 12);
+  return {ctx:ctx,P:P,sc:sc,w:w,h:h};
+}
+function arrow(pl, x0,y0,x1,y1,color,wd,dash){
+  const c=pl.ctx, a=pl.P(x0,y0), b=pl.P(x1,y1);
+  c.save(); c.strokeStyle=color; c.fillStyle=color; c.lineWidth=wd||2.2; c.setLineDash(dash||[]);
+  c.beginPath(); c.moveTo(a[0],a[1]); c.lineTo(b[0],b[1]); c.stroke(); c.setLineDash([]);
+  const ang=Math.atan2(b[1]-a[1],b[0]-a[0]), L=Math.hypot(b[0]-a[0],b[1]-a[1]);
+  if (L>6){ c.beginPath(); c.moveTo(b[0],b[1]); c.lineTo(b[0]-9*Math.cos(ang-0.4),b[1]-9*Math.sin(ang-0.4)); c.lineTo(b[0]-9*Math.cos(ang+0.4),b[1]-9*Math.sin(ang+0.4)); c.closePath(); c.fill(); }
+  c.restore();
+}
+IMPL.euler = {draw:function(W){
+  const th=W.v("th")*Math.PI/180; W.o.th.textContent=W.v("th")+"°";
+  const pl=plane(W.c.plane,2.3), c=pl.ctx;
+  c.strokeStyle=css("--line"); c.beginPath(); const o=pl.P(0,0); c.arc(o[0],o[1],pl.sc,0,TAU); c.stroke();
+  const co=Math.cos(th), si=Math.sin(th);
+  arrow(pl,co,si,2*co,0,css("--even"),1.2,[3,3]);
+  arrow(pl,0,0,0,2*si,css("--muted"),2,[6,4]);
+  arrow(pl,0,0,co,si,css("--odd"),2.5);
+  arrow(pl,0,0,co,-si,css("--even"),2.5);
+  arrow(pl,0,0,2*co,0,css("--ink"),3);
+  W.o.out.innerHTML="<div>somme = 2 cos θ = <b>"+fr(2*co,3)+"</b></div><div>différence = 2j sin θ = <b>"+fr(2*si,3)+" j</b></div><div>sin θ = différence / (2j) = <b>"+fr(si,3)+"</b></div>";
+}};
+
+IMPL.cn = {init:function(W){
+  W.tau=0.1; W.last=0; W.raf=null;
+  if (reduced) W.k.play.checked=false;
+  function loop(ts){
+    if (!visible(W) || !W.v("play")){ W.raf=null; return; }
+    const dt = W.last? (ts-W.last)/1000 : 0; W.last=ts; W.tau=(W.tau+dt*0.18)%1;
+    IMPL.cn.draw(W); W.raf=requestAnimationFrame(loop);
+  }
+  W.start=function(){ if (!W.raf && W.v("play") && visible(W)){ W.last=0; W.raf=requestAnimationFrame(loop); } };
+  W.onChange=function(){ setTimeout(W.start,0); };
+}, draw:function(W){
+  const a=W.v("a"), b=W.v("b"), real=W.v("real");
+  W.o.a.textContent=fr(a,1); W.o.b.textContent=fr(b,1);
+  const C=[a/2,-b/2], Cm = real? [a/2,b/2] : [a/4,b/4];
+  const wt=TAU*W.tau, e=[Math.cos(wt),Math.sin(wt)];
+  const mul=function(z,u){ return [z[0]*u[0]-z[1]*u[1], z[0]*u[1]+z[1]*u[0]]; };
+  const v1=mul(C,e), v2=mul(Cm,[e[0],-e[1]]), sm=[v1[0]+v2[0], v1[1]+v2[1]];
+  const R=Math.max(1.2, Math.hypot(a,b)*1.05);
+  const pl=plane(W.c.plane,R), c=pl.ctx;
+  c.save(); c.globalAlpha=0.5; c.strokeStyle=css("--ink"); c.setLineDash([2,3]); c.beginPath();
+  for (let i=0;i<=120;i++){ const w2=TAU*i/120, u=[Math.cos(w2),Math.sin(w2)], p1=mul(C,u), p2=mul(Cm,[u[0],-u[1]]), q=pl.P(p1[0]+p2[0],p1[1]+p2[1]); if(i===0) c.moveTo(q[0],q[1]); else c.lineTo(q[0],q[1]); }
+  c.stroke(); c.restore();
+  [[C,css("--odd"),"Cn"],[Cm,css("--even"),"C₋n"]].forEach(function(z){ const q=pl.P(z[0][0],z[0][1]); c.fillStyle=z[1]; c.beginPath(); c.arc(q[0],q[1],4.5,0,TAU); c.fill(); c.font="12px "+css("--ui"); c.fillText(z[2], q[0]+7, q[1]-6); });
+  arrow(pl,0,0,v1[0],v1[1],css("--odd"),2.5);
+  arrow(pl,v1[0],v1[1],sm[0],sm[1],css("--even"),2.5);
+  arrow(pl,0,0,sm[0],sm[1],css("--ink"),1.5,[5,4]);
+  const q=pl.P(sm[0],sm[1]); c.fillStyle=css("--ink"); c.beginPath(); c.arc(q[0],q[1],5,0,TAU); c.fill();
+  const re=function(t){ const u=[Math.cos(TAU*t),Math.sin(TAU*t)], p1=mul(C,u), p2=mul(Cm,[u[0],-u[1]]); return p1[0]+p2[0]; };
+  const im=function(t){ const u=[Math.cos(TAU*t),Math.sin(TAU*t)], p1=mul(C,u), p2=mul(Cm,[u[0],-u[1]]); return p1[1]+p2[1]; };
+  const g=frame(W.c.time,[0,1],[-R,R],{xt:TX1,yt:yt([-R,R])});
+  line(g,re,css("--ink"),2.2); if (!real) line(g,im,css("--bad"),1.6,[5,4]);
+  vline(g,W.tau,css("--muted")); dot(g,W.tau,sm[0],css("--ink"),5); if (!real) dot(g,W.tau,sm[1],css("--bad"),4);
+  const sgn=function(x){ return x<0?" − ":" + "; };
+  W.o.out.innerHTML = "<div>Cn = <b>"+fr(C[0],2)+sgn(C[1])+fr(Math.abs(C[1]),2)+" j</b></div><div>C₋n = <b>"+fr(Cm[0],2)+sgn(Cm[1])+fr(Math.abs(Cm[1]),2)+" j</b></div><div>|Cn| = <b>"+fr(Math.hypot(C[0],C[1]),3)+"</b></div>"+(real?"<div class='verdict-ok'>C₋n est le conjugué de Cn : la somme reste réelle</div>":"<div class='verdict-no'>C₋n n'est plus le conjugué de Cn : la somme a une partie imaginaire (pointillé rouge)</div>");
+  if (W.start) W.start();
+}};
+
+IMPL.spec = {draw:function(W){
+  const s=W.v("sig"), mode=W.v("mode"), c=coefs(s,10); const it=[]; let m=0.1;
+  if (mode==="bi"){
+    for (let n=-10;n<=10;n++){ const k=Math.abs(n), v = k===0?Math.abs(c.a0):amp(c,k)/2; m=Math.max(m,v); it.push({x:n,v:v,color:colN(k)}); }
+    const g=frame(W.c.bars,[-10.7,10.7],[0,m*1.15],{xt:nt(-10,10).filter(function(t){return t[0]%2===0;}),yt:[[0,"0"],[m,fr(m,2)]]}); bars(g,it,0.6); vline(g,0,css("--line"),[]);
+  } else {
+    for (let n=0;n<=10;n++){ const v = n===0?Math.abs(c.a0):amp(c,n); m=Math.max(m,v); it.push({x:n,v:v,color:colN(n)}); }
+    const g=frame(W.c.bars,[-0.7,10.7],[0,m*1.15],{xt:nt(0,10),yt:[[0,"0"],[m,fr(m,2)]]}); bars(g,it,0.6);
+  }
+  W.o.out.innerHTML="<div>|C1| = |C₋1| = <b>"+fr(amp(c,1)/2,3)+"</b></div><div>Amplitude physique du fondamental √(a1² + b1²) = 2|C1| = <b>"+fr(amp(c,1),3)+"</b></div>";
+}};
+
+IMPL.trans = {draw:function(W){
+  const s=W.v("sig"), t0=W.v("t0"), f0=SIG[s].f; W.o.t0.textContent=fr(t0,2)+" T";
+  const f=function(t){ return f0(t-t0); };
+  const yr=range(f,0,2);
+  const g=frame(W.c.top,[0,2],yr,{xt:tticks(0,2),yt:yt(yr)}); line(g,f0,css("--muted"),1.5,[5,4]); line(g,f,css("--ink"),2);
+  const c=coefs(s,10,t0); let m=0.05; for (let n=1;n<=10;n++) m=Math.max(m,amp(c,n)/2);
+  const g2=frame(W.c.mod,[0.4,10.6],[0,m*1.15],{noX:true,yt:[[0,"0"],[m,fr(m,2)]],title:"|Cn|"});
+  bars(g2,Array.from({length:10},function(_,i){ const n=i+1; return {x:n,v:amp(c,n)/2,color:colN(n)}; }),0.55);
+  const g3=frame(W.c.ph,[0.4,10.6],[-Math.PI*1.1,Math.PI*1.1],{xt:nt(1,10),yt:[[-Math.PI,"−π"],[0,"0"],[Math.PI,"π"]],title:"arg(Cn)"});
+  bars(g3,Array.from({length:10},function(_,i){ const n=i+1; const on = amp(c,n)>1e-3*m*2; return {x:n,v:on?Math.atan2(-c.b[n],c.a[n]):0,color:colN(n),alpha:on?1:0}; }),0.55);
+}};
+
+IMPL.deriv = {draw:function(W){
+  const s=W.v("sig"), f=SIG[s].f, N=60, c=coefs(s,N);
+  const d=function(t){ let v=0; for (let n=1;n<=N;n++) v+= n*(c.b[n]*Math.cos(TAU*n*t)-c.a[n]*Math.sin(TAU*n*t)); return v; };
+  const r1=range(f,0,2), r2=range(d,0,2); const yr=[Math.min(r1[0],r2[0]),Math.max(r1[1],r2[1])];
+  const g=frame(W.c.top,[0,2],yr,{xt:tticks(0,2),yt:yt(yr)}); line(g,d,css("--odd"),2); line(g,f,css("--ink"),2);
+  let m=0.05; for (let n=1;n<=12;n++) m=Math.max(m,amp(c,n)/2*n);
+  const g2=frame(W.c.bars,[0.4,12.6],[0,m*1.15],{xt:nt(1,12),yt:[[0,"0"],[m,fr(m,2)]]});
+  const it=[]; for (let n=1;n<=12;n++){ it.push({x:n-0.18,v:amp(c,n)/2,color:css("--ink")}); it.push({x:n+0.18,v:n*amp(c,n)/2,color:css("--odd")}); }
+  bars(g2,it,0.32);
+  W.o.out.innerHTML="<div>Rang 1 : |C1(f')| / ω = <b>"+fr(amp(c,1)/2,3)+"</b> = 1 × |C1(f)|</div><div>Rang 3 : |C3(f')| / ω = <b>"+fr(3*amp(c,3)/2,3)+"</b> = 3 × |C3(f)|</div>";
+}};
+
+IMPL.pars = {draw:function(W){
+  const s=W.v("sig"), N=W.v("N"), c=coefs(s,15), E=c.E; W.o.n.textContent=N;
+  const En=[c.a0*c.a0]; for (let n=1;n<=15;n++) En.push((c.a[n]*c.a[n]+c.b[n]*c.b[n])/2);
+  const m=Math.max.apply(null,En)||1;
+  const g=frame(W.c.bars,[-0.7,15.7],[0,m*1.2],{xt:nt(0,15),yt:[[0,"0"],[m,fr(m,3)]]});
+  bars(g,En.map(function(v,n){ return {x:n,v:v,color:colN(n),alpha:n>N?0.2:1}; }),0.6);
+  // courbe cumulée (échelle 0–100 % sur toute la hauteur)
+  const ctx=g.ctx; let cum=0; ctx.save(); ctx.strokeStyle=css("--ink"); ctx.lineWidth=1.6; ctx.beginPath();
+  const Yp=function(p){ return g.pt+(1-p)*(g.h-g.pt-g.pb); };
+  En.forEach(function(v,n){ cum+=v; const x=g.X(n), y=Yp(cum/E*0.95); if(n===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+  ctx.stroke(); cum=0; En.forEach(function(v,n){ cum+=v; ctx.fillStyle=n<=N?css("--ink"):css("--line"); ctx.beginPath(); ctx.arc(g.X(n),Yp(cum/E*0.95),3,0,TAU); ctx.fill(); });
+  ctx.setLineDash([4,4]); ctx.strokeStyle=css("--muted"); ctx.beginPath(); ctx.moveTo(g.pl,Yp(0.95)); ctx.lineTo(g.w-g.pr,Yp(0.95)); ctx.stroke();
+  ctx.fillStyle=css("--muted"); ctx.fillText("100 %", g.w-44, Yp(0.95)-4); ctx.restore();
+  let got=0; for (let n=0;n<=N;n++) got+=En[n];
+  W.o.out.innerHTML="<div>E = (1/T) ∫ f² = <b>"+fr(E,4)+"</b></div><div>Somme des En jusqu'au rang "+N+" : <b>"+fr(got,4)+"</b></div><div>Énergie capturée : <b>"+fr(got/E*100,1)+" %</b></div>";
+}};
+
+IMPL.glanim = {init:function(W){
+  W.root.querySelector("[data-play]").addEventListener("click", function(){
+    if (W.anim) return; const t0=performance.now(); const dur = reduced? 1 : 3000;
+    function step(ts){ const k=Math.min(100, (ts-t0)/dur*100); W.k.k.value=k; draw(W); if (k<100) W.anim=requestAnimationFrame(step); else W.anim=null; }
+    W.k.k.value=0; W.anim=requestAnimationFrame(step);
+  });
+}, draw:function(W){
+  const s=W.v("sig"), k=W.v("k"), f=SIG[s].f, a0=coefs(s,1).a0;
+  const g=function(t){ return f(t)-a0; };
+  const shift = Math.min(k,50)/50*0.5, flipF = k<=50 ? 1 : 1-2*(k-50)/50;
+  W.o.st.textContent = k<=50 ? "décalage de "+fr(shift,2)+" T" : "retournement "+Math.round((k-50)*2)+" %";
+  const yr=sym(range(g,0,1)); yr[0]*=1.1; yr[1]*=1.1;
+  const G=frame(W.c.top,[0,1],yr,{xt:TX1,yt:yt(yr)});
+  vline(G,0.5,css("--line"));
+  fill(G,g,css("--pos"),css("--pos"),0.25,0,0.5);
+  line(G,g,css("--muted"),2);
+  line(G,g,css("--pos"),2.6,null,1,0,0.5);
+  line(G,function(t){ return flipF*g(t-shift); },css("--odd"),2.6,[7,4],1,shift,shift+0.5);
+  let out="";
+  if (k<100) out = "<div>"+(k<=50?"Étape 1 : on décale la première moitié de T/2.":"Étape 2 : on retourne la copie (on la multiplie par −1).")+"</div>";
+  else { const ok = rms(function(t){ return g(t)+g(t+0.5); })/(rms(g)||1) < 0.02;
+    out = ok? "<div class='verdict-ok'>La copie retombe exactement sur la seconde moitié : g(t + T/2) = −g(t). Rangs pairs nuls.</div>" : "<div class='verdict-no'>La copie ne retombe pas sur la seconde moitié : pas de glissement, les rangs pairs peuvent exister.</div>"; }
+  W.o.out.innerHTML = out;
+}};
+
+IMPL.glgal = {init:function(W){
+  W.list = [
+    ["cren","Créneau ±1","oui","la seconde moitié est l'opposée de la première."],
+    ["crenOff","Créneau entre 0 et 1","oui","une fois a0 = 0,5 retiré, c'est le créneau ±0,5."],
+    ["tri","Triangle","oui","la demi-période au-dessus de la moyenne est l'exacte opposée de celle en dessous."],
+    ["asym","Rangs 1, 3 et 5 seulement","oui","aucune parité, mais uniquement des rangs impairs."],
+    ["scie","Dent de scie","non","la rampe monte sur toute la période : la seconde moitié n'est pas la première retournée."],
+    ["redr","Sinus redressé","non","ses deux moitiés sont toutes les deux positives, en miroir l'une de l'autre : décalée de T/2, la courbe n'est pas l'opposée d'elle-même."],
+    ["imp","Impulsion 25 %","non","le motif est à 1 pendant un quart de période seulement : impossible de l'opposer à la moitié suivante."]
+  ];
+  W.o.grid.innerHTML = W.list.map(function(it,i){ return '<div style="background:var(--surface);border-radius:6px;padding:8px 10px"><div style="font-size:.88rem;font-weight:600">'+it[1]+' <span class="'+(it[2]==="oui"?"verdict-ok":"verdict-no")+'">'+(it[2]==="oui"?"glissement":"pas de glissement")+'</span></div><canvas data-gi="'+i+'" style="height:110px"></canvas><div style="font-size:.84rem;color:var(--muted)">'+(it[2]==="oui"?"Oui : ":"Non : ")+it[3]+'</div></div>'; }).join("");
+}, draw:function(W){
+  W.list.forEach(function(it,i){
+    const cv=W.root.querySelector('canvas[data-gi="'+i+'"]'), f=SIG[it[0]].f, a0=coefs(it[0],1).a0;
+    const g=function(t){ return f(t)-a0; }, mg=function(t){ return -g(t+0.5); };
+    const r=sym(range(g,0,1)); r[0]*=1.15; r[1]*=1.15;
+    const G=frame(cv,[0,1],r,{xt:[[0,"0"],[0.5,"T/2"],[1,"T"]],pl:10});
+    fill(G,function(t){ return g(t)-mg(t); },css("--neg"),css("--neg"),0.3);
+    line(G,g,css("--ink"),2); line(G,mg,css("--odd"),2,[6,4]);
+  });
+}};
+
+IMPL.glbuild = {init:function(W){
+  const P = {
+    odd:{a0:0.5,a1:0,b1:1,a2:0,b2:0,a3:0,b3:0.33,a4:0,b4:0},
+    noparity:{a0:0,a1:0.6,b1:0.8,a2:0,b2:0,a3:-0.3,b3:0.4,a4:0,b4:0},
+    "break":{a0:0,a1:0.6,b1:0.8,a2:0.3,b2:0,a3:-0.3,b3:0.4,a4:0,b4:0},
+    zero:{a0:0,a1:0,b1:0,a2:0,b2:0,a3:0,b3:0,a4:0,b4:0}
+  };
+  W.root.querySelectorAll("[data-pre]").forEach(function(b){ b.addEventListener("click", function(){ const p=P[b.dataset.pre]; Object.keys(p).forEach(function(k){ W.k[k].value=p[k]; }); draw(W); }); });
+}, draw:function(W){
+  const A=[W.v("a0"),W.v("a1"),W.v("a2"),W.v("a3"),W.v("a4")], B=[0,W.v("b1"),W.v("b2"),W.v("b3"),W.v("b4")], sub=W.v("sub");
+  ["a0","a1","b1","a2","b2","a3","b3","a4","b4"].forEach(function(k){ W.o["v"+k].textContent=fr(W.v(k),2); });
+  const f=function(t){ let v=A[0]; for (let n=1;n<=4;n++) v+=A[n]*Math.cos(TAU*n*t)+B[n]*Math.sin(TAU*n*t); return v; };
+  const g=function(t){ return f(t)-(sub?A[0]:0); }, mg=function(t){ return -g(t+0.5); };
+  let yr=range(f,0,1.5); yr=[Math.min(yr[0],-0.5),Math.max(yr[1],0.5)];
+  const G1=frame(W.c.f,[0,1.5],yr,{xt:tticks(0,1.5),yt:yt(yr)}); line(G1,f,css("--muted"),2.2);
+  if (sub) hline(G1,A[0],css("--muted"));
+  const r1=range(g,0,1.5), r2=range(mg,0,1.5); let yr2=sym([Math.min(r1[0],r2[0]),Math.max(r1[1],r2[1])]); if (yr2[1]<0.5) yr2=[-0.5,0.5];
+  const G2=frame(W.c.g,[0,1.5],yr2,{xt:tticks(0,1.5),yt:yt(yr2)});
+  fill(G2,function(t){ return g(t)-mg(t); },css("--neg"),css("--neg"),0.35);
+  line(G2,g,css("--ink"),2.4); line(G2,mg,css("--odd"),2,[7,5]);
+  const it=[]; let m=0.3; for (let n=1;n<=4;n++){ m=Math.max(m,Math.abs(A[n]),Math.abs(B[n])); it.push({x:n-0.17,v:A[n],color:colN(n)}); it.push({x:n+0.17,v:B[n],color:colN(n),alpha:0.55}); }
+  const G3=frame(W.c.bars,[0.4,4.6],[-m*1.15,m*1.15],{xt:[[0.83,"a1"],[1.17,"b1"],[1.83,"a2"],[2.17,"b2"],[2.83,"a3"],[3.17,"b3"],[3.83,"a4"],[4.17,"b4"]],yt:[[0,"0"]]});
+  bars(G3,it,0.28);
+  const even=[]; [2,4].forEach(function(n){ if (Math.abs(A[n])>1e-9) even.push("a"+n); if (Math.abs(B[n])>1e-9) even.push("b"+n); });
+  const gc=function(t){ return f(t)-A[0]; };
+  const nonzero = rms(gc)>1e-6;
+  const gl = nonzero && rms(function(t){ return g(t)+g(t+0.5); })/(rms(g)||1) < 0.02;
+  const par = nonzero ? parityOf(gc) : "–";
+  let st="";
+  st += "<li><b>1.</b>a0 = "+fr(A[0],2)+(sub?" est retiré : on teste g = f − a0.":(Math.abs(A[0])>1e-9?" n'est pas retiré : le test porte sur f et échoue à cause de la moyenne.":" : g = f."))+"</li>";
+  if (!nonzero) st += "<li><b>2.</b>Signal constant : rien à tester.</li>";
+  else if (gl) st += "<li><b>2.</b><span class='verdict-ok'>Glissement</span> : g(t + T/2) = −g(t). Aucun coefficient pair n'est présent.</li>";
+  else if (even.length) st += "<li><b>2.</b><span class='verdict-no'>Pas de glissement</span> : les coefficients pairs "+even.join(", ")+" ne sont pas nuls. La zone rose est 2 × leur somme d'harmoniques.</li>";
+  else st += "<li><b>2.</b><span class='verdict-no'>Test échoué</span> : les coefficients pairs sont nuls, c'est la moyenne non retirée qui fausse le test.</li>";
+  if (nonzero) st += "<li><b>3.</b>Parité de g : "+(par==="paire"?"paire, seuls des an":par==="impaire"?"impaire, seuls des bn":"aucune, an et bn mélangés")+". Le glissement n'en dépend pas.</li>";
+  W.o.steps.innerHTML = st;
+}};
+
+/* ---------- hero ---------- */
+function drawHero(){
+  const N=+$("heroN").value, c=coefs("cren",41);
+  $("heroV").textContent = "N = "+N+", "+((N+1)/2)+" harmonique"+(N>1?"s":"")+" impaire"+(N>1?"s":"");
+  const g=frame($("heroCv"),[-0.25,2.25],[-1.45,1.45],{xt:tticks(0,2),yt:[[-1,"−1"],[0,"0"],[1,"1"]]});
+  line(g,SIG.cren.f,css("--muted"),2);
+  for (let n=1;n<=N;n+=2){ (function(n){ line(g,function(t){ return c.b[n]*Math.sin(TAU*n*t); },css("--odd"),1,null,0.35); })(n); }
+  line(g,function(t){ return SN(c,t,N); },css("--ink"),2.4);
+}
+$("heroN").addEventListener("input", drawHero);
+
+/* ---------- onglets, concepts ---------- */
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="cartes") renderCard();
+  drawAll(); save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 8 concepts revus"; $("seenBar").style.width=(n/8*100)+"%"; }
+document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
+updSeen();
+
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Coefficients trigonométriques", r:[
+  ["a0 = (1/T) × ∫[T] f(t) dt","Valeur moyenne du signal."],
+  ["an = (2/T) × ∫[T] f(t) × cos(nωt) dt","n ≥ 1 ; amplitude des cosinus de rang n."],
+  ["bn = (2/T) × ∫[T] f(t) × sin(nωt) dt","n ≥ 1 ; amplitude des sinus de rang n."],
+  ["SN(t) = a0 + Σ(n=1 à N) [an cos(nωt) + bn sin(nωt)]","Somme partielle ; ω = 2π / T."]]},
+ {g:"Parité (décide de la famille)", r:[
+  ["f impaire : a0 = 0, an = 0, bn = (4/T) × ∫(0 à T/2) f sin(nωt) dt","f(−t) = −f(t)."],
+  ["f paire : bn = 0, a0 = (2/T) × ∫(0 à T/2) f dt, an = (4/T) × ∫(0 à T/2) f cos(nωt) dt","f(−t) = f(t)."]]},
+ {g:"Glissement (décide des rangs)", r:[
+  ["g = f − a0 ;  g(t + T/2) = −g(t)","Toujours retirer la moyenne avant de tester."],
+  ["an = bn = 0 pour tout n pair","Les rangs impairs restent tous ; aucun plafond de rang."],
+  ["1) a0  2) glissement sur g  3) parité sur g","Ordre des critères avant tout calcul."]]},
+ {g:"Exemple du créneau impair ±A", r:[
+  ["bn = (2A / (nπ)) × [1 − cos(nπ)]","cos(nπ) = (−1)^n."],
+  ["b(2p+1) = 4A / ((2p+1)π),  b(2p) = 0","Décroissance en 1/n."]]},
+ {g:"Dirichlet", r:[
+  ["S(t) = f(t) si f continue en t","f et f' continues par morceaux."],
+  ["S(t0) = [f(t0⁻) + f(t0⁺)] / 2","À un saut."],
+  ["dépassement de Gibbs ≈ 9 % du saut","Ne diminue pas quand N augmente, se resserre seulement."]]},
+ {g:"Forme complexe", r:[
+  ["cos θ = (e^(jθ) + e^(−jθ)) / 2,   sin θ = (e^(jθ) − e^(−jθ)) / (2j)","Formules d'Euler ; 1/j = −j."],
+  ["C0 = a0,  Cn = (an − j bn) / 2,  C₋n = (an + j bn) / 2","Passage réel vers complexe."],
+  ["Cn = (1/T) × ∫[T] f(t) × e^(−jnωt) dt","Valable pour tout n entier, positif ou négatif."],
+  ["an = Cn + C₋n,   bn = j × (Cn − C₋n)","Passage complexe vers réel."],
+  ["f réelle : C₋n = conjugué(Cn)","Équivalent à conjugué(Cn) = C₋n."],
+  ["an = 2 Re(Cn),  bn = −2 Im(Cn),  |Cn| = (1/2) √(an² + bn²)","f réelle, n ≥ 1."],
+  ["f paire : C₋n = Cn (réel) ;  f impaire : C₋n = −Cn (imaginaire pur)","Cas réels."]]},
+ {g:"Propriétés", r:[
+  ["f(t − t0) → Cn × e^(−jnωt0)","Module inchangé, phase tournée."],
+  ["Cn(f') = j nω Cn(f) ;  an(f') = nω bn,  bn(f') = −nω an","Dérivation terme à terme."],
+  ["Cn(F) = Cn(f) / (j nω),  n ≠ 0","Intégration ; f de moyenne nulle."],
+  ["lim an = lim bn = lim |Cn| = 0","Les coefficients tendent vers 0."]]},
+ {g:"Parseval", r:[
+  ["E = (1/T) × ∫[T] |f(t)|² dt","Énergie moyenne ; Veff² en électronique."],
+  ["E = a0² + (1/2) Σ(n ≥ 1) (an² + bn²) = Σ |Cn|²","Somme des énergies des harmoniques."],
+  ["En = (an² + bn²) / 2","Énergie de l'harmonique de rang n."]]}
+];
+(function(){
+  const box=$("fList"); let h="";
+  FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
+  box.innerHTML=h;
+  $("hideF").addEventListener("change", function(){ box.classList.toggle("hidef", this.checked); box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); }); });
+  box.addEventListener("click", function(e){ const f=e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes ---------- */
+const CARDS = [
+ ["k1","Coefficients","Formule de a0 et sa signification ?","a0 = (1/T) × ∫[T] f(t) dt : la valeur moyenne du signal."],
+ ["k2","Coefficients","Formules de an et bn ?","an = (2/T) ∫[T] f cos(nωt) dt, bn = (2/T) ∫[T] f sin(nωt) dt, pour n ≥ 1."],
+ ["k3","Coefficients","Pourquoi 2/T pour an mais 1/T pour a0 ?","cos²(nωt) a pour moyenne 1/2, alors que la base de a0 est la constante 1, de carré moyen 1."],
+ ["k4","Coefficients","Qu'est-ce que l'harmonique de rang n ?","an cos(nωt) + bn sin(nωt), de période T/n. Le rang 1 est le fondamental."],
+ ["p1","Parité","f impaire : quels coefficients sont nuls, et comment calcule-t-on les autres ?","a0 = 0 et an = 0 ; bn = (4/T) ∫(0 à T/2) f sin(nωt) dt."],
+ ["p2","Parité","f paire : quels coefficients sont nuls, et comment calcule-t-on les autres ?","bn = 0 ; a0 = (2/T) ∫(0 à T/2) f dt, an = (4/T) ∫(0 à T/2) f cos(nωt) dt."],
+ ["p3","Parité","Une moyenne nulle suffit-elle à rendre une fonction impaire ?","Non : c'est nécessaire, pas suffisant."],
+ ["p4","Parité","La parité d'un signal dépend-elle du choix de l'origine des temps ?","Oui : décaler le signal peut la faire apparaître ou disparaître. Les amplitudes √(an² + bn²), elles, ne changent pas."],
+ ["g1","Glissement","Définition de la symétrie de glissement ?","g = f − a0 vérifie g(t + T/2) = −g(t) pour tout t."],
+ ["g2","Glissement","Que permet de conclure le glissement ?","an = bn = 0 pour tout n pair. Les rangs impairs restent, jusqu'à l'infini."],
+ ["g3","Glissement","Le glissement « plafonne »-t-il les harmoniques ?","Non : il retire un rang sur deux, sans limite de rang."],
+ ["g4","Glissement","Pourquoi teste-t-on le glissement sur g = f − a0 et pas sur f ?","Une moyenne non nulle fait échouer le test sur f, alors que les rangs pairs peuvent être nuls. Exemple : créneau entre 0 et 1."],
+ ["g5","Glissement","Parité et glissement : que décide chacun ?","La parité décide de la famille (an ou bn) ; le glissement décide des rangs (pairs nuls). Ils sont indépendants et se combinent."],
+ ["g6","Glissement","Un décalage de l'origine des temps détruit-il le glissement ?","Non. Il peut détruire la parité, mais le glissement porte sur la forme du motif."],
+ ["g7","Glissement","Ordre des vérifications avant de calculer des coefficients ?","1) calculer a0 ; 2) tester le glissement sur g = f − a0 ; 3) tester la parité de g."],
+ ["g8","Glissement","Pourquoi le glissement annule-t-il les rangs pairs ?","Pour n pair, cos(nω(t + T/2)) = cos(nωt) : la base se répète alors que g change de signe, donc les deux moitiés de l'intégrale s'annulent."],
+ ["d1","Dirichlet","Vers quoi converge la série de Fourier à un saut ?","Vers [f(t0⁻) + f(t0⁺)] / 2, la moyenne des deux limites."],
+ ["d2","Dirichlet","Qu'est-ce que le phénomène de Gibbs ?","Un dépassement d'environ 9 % du saut près d'une discontinuité, qui se resserre quand N augmente mais ne diminue pas en amplitude."],
+ ["c1","Complexe","Formule d'Euler pour sin θ ?","sin θ = (e^(jθ) − e^(−jθ)) / (2j). Un signe moins entre les exponentielles."],
+ ["c2","Complexe","Cn et C₋n en fonction de an et bn ?","Cn = (an − j bn) / 2 et C₋n = (an + j bn) / 2."],
+ ["c3","Complexe","an et bn en fonction de Cn et C₋n ?","an = Cn + C₋n et bn = j (Cn − C₋n)."],
+ ["c4","Complexe","Relation entre Cn et C₋n pour une fonction réelle ?","C₋n = conjugué(Cn), ce qui s'écrit aussi conjugué(Cn) = C₋n : c'est la même égalité."],
+ ["c5","Complexe","Formule intégrale de Cn ?","Cn = (1/T) ∫[T] f(t) e^(−jnωt) dt, pour tout n entier."],
+ ["c6","Complexe","Pourquoi faut-il la paire (Cn, C₋n) pour une harmonique réelle ?","Chaque terme seul tourne dans le plan complexe ; leurs parties imaginaires ne s'annulent qu'ensemble."],
+ ["c7","Complexe","an et bn en fonction de Re(Cn) et Im(Cn) pour f réelle ?","an = 2 Re(Cn), bn = −2 Im(Cn)."],
+ ["r1","Propriétés","Effet d'un retard t0 sur Cn ?","Cn devient Cn × e^(−jnωt0) : module inchangé, phase décalée de −nωt0."],
+ ["r2","Propriétés","Coefficients de la dérivée f' ?","Cn(f') = j nω Cn(f) ; an(f') = nω bn, bn(f') = −nω an, a0(f') = 0."],
+ ["e1","Parseval","Identité de Parseval ?","(1/T) ∫[T] f² dt = a0² + (1/2) Σ (an² + bn²) = Σ |Cn|²."],
+ ["e2","Parseval","Énergie du fondamental d'un créneau ±A, en part de l'énergie totale ?","8 / π² ≈ 81 %."]
+];
+let fcCur=null, fcFlipped=false;
+(function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
+function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
+function weight(id){ const b=S.cards[id]; if (b===undefined) return 3; return [6,3,2][b]||0.5; }
+function pick(){ const p=pool(); const cand=p.length>1?p.filter(function(c){return !fcCur||c[0]!==fcCur[0];}):p; let tot=0; cand.forEach(function(c){tot+=weight(c[0]);}); let r=Math.random()*tot; for (const c of cand){ r-=weight(c[0]); if (r<=0) return c; } return cand[cand.length-1]; }
+function renderCard(){
+  if (!fcCur||pool().indexOf(fcCur)<0) fcCur=pick();
+  fcFlipped=false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent=fcCur[1]; $("fcQ").textContent=fcCur[2]; $("fcA").textContent=fcCur[3];
+  $("fcYes").disabled=true; $("fcNo").disabled=true;
+  let n=0,f=0,c=0,a=0; pool().forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML='<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped=!fcFlipped; $("fc").classList.toggle("flipped",fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click",flip);
+$("fc").addEventListener("keydown",function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click",flip);
+$("fcYes").addEventListener("click",function(){ const id=fcCur[0]; S.cards[id]=Math.min(3,(S.cards[id]||0)+1); save(); fcCur=pick(); renderCard(); });
+$("fcNo").addEventListener("click",function(){ S.cards[fcCur[0]]=0; save(); fcCur=pick(); renderCard(); });
+$("fcReset").addEventListener("click",function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards={}; save(); fcCur=null; renderCard(); } });
+
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1",axis:"Fourier",pts:0.5,unit:"V",ans:0.75,tol:0.02,
+  q:"Un signal périodique de période T vaut 3 V pendant le premier quart de chaque période et 0 V le reste du temps. Que vaut a0 ?",
+  c:"<p>a0 est la valeur moyenne : son facteur est 1/T, pas 2/T.</p><div class='fblock'>a0 = (1/T) × ∫(0 à T/4) 3 dt = (1/T) × 3 × T/4 = 0,75 V</div><p>Erreur fréquente : utiliser 2/T comme pour an donne 1,5 V.</p>"},
+ {id:"e2",axis:"Fourier",pts:1,unit:"V",ans:1.273,tol:0.02,
+  q:"Un créneau impair vaut +5 V puis −5 V sur chaque demi-période. Parmi ses harmoniques de rang 4 à 8, quelle est l'amplitude de la plus grande ?",
+  c:"<p>Le créneau impair a an = 0 (parité) et des bn nuls pour tous les rangs pairs (glissement). Entre 4 et 8, seuls les rangs 5 et 7 existent, et bn = 4A / (nπ) décroît avec n : c'est le rang 5.</p><div class='fblock'>b5 = 4 × 5 / (5π) = 4 / π ≈ 1,273 V</div><p>Erreur fréquente : prendre le rang 4, ce qui donne 1,59 V, alors que ce rang est nul.</p>"},
+ {id:"e3",axis:"Fourier",pts:1,unit:"",ans:2,tol:0.01,
+  q:"f(t) = 4t / T sur [0, T[, prolongée par périodicité (dent de scie de 0 à 4). Vers quelle valeur converge sa série de Fourier en t = T ?",
+  c:"<p>En t = T le signal saute : juste avant il vaut presque 4, juste après il repart de 0. Le théorème de Dirichlet donne la moyenne des deux limites.</p><div class='fblock'>S(T) = [f(T⁻) + f(T⁺)] / 2 = (4 + 0) / 2 = 2</div><p>Erreur fréquente : répondre 0, la valeur de f en ce point, ou 4.</p>"},
+ {id:"e4",axis:"Fourier",pts:1,unit:"",ans:3,tol:0.01,
+  q:"Un signal vérifie, pour tout t : f(t + T/2) = 6 − f(t). Quelle est sa valeur moyenne ?",
+  c:"<p>On prend la moyenne sur une période des deux membres. Un décalage de T/2 ne change pas la moyenne d'un signal T-périodique :</p><div class='fblock'>a0 = 6 − a0   donc   a0 = 3</div><p>On vérifie alors que g = f − 3 satisfait g(t + T/2) = 3 − f(t) = −g(t) : le signal a une symétrie de glissement une fois sa moyenne retirée, et seuls ses rangs impairs sont non nuls. C'est exactement le cas du créneau entre 0 et 6.</p>"},
+ {id:"e5",axis:"Fourier",pts:1,unit:"coefficients",ans:6,tol:0.01,
+  q:"Un signal réel, ni pair ni impair, vérifie g(t + T/2) = −g(t) avec g = f − a0. Parmi les douze coefficients a1 à a6 et b1 à b6, combien sont nuls d'après les seules symétries ?",
+  c:"<p>Pas de parité : aucune famille entière n'est éliminée. Le glissement élimine an et bn pour chaque rang pair : n = 2, 4, 6.</p><div class='fblock'>a2, a4, a6, b2, b4, b6   →   6 coefficients nuls</div><p>Erreur fréquente : répondre 3 en pensant que le glissement ne touche qu'une famille. Il agit sur les rangs, pour les deux familles.</p>"},
+ {id:"e6",axis:"Fourier",pts:1,unit:"coefficients",ans:3,tol:0.01,
+  q:"On retarde de T/4 un créneau impair ±A. Parmi les dix coefficients a1 à a5 et b1 à b5 du signal retardé, combien sont non nuls ?",
+  c:"<p>Retardé de T/4, le créneau vaut −A autour de t = 0 et +A autour de t = T/2, symétriquement par rapport à t = 0 : il devient pair, donc bn = 0 pour tout n. Le glissement, lui, ne dépend pas de l'origine : les rangs pairs restent nuls.</p><div class='fblock'>restent : a1, a3, a5   →   3 coefficients non nuls</div><p>Leurs amplitudes sont celles du créneau de départ, 4A / (nπ) : un décalage ne change pas √(an² + bn²).</p>"},
+ {id:"e7",axis:"Nombres complexes",pts:1,unit:"",ans:-2,tol:0.01,
+  q:"f(t) = 3 cos(ωt) + 4 sin(ωt). Quelle est la partie imaginaire de C1 ?",
+  c:"<p>a1 = 3, b1 = 4. Avec Cn = (an − j bn) / 2 :</p><div class='fblock'>C1 = (3 − 4j) / 2 = 1,5 − 2j   →   Im(C1) = −2</div><p>On retrouve bn = −2 Im(Cn) = 4. Erreur fréquente : oublier le signe moins et répondre 2 ; c'est Im(C₋1).</p>"},
+ {id:"e8",axis:"Nombres complexes",pts:1,unit:"",ans:-2,tol:0.01,
+  q:"Même signal qu'à l'exercice précédent, mais retardé de T/4 : on étudie f(t − T/4). Quelle est la partie réelle de son coefficient C1 ?",
+  c:"<p>Un retard t0 multiplie Cn par e^(−jnωt0). Pour n = 1 et t0 = T/4 : ωt0 = π/2, donc on multiplie par e^(−jπ/2) = −j.</p><div class='fblock'>C1' = −j × (1,5 − 2j) = −1,5j + 2j² = −2 − 1,5j   →   Re(C1') = −2</div><p>Vérification directe : f(t − T/4) = 3 sin(ωt) − 4 cos(ωt), donc a1 = −4, b1 = 3 et C1' = (−4 − 3j) / 2. Le module reste 2,5.</p>"},
+ {id:"e9",axis:"Fourier",pts:1.5,unit:"%",ans:81.06,tol:0.01,
+  q:"Quel pourcentage de l'énergie moyenne d'un créneau impair ±A est porté par son seul fondamental ?",
+  c:"<p>Énergie totale : f² = A² partout, donc E = A². Énergie du fondamental avec b1 = 4A / π :</p><div class='fblock'>E1 = b1² / 2 = 16A² / (2π²) = 8A² / π²<br>E1 / E = 8 / π² ≈ 0,8106   →   81,1 %</div><p>Erreur fréquente : oublier le facteur 1/2 de Parseval, ce qui donne plus de 100 %.</p>"},
+ {id:"e10",axis:"Fourier",pts:1,unit:"",ans:1.2337,tol:0.005,
+  q:"En appliquant l'identité de Parseval au créneau impair ±A, calcule la somme 1 + 1/9 + 1/25 + 1/49 + … (inverses des carrés des entiers impairs).",
+  c:"<p>Pour le créneau : E = A², a0 = 0, an = 0, et bn = 4A / (nπ) pour n impair.</p><div class='fblock'>A² = (1/2) × Σ(n impair) 16A² / (n²π²) = (8A² / π²) × Σ(n impair) 1/n²<br>Σ(n impair) 1/n² = π² / 8 ≈ 1,2337</div><p>C'est la technique classique : reconnaître une série numérique comme le Parseval d'un signal connu.</p>"}
+];
+const GF={full:1,half:0.5,zero:0};
+function renderEx(){
+  $("exList").innerHTML=EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e=EX.find(function(x){return x.id===box.dataset.id;}); const inp=box.querySelector("input"); const st=S.ex[e.id];
+    if (st){ inp.value=st.v||""; if (st.v) check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click",function(){ check(box,e,true); });
+    inp.addEventListener("keydown",function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click",function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw=box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".").replace("−","-");
+  const v=parseFloat(raw), out=box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple 1,25."; return; }
+  const ok=Math.abs(v-e.ans)<=Math.abs(e.ans)*e.tol+1e-9;
+  out.className="verdict "+(ok?"ok":"no");
+  const dec = String(e.ans).indexOf(".")>=0 ? String(e.ans).split(".")[1].length : 0;
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction." : "Hors tolérance : la valeur attendue est "+fr(e.ans,dec)+(e.unit?" "+e.unit:"")+". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].v=box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+$("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click",function(){
+  const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
+  const sc={}; Object.keys(ax).forEach(function(a){ sc[a]=Math.round(ax[a].got/ax[a].max*100); });
+  const d=new Date(), date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value=JSON.stringify({date:date,subject:"maths",scores:sc},null,2); $("jsonZone").style.display="block";
+});
+$("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
+
+/* ---------- démarrage ---------- */
+initWidgets();
+renderEx();
+showTab(S.tab||"concepts");
+let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script>
+</body>
+</html>

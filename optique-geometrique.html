@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Optique géométrique – révision interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF1; --surface:#F8F9FA; --ink:#1A2230; --muted:#5A6576; --line:#CBD2DB; --soft:#DFE4EA;
+  --odd:#2F6FB3; --even:#C2571A; --ca:#6B4FA0; --cb:#B07A0A; --pos:#1F8A70; --neg:#B03A5B; --ray:#D9480F; --img:#2F6FB3; --medium:#2F6FB3;
+  --good:#1E7A4C; --bad:#B03A2E; --warn:#9A6B00;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+    --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+    --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --surface:#171D27; --ink:#E3E8EF; --muted:#96A1B2; --line:#2C3544; --soft:#1F2733;
+  --odd:#7FB2E5; --even:#F0A06A; --ca:#B7A0E6; --cb:#E6C35C; --pos:#4CC3A0; --neg:#E87A9A; --ray:#FF8A50; --img:#7FB2E5; --medium:#7FB2E5;
+  --good:#4CC38A; --bad:#F07A6A; --warn:#E3B341;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+canvas{display:block;width:100%;max-width:100%}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+header.hero{padding:40px 0 18px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;letter-spacing:-0.03em;margin:0;font-weight:600}
+.hero p.sub{margin:10px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.hero .heroplot{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px}
+.hero-row{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-row label{font-weight:600}
+.hero-row input{flex:1;min-width:200px;accent-color:var(--ink)}
+.hero-row .v{font-family:var(--mono);min-width:12ch}
+
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{background:none;border:0;padding:14px 12px 12px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none;padding:28px 0 60px}
+.panel.active{display:block}
+.panel > .wrap > h2{font-size:1.7rem;letter-spacing:-0.02em;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:66ch}
+
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.concept.focus{border:2px solid var(--even)}
+.focus-tag{display:inline-block;font-size:.82rem;font-weight:600;color:var(--even);border:1px solid var(--even);border-radius:4px;padding:1px 8px;margin-bottom:10px}
+.concept h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.concept h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.prose{font-family:var(--text);font-size:1.03rem;line-height:1.68;max-width:70ch}
+.prose p{margin:0 0 .8em}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:14px}
+.part-t{font-family:var(--ui);font-weight:600;font-size:.95rem;display:block;margin-bottom:4px}
+details.fold{border-top:1px solid var(--line)}
+details.fold > summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::after{content:"+";font-family:var(--mono);color:var(--muted);font-size:1.2rem}
+details.fold[open] > summary::after{content:"−"}
+details.fold > .body{padding:0 0 16px}
+.f{font-family:var(--mono);font-size:.92rem;background:var(--soft);padding:1px 6px;border-radius:4px}
+.fblock{font-family:var(--mono);font-size:.93rem;background:var(--soft);padding:10px 14px;border-radius:6px;margin:8px 0 12px;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.def{border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.def b{display:block;margin-bottom:2px}
+.trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.trap b{display:block;margin-bottom:2px;color:var(--even)}
+.q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
+.q > p{margin:0 0 6px;font-family:var(--text)}
+.q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+.q details .ans{font-family:var(--text);padding-top:8px;font-size:.98rem}
+.seen{display:inline-flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.92rem;cursor:pointer}
+.seen input{width:18px;height:18px;accent-color:var(--ink)}
+.progress-line{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--muted);font-size:.92rem}
+.bar{flex:1;height:6px;background:var(--soft);border-radius:3px;overflow:hidden;max-width:300px}
+.bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .3s}
+
+/* Widgets */
+.wg{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0 18px;background:var(--bg);font-family:var(--ui)}
+.wg h4{margin:0 0 4px;font-size:1.02rem;font-weight:600}
+.wg .hint{color:var(--muted);margin:0 0 12px;font-size:.92rem;max-width:66ch}
+.cv{background:var(--surface);border-radius:6px;margin-top:8px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:500;margin-bottom:4px;gap:8px}
+.ctl label span{font-family:var(--mono);font-weight:400;color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--ink)}
+.ctl select{width:100%}
+select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+.readout{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px;font-size:.9rem}
+.readout b{font-family:var(--mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.82rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict-ok{color:var(--good);font-weight:600} .verdict-no{color:var(--bad);font-weight:600}
+.steps{margin:10px 0 0;padding:0;list-style:none;font-size:.92rem}
+.steps li{padding:6px 0;border-top:1px solid var(--line)}
+.steps li b{font-family:var(--mono);font-weight:500;margin-right:6px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.good{border-color:var(--good);color:var(--good)}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.verdict{font-weight:600;margin-top:10px}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+
+.fgroup{margin-bottom:28px}
+.fgroup h3{font-size:1.1rem;margin:0 0 10px;font-weight:600}
+.frow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 20px;padding:12px 0;border-top:1px solid var(--line)}
+.frow .fx{font-family:var(--mono);font-size:.93rem;overflow-x:auto}
+.frow .fd{font-size:.93rem;color:var(--muted)}
+.hidef .frow .fx{filter:blur(6px);cursor:pointer;user-select:none;transition:filter .2s}
+.hidef .frow .fx.show{filter:none}
+@media (max-width:640px){.frow{grid-template-columns:1fr}}
+
+.cardzone{display:flex;flex-direction:column;max-width:640px}
+.fc{perspective:1200px;cursor:pointer;min-height:240px}
+.fc-in{position:relative;width:100%;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+.fc-face.back{transform:rotateY(180deg);border-color:var(--ink)}
+.fc-theme{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.fc-text{font-family:var(--text);font-size:1.15rem;line-height:1.5}
+.fc-face.back .fc-text{font-size:1.02rem}
+.fc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.boxes{display:flex;gap:6px;margin:18px 0 6px}
+.boxes div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:.82rem;color:var(--muted)}
+.boxes div b{display:block;font-size:1.2rem;color:var(--ink);font-family:var(--mono);font-weight:500}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.ex-head{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.ex .prose{margin-bottom:12px}
+.ans-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans-row input{width:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--mono)}
+.corr{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:none}
+.corr.show{display:block}
+.grade{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.grade .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.scorebox{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scorebox .big{font-family:var(--mono);font-size:1.3rem}
+textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:.85rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: reduce){.fc-in{transition:none}.bar i{transition:none}}
+@media (max-width:560px){.concept,.ex{padding:18px 14px}.wg{padding:14px 12px}}
+
+.hero .stage{margin-top:22px;background:#0b0e14;border-radius:8px;overflow:hidden}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.presets .btn{padding:6px 12px;font-size:.9rem}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <h1>Optique géométrique</h1>
+  <p class="sub">Snell-Descartes, prisme, dioptre plan, dioptre sphérique et lentilles minces. Sur chaque schéma, tu règles les angles, les indices et la position des objets, et les valeurs calculées suivent.</p>
+  <div class="stage"><canvas id="heroCv" style="height:190px"></canvas></div>
+  <div class="hero-row"><label for="heroI">Incidence sur le prisme</label><input type="range" id="heroI" min="20" max="85" value="50"><span class="v" id="heroV"></span></div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="concepts">Concepts</button>
+    <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
+    <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
+    <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+  </div>
+</nav>
+<main>
+<section class="panel active" id="concepts"><div class="wrap">
+  <h2>Concepts</h2>
+  <p class="lead">Cinq blocs dans l'ordre du cours. Le schéma interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées. Les distances sont en cm, les angles en degrés, et la lumière va de gauche à droite (ou de haut en bas pour Snell-Descartes).</p>
+  <div class="progress-line"><span id="seenCount">0 / 5 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<!-- 1 SNELL -->
+<article class="concept" data-id="c1">
+  <h3><span class="n">1</span>Lois de Snell-Descartes et réflexion totale</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Tout le reste du cours (prisme, dioptres, lentilles) n'est que l'application répétée de cette seule loi à des surfaces de formes différentes. Et la réflexion totale explique les fibres optiques, les prismes à réflexion et l'éclat du diamant.</p></div>
+  <div class="wg" data-w="snell">
+    <h4>🔬 Réfraction à une interface</h4>
+    <p class="hint">Le milieu 1 est en haut, le milieu 2 en bas ; plus le bleu est foncé, plus l'indice est élevé. Les angles sont mesurés par rapport à la normale (pointillé vertical). Passe d'un milieu plus réfringent à un moins réfringent et augmente i1 pour atteindre la réflexion totale.</p>
+    <div class="presets">
+      <button class="btn" type="button" data-pre="airverre">Air → verre</button>
+      <button class="btn" type="button" data-pre="verreair">Verre → air</button>
+      <button class="btn" type="button" data-pre="eauair">Eau → air</button>
+      <button class="btn" type="button" data-pre="diamant">Diamant → air</button>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label>Indice n1 <span data-o="n1"></span></label><input type="range" data-k="n1" min="1" max="2.5" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice n2 <span data-o="n2"></span></label><input type="range" data-k="n2" min="1" max="2.5" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Incidence i1 <span data-o="i1"></span></label><input type="range" data-k="i1" min="0" max="89.5" step="0.5" value="40"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:300px"></canvas>
+    <canvas class="cv" data-c="graph" style="height:170px"></canvas>
+    <div class="legend"><span><i style="background:var(--ray)"></i>rayons incident et réfracté</span><span><i style="background:var(--muted)"></i>rayon réfléchi</span><span><i style="background:var(--ink)"></i>i2 en fonction de i1</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une rangée de soldats marche en ligne sur un parking et arrive en biais sur une plage de sable, où l'on avance moins vite. Le premier soldat à toucher le sable ralentit pendant que les autres avancent encore vite : toute la rangée pivote. Plus le sable freine, plus la rangée tourne vers la perpendiculaire à la plage.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">Réfraction :  n1 × sin(i1) = n2 × sin(i2)
+Réflexion  :  i2 = −i1
+Rayons incident, réfléchi, réfracté et normale : coplanaires</div>
+    <div class="def"><b>Plan d'incidence</b>Plan contenant le rayon incident et la normale au dioptre au point d'incidence. Les rayons réfléchi et réfracté y restent.</div>
+    <div class="fblock">n1 &lt; n2 :  i2 &lt; i1 ; i2 plafonne à asin(n1/n2) quand i1 → 90°
+n1 &gt; n2 :  i2 &gt; i1 ; angle limite  sin(i_lim) = n2 / n1
+          i1 &gt; i_lim  →  réflexion totale</div>
+    <div class="def"><b>Réflexion totale</b>Quand n1 × sin(i1) dépasse n2, aucun angle i2 ne satisfait la loi : toute la lumière est réfléchie. Ne peut arriver qu'en allant vers un milieu moins réfringent.</div>
+    <div class="def"><b>Retour inverse de la lumière</b>Un trajet lumineux est réversible : si la lumière va de A à B par un chemin, elle peut revenir de B à A par le même chemin.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi la réflexion totale ne peut-elle jamais se produire quand la lumière entre dans un milieu plus réfringent ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Il faudrait sin(i2) = (n1/n2) × sin(i1) &gt; 1. Avec n1/n2 &lt; 1 et sin(i1) ≤ 1, ce produit reste toujours inférieur à 1 : il existe toujours un angle de réfraction. Le rayon réfracté est même « rabattu » vers la normale.</div></details></div>
+    <div class="q"><p>Relie l'angle limite de réflexion totale, verre vers air, et l'angle de réfraction maximal, air vers verre. Que dit le retour inverse de la lumière ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est le même angle, asin(n_air / n_verre). Un rayon rasant (90°) dans l'air entre dans le verre à cet angle ; en inversant le trajet, un rayon dans le verre à cet angle ressort rasant. Au-delà, il n'existe plus de trajet inverse dans l'air : c'est la réflexion totale.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 2 PRISME -->
+<article class="concept focus" data-id="c2">
+  <span class="focus-tag">Point à renforcer : angle limite et minimum de déviation</span>
+  <h3><span class="n">2</span>Le prisme</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Le prisme dévie la lumière et sépare les couleurs. Et son minimum de déviation fournit une méthode précise pour mesurer l'indice d'un verre, à partir de deux angles seulement.</p></div>
+  <div class="wg" data-w="prism">
+    <h4>🔬 Trajet dans un prisme et courbe D(i1)</h4>
+    <p class="hint">Règle l'angle au sommet A, l'indice n et l'incidence i1. Sur la courbe du bas, deux repères à ne pas confondre : la zone grisée où le rayon ne ressort pas (réflexion totale sur la seconde face), et le creux de la courbe, le minimum de déviation. Coche « lumière blanche » pour voir d'où vient la dispersion.</p>
+    <div class="controls">
+      <div class="ctl"><label>Angle au sommet A <span data-o="A"></span></label><input type="range" data-k="A" min="15" max="80" step="1" value="60"></div>
+      <div class="ctl"><label>Indice n <span data-o="n"></span></label><input type="range" data-k="n" min="1.3" max="1.9" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Incidence i1 <span data-o="i1"></span></label><input type="range" data-k="i1" min="0" max="89.5" step="0.5" value="55"></div>
+      <div class="ctl" style="display:flex;flex-direction:column;gap:8px;justify-content:end">
+        <label class="chk" style="margin:0"><input type="checkbox" data-k="white"> Lumière blanche (dispersion ×5)</label>
+        <button class="btn" type="button" data-min>Placer au minimum de déviation</button>
+      </div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:320px"></canvas>
+    <canvas class="cv" data-c="graph" style="height:190px"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>D(i1)</span><span><i style="background:var(--ray)"></i>point actuel</span><span><i style="background:var(--line)"></i>pas d'émergence</span><span><i style="background:var(--pos)"></i>minimum de déviation</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu roules à vélo et tu dois traverser une bande de boue posée en biais. En entrant, la roue qui touche la boue la première ralentit et le vélo tourne ; en sortant, il tourne encore dans le même sens. Il existe une façon d'aborder la bande, bien symétrique, pour laquelle tu es le moins détourné de ta route. Et si tu arrives trop en biais sur le bord de sortie, tu rebondis au lieu de sortir.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">sin(i1) = n × sin(r1)        sin(i2) = n × sin(r2)
+A = r1 + r2                   D = i1 + i2 − A</div>
+    <div class="def"><b>Déviation D</b>Angle entre la direction du rayon incident prolongé et celle du rayon émergent. La lumière est toujours déviée vers la base du prisme.</div>
+    <p>Condition d'émergence : sur la seconde face, la lumière va du verre vers l'air ; elle ne ressort que si r2 ≤ i_lim, avec sin(i_lim) = 1/n. Comme r2 = A − r1, cela impose une incidence i1 minimale.</p>
+    <div class="fblock">Minimum de déviation :  dD/di1 = 0  ⟺  di2/di1 = −1  ⟺  trajet symétrique
+i1 = i2 = i_m        r1 = r2 = A / 2        D_min = 2 i_m − A
+sin((D_min + A) / 2) = n × sin(A / 2)       → mesure de n</div>
+    <div class="trap"><b>Deux notions à ne pas confondre</b>L'angle limite concerne la sortie du rayon : en dessous d'une certaine incidence, la seconde face réfléchit tout. Le minimum de déviation est une configuration symétrique où le rayon sort très bien : c'est le creux de la courbe D(i1), loin de la zone grisée. On mesure n au minimum de déviation, pas à l'angle limite.</div>
+    <div class="trap"><b>La dispersion vient de n(λ)</b>Aucune longueur d'onde n'apparaît dans D = i1 + i2 − A : les couleurs se séparent parce que l'indice dépend de λ (plus grand pour le bleu que pour le rouge). Ta fiche indique que la dispersion est plus importante quand A est petit : c'est l'inverse. Pour un prisme d'angle faible, D ≈ (n − 1) × A, donc l'écart entre couleurs vaut environ Δn × A et augmente avec A. Tu peux le vérifier sur le schéma.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi le minimum de déviation correspond-il nécessairement à un trajet symétrique ? Raisonne avec le retour inverse de la lumière.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Si un trajet d'incidence i1 et d'émergence i2 donne la déviation D, le trajet inverse (incidence i2, émergence i1) donne la même déviation. La courbe D(i1) prend donc la même valeur en i1 et en i2. Si le minimum était atteint pour i1 ≠ i2, il le serait aussi en i2 : il y aurait deux minima. Un minimum unique impose i1 = i2.</div></details></div>
+    <div class="q"><p>Qu'est-ce qui fait qu'un prisme d'indice plus élevé laisse ressortir moins de rayons ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">L'angle limite verre vers air diminue quand n augmente. La condition r2 ≤ i_lim devient plus sévère : il faut un r1 plus grand, donc une incidence plus rasante, pour que le rayon sorte. La zone grisée de la courbe s'élargit.</div></details></div>
+    <div class="q"><p>Pourquoi mesure-t-on l'indice au minimum de déviation plutôt qu'à un angle quelconque ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Au minimum, la dérivée de D est nulle : une petite erreur sur le réglage de l'incidence ne change presque pas D. On repère le minimum facilement en tournant le prisme (l'image s'arrête puis repart en arrière) et la formule ne demande que A et D_min, deux angles mesurables précisément.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 3 DIOPTRE PLAN -->
+<article class="concept" data-id="c3">
+  <h3><span class="n">3</span>Stigmatisme, conditions de Gauss et dioptre plan</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Presque aucun système optique ne donne une image parfaitement nette. Les conditions de Gauss disent quand on peut faire comme si, et le dioptre plan est l'exemple le plus simple où l'on voit l'image d'un point s'étaler dès qu'on s'éloigne de l'axe.</p></div>
+  <div class="wg" data-w="dplan">
+    <h4>🔬 Où se trouve l'image d'un point sous une surface plane ?</h4>
+    <p class="hint">Le point A est dans le milieu d'indice n1, sous la surface ; l'observateur est au-dessus, dans le milieu n2. Chaque rayon réfracté est prolongé en pointillé : il semble venir d'un point A' différent selon son angle. Réduis l'ouverture pour te placer dans les conditions de Gauss : les points A' se regroupent sur l'image prévue par HA' = HA × n2 / n1.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="pieds">Pieds dans l'eau (exemple du cours)</button><button class="btn" type="button" data-pre="bloc">Point dans un bloc de verre</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Indice n1 (côté objet) <span data-o="n1"></span></label><input type="range" data-k="n1" min="1" max="2" step="0.01" value="1.33"></div>
+      <div class="ctl"><label>Indice n2 (côté observateur) <span data-o="n2"></span></label><input type="range" data-k="n2" min="1" max="2" step="0.01" value="1"></div>
+      <div class="ctl"><label>Profondeur HA <span data-o="h"></span></label><input type="range" data-k="h" min="10" max="100" step="1" value="60"></div>
+      <div class="ctl"><label>Ouverture des rayons <span data-o="ap"></span></label><input type="range" data-k="ap" min="2" max="80" step="1" value="40"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:320px"></canvas>
+    <canvas class="cv" data-c="graph" style="height:160px"></canvas>
+    <div class="legend"><span><i style="background:var(--ray)"></i>rayons réels</span><span><i style="background:var(--img)"></i>prolongements et images A'</span><span><i style="background:var(--pos)"></i>image dans les conditions de Gauss</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Tu regardes un caillou au fond d'une piscine. Vu d'au-dessus, il paraît moins profond qu'il ne l'est. En te penchant pour le regarder de biais, il semble remonter encore et se déformer : chaque direction de regard te donne un caillou un peu différent. Tant que tu regardes presque à la verticale, tous ces cailloux se confondent.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Stigmatisme rigoureux</b>À un point objet correspond un unique point image. Seul le miroir plan l'assure pour tous les points ; le miroir ellipsoïdal l'assure entre ses deux foyers, le miroir parabolique entre l'infini et son foyer.</div>
+    <div class="def"><b>Stigmatisme approché</b>L'image d'un point est une petite tache, plus petite qu'un pixel du capteur ou qu'une cellule de la rétine : on la considère nette.</div>
+    <div class="def"><b>Conditions de Gauss</b>Rayons paraxiaux (peu inclinés et proches de l'axe) et objets petits et plans. Elles donnent un stigmatisme et un aplanétisme approchés.</div>
+    <div class="fblock">Cas général :  HA' = HA × (n2 / n1) × √[(1 − (n1/n2)² sin²(i1)) / (1 − sin²(i1))]
+Gauss       :  HA' = HA × n2 / n1        ⟺   n1 / HA − n2 / HA' = 0</div>
+    <p>La racine dépend de i1 : la position de l'image change avec l'angle du rayon, le dioptre plan n'est pas stigmatique. Pour i1 petit, sin²(i1) devient négligeable et la racine tend vers 1. L'image est toujours du même côté que l'objet : elle est virtuelle.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi une image virtuelle peut-elle être vue par l'œil mais pas recueillie sur un écran ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Aucun rayon ne passe réellement par A' : seuls leurs prolongements s'y croisent. Un écran placé en A' ne reçoit aucune lumière venant de A. L'œil, lui, reçoit les rayons divergents et, comme son cristallin les fait converger sur la rétine, il les interprète comme issus de A'.</div></details></div>
+    <div class="q"><p>Sur le schéma, pourquoi les images A' des rayons les plus inclinés remontent-elles vers la surface quand on va de l'eau vers l'air ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le rapport tan(i1)/tan(i2) diminue quand i1 augmente, car i2 grandit plus vite que i1 et sa tangente explose à l'approche de 90°. HA' = HA × tan(i1)/tan(i2) diminue donc : les rayons obliques semblent venir de moins profond.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 4 DIOPTRE SPHERIQUE -->
+<article class="concept" data-id="c4">
+  <h3><span class="n">4</span>Le dioptre sphérique</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une surface courbe fait converger ou diverger la lumière : c'est la brique élémentaire des lentilles, de la cornée de l'œil et des objectifs. Une lentille mince n'est rien d'autre que deux dioptres sphériques accolés.</p></div>
+  <div class="wg" data-w="dsph">
+    <h4>🔬 Image d'un objet par un dioptre sphérique</h4>
+    <p class="hint">R est le rayon algébrique SC : positif si le centre C est à droite du sommet S. La position de l'objet SA est négative à gauche du dioptre (objet réel) et positive à droite (objet virtuel). Les traits pleins sont les rayons réels, les pointillés leurs prolongements. Coche « rayons réels hors Gauss » pour voir que les rayons issus de A et tracés exactement ne se recoupent pas tous en A'.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="oeil">Surface convexe, air → verre</button><button class="btn" type="button" data-pre="concave">Surface concave, air → verre</button><button class="btn" type="button" data-pre="sortie">Verre → air</button><button class="btn" type="button" data-pre="virt">Objet virtuel</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Indice n1 (avant) <span data-o="n1"></span></label><input type="range" data-k="n1" min="1" max="2" step="0.01" value="1"></div>
+      <div class="ctl"><label>Indice n2 (après) <span data-o="n2"></span></label><input type="range" data-k="n2" min="1" max="2" step="0.01" value="1.5"></div>
+      <div class="ctl"><label>Rayon R = SC <span data-o="R"></span></label><input type="range" data-k="R" min="-40" max="40" step="1" value="10"></div>
+      <div class="ctl"><label>Position de l'objet SA <span data-o="p"></span></label><input type="range" data-k="p" min="-90" max="40" step="1" value="-40"></div>
+      <div class="ctl"><label>Taille de l'objet AB <span data-o="y"></span></label><input type="range" data-k="y" min="1" max="10" step="0.5" value="4"></div>
+      <div class="ctl" style="display:flex;flex-direction:column;gap:8px;justify-content:end"><label class="chk" style="margin:0"><input type="checkbox" data-k="exact"> Rayons réels hors Gauss</label></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:340px"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>objet AB</span><span><i style="background:var(--img)"></i>image A'B'</span><span><i style="background:var(--ray)"></i>rayons</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>La même rangée de soldats arrive cette fois sur une plage en forme d'arc de cercle. Ceux du milieu touchent le sable avant ceux des bords (ou après, selon le sens de la courbe) : la rangée se replie comme un éventail et tous les soldats se dirigent vers un même point.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="fblock">Formule exacte (tout angle) :  n2 × CA2 / IA2 = n1 × CA1 / IA1
+Gauss (I ≈ S) :  n2 / SA' − n1 / SA = (n2 − n1) / SC
+Foyers :  SF' = n2 × SC / (n2 − n1)      SF = −n1 × SC / (n2 − n1)
+Grandissement :  Gt = A'B' / AB = (n1 × SA') / (n2 × SA)</div>
+    <div class="def"><b>Mesure algébrique</b>Une distance orientée dans le sens de propagation de la lumière : SA &lt; 0 si A est avant le sommet. AB = −BA.</div>
+    <div class="def"><b>Vergence</b>V = (n2 − n1) / SC, en dioptries si SC est en mètres. Positive : le dioptre est convergent.</div>
+    <p>La formule exacte ne suppose rien sur les angles. C'est en remplaçant IA par SA, donc en supposant I très proche du sommet, qu'on obtient la formule de conjugaison : elle n'est valable que dans les conditions de Gauss.</p>
+    <p>Le rayon passant par C n'est pas dévié : il arrive selon la normale, avec une incidence nulle.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Quelle information physique la vergence (n2 − n1) / SC rassemble-t-elle ? Comment une surface concave peut-elle être convergente ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Elle combine le sens de variation de l'indice et la courbure. Une surface concave (SC &lt; 0) est convergente si n2 &lt; n1, par exemple quand la lumière sort du verre vers l'air par une face creuse. Ni la forme seule ni les indices seuls ne décident.</div></details></div>
+    <div class="q"><p>Pourquoi a-t-on le droit de retrouver le dioptre plan en faisant tendre R vers l'infini dans la formule de conjugaison ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une sphère de rayon infini est localement un plan. Le second membre (n2 − n1)/R tend vers 0 et il reste n2/SA' = n1/SA, soit exactement la formule du dioptre plan dans les conditions de Gauss.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 5 LENTILLES -->
+<article class="concept" data-id="c5">
+  <h3><span class="n">5</span>Lentilles minces, objets et images réels ou virtuels</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La lentille mince est l'élément de base des instruments : loupe, appareil photo, microscope, lunette. Savoir placer l'image et dire si elle est réelle ou virtuelle, droite ou renversée, c'est la base de tout montage optique.</p></div>
+  <div class="wg" data-w="lens">
+    <h4>🔬 Construction de l'image par une lentille mince</h4>
+    <p class="hint">Trois rayons issus de B : parallèle à l'axe (ressort en passant par F'), passant par O (non dévié), passant par F (ressort parallèle). Déplace l'objet de part et d'autre du foyer, change le signe de f', ou place l'objet à droite de la lentille pour obtenir un objet virtuel. Les quatre boutons reproduisent les quatre cas de ta fiche.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="c1">Objet réel, image réelle</button><button class="btn" type="button" data-pre="c2">Objet réel, image virtuelle</button><button class="btn" type="button" data-pre="c3">Objet virtuel, image réelle</button><button class="btn" type="button" data-pre="c4">Objet virtuel, image virtuelle</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Définir la lentille par</label><select data-k="mode"><option value="f">sa distance focale f'</option><option value="nr">n, R1 et R2</option></select></div>
+      <div class="ctl" data-show="f"><label>Distance focale f' <span data-o="f"></span></label><input type="range" data-k="f" min="-40" max="40" step="1" value="20"></div>
+      <div class="ctl" data-show="nr"><label>Indice n <span data-o="n"></span></label><input type="range" data-k="n" min="1.3" max="1.9" step="0.01" value="1.5"></div>
+      <div class="ctl" data-show="nr"><label>R1 = S1C1 <span data-o="R1"></span></label><input type="range" data-k="R1" min="-60" max="60" step="1" value="20"></div>
+      <div class="ctl" data-show="nr"><label>R2 = S2C2 <span data-o="R2"></span></label><input type="range" data-k="R2" min="-60" max="60" step="1" value="-20"></div>
+      <div class="ctl"><label>Position de l'objet OA <span data-o="p"></span></label><input type="range" data-k="p" min="-90" max="50" step="1" value="-35"></div>
+      <div class="ctl"><label>Taille de l'objet AB <span data-o="y"></span></label><input type="range" data-k="y" min="1" max="10" step="0.5" value="4"></div>
+    </div>
+    <canvas class="cv" data-c="scene" style="height:340px"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>objet AB</span><span><i style="background:var(--img)"></i>image A'B'</span><span><i style="background:var(--ray)"></i>rayons (pointillés : prolongements)</span></div>
+    <div class="readout" data-o="out"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une lentille convergente est comme un entonnoir pour la lumière : tout ce qui arrive bien parallèle est rabattu vers un même point, le foyer. Une lentille divergente fait l'inverse, comme un jet d'eau qu'on écrase avec le pouce : les rayons s'écartent comme s'ils venaient d'un point situé derrière.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Lentille mince d'indice n dans l'air : deux dioptres sphériques de sommets quasi confondus en O. L'image intermédiaire A1 du premier dioptre sert d'objet au second.</p>
+    <div class="fblock">1er dioptre (1 → n) :  n / OA1 − 1 / OA = (n − 1) / R1
+2e dioptre  (n → 1) :  1 / OA' − n / OA1 = (1 − n) / R2
+Somme (OA1 s'élimine) :  1 / OA' − 1 / OA = (n − 1) × (1 / R1 − 1 / R2) = 1 / f'
+Grandissements :  Gt = OA' / OA      Ga = 1 / Gt      Ga × Gt = 1</div>
+    <div class="def"><b>Objet réel, objet virtuel</b>Objet réel : les rayons en partent réellement, il est avant la lentille (OA &lt; 0). Objet virtuel : les rayons convergent vers lui mais la lentille les intercepte avant, il est après la lentille (OA &gt; 0). Il est forcément l'image d'un premier système.</div>
+    <div class="def"><b>Image réelle, image virtuelle</b>Image réelle : les rayons y convergent réellement, après la lentille (OA' &gt; 0), on peut la recueillir sur un écran. Image virtuelle : seuls les prolongements s'y croisent, avant la lentille (OA' &lt; 0).</div>
+    <div class="def"><b>Grandissement transversal Gt</b>Rapport algébrique A'B' / AB. Négatif : image renversée. |Gt| &gt; 1 : image agrandie.</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Que se passe-t-il pour l'image quand l'objet traverse le foyer objet F d'une lentille convergente ? Pourquoi la loupe exige-t-elle de placer l'objet entre F et O ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Quand A approche de F, l'image réelle part vers l'infini ; quand A passe entre F et O, les rayons ressortent divergents et l'image devient virtuelle, droite et agrandie, du même côté que l'objet. C'est ce que l'œil voit à travers une loupe : il faut une image virtuelle droite, donc un objet entre F et O.</div></details></div>
+    <div class="q"><p>Dans la démonstration de la formule des lentilles, que représente physiquement OA1, et pourquoi a-t-on le droit de le faire disparaître ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">OA1 est l'image que donnerait le premier dioptre seul, si le verre s'étendait à l'infini. Elle sert d'objet au second dioptre. Comme elle apparaît avec le même coefficient n dans les deux relations, avec des signes opposés, elle s'élimine en les additionnant : seules les positions de l'objet et de l'image finale comptent.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+</div></section>
+<section class="panel" id="formules"><div class="wrap">
+  <h2>Formules</h2>
+  <p class="lead">L'essentiel du cours avec les conditions d'usage. Le mode test floute les formules : retrouve-les, puis touche pour vérifier.</p>
+  <div class="row"><label class="chk"><input type="checkbox" id="hideF"> Mode test : masquer les formules</label></div>
+  <div id="fList"></div>
+</div></section>
+
+<section class="panel" id="cartes"><div class="wrap">
+  <h2>Cartes mémoire</h2>
+  <p class="lead">Réponds de tête, retourne la carte, puis sois honnête. Les cartes ratées reviennent plus souvent ; une carte passe « acquise » après trois réussites.</p>
+  <div class="row"><label for="fcTheme">Thème</label><select id="fcTheme"></select><button class="btn" id="fcReset">Remettre à zéro</button></div>
+  <div class="cardzone">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="fc-in">
+        <div class="fc-face front"><div class="fc-theme" id="fcThemeF"></div><div class="fc-text" id="fcQ"></div></div>
+        <div class="fc-face back"><div class="fc-theme">Réponse</div><div class="fc-text" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-actions"><button class="btn" id="fcFlip">Retourner</button><button class="btn bad" id="fcNo" disabled>Pas su</button><button class="btn good" id="fcYes" disabled>Su</button></div>
+    <div class="boxes" id="fcBoxes"></div>
+  </div>
+</div></section>
+
+<section class="panel" id="exos"><div class="wrap">
+  <h2>Exercices</h2>
+  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <div id="exList"></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
+</div></section>
+</main>
+<footer class="wrap">Ta progression (concepts revus, cartes, exercices) est enregistrée dans ce navigateur uniquement.</footer>
+<script>
+(function(){
+"use strict";
+const KEY="optique-geometrique-v1";
+let S={seen:{},cards:{},ex:{},tab:"concepts"};
+try{ const r=localStorage.getItem(KEY); if(r) Object.assign(S,JSON.parse(r)); }catch(e){}
+let saveT=null; function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} },150); }
+const $=function(id){ return document.getElementById(id); };
+const fr=function(x,d){ if(!isFinite(x)) return "∞"; if(Math.abs(x)<0.5*Math.pow(10,-d)) x=0; return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+const D2R=Math.PI/180, R2D=180/Math.PI;
+function asinS(x){ return (x>1||x<-1)?NaN:Math.asin(x); }
+
+/* ---------- tracé ---------- */
+function fit(c){
+  const r=c.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+  if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){ c.width=Math.round(w*d); c.height=Math.round(h*d); }
+  const ctx=c.getContext("2d"); ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+/* monde : repère orthonormé ou non */
+function world(cv, xr, yr, equal){
+  const F=fit(cv), w=F.w, h=F.h, pad=10;
+  let sx=(w-2*pad)/(xr[1]-xr[0]), sy=(h-2*pad)/(yr[1]-yr[0]);
+  let ox=pad, oy=pad;
+  if(equal){ const s=Math.min(sx,sy); ox=(w-s*(xr[1]-xr[0]))/2; oy=(h-s*(yr[1]-yr[0]))/2; sx=sy=s; }
+  const X=function(x){ return ox+(x-xr[0])*sx; }, Y=function(y){ return oy+(yr[1]-y)*sy; };
+  return {ctx:F.ctx,w:w,h:h,X:X,Y:Y,sx:sx,sy:sy,xr:xr,yr:yr};
+}
+function seg(g,x0,y0,x1,y1,color,wd,dash,alpha){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.globalAlpha=alpha===undefined?1:alpha; c.beginPath(); c.moveTo(g.X(x0),g.Y(y0)); c.lineTo(g.X(x1),g.Y(y1)); c.stroke(); c.restore(); }
+function arrowHead(g,x0,y0,x1,y1,color,size){ const c=g.ctx, a=[g.X(x0),g.Y(y0)], b=[g.X(x1),g.Y(y1)], ang=Math.atan2(b[1]-a[1],b[0]-a[0]), s=size||8; c.save(); c.fillStyle=color; c.beginPath(); c.moveTo(b[0],b[1]); c.lineTo(b[0]-s*Math.cos(ang-0.4),b[1]-s*Math.sin(ang-0.4)); c.lineTo(b[0]-s*Math.cos(ang+0.4),b[1]-s*Math.sin(ang+0.4)); c.closePath(); c.fill(); c.restore(); }
+function ray(g,x0,y0,x1,y1,color,wd,dash,alpha){ seg(g,x0,y0,x1,y1,color,wd,dash,alpha); const mx=x0+(x1-x0)*0.55, my=y0+(y1-y0)*0.55; if(!dash) arrowHead(g,x0,y0,mx,my,color,7); }
+function label(g,x,y,t,color,align,dy){ const c=g.ctx; c.save(); c.fillStyle=color||css("--ink"); c.font="12px "+css("--ui"); c.textAlign=align||"left"; c.fillText(t,g.X(x),g.Y(y)+(dy||0)); c.restore(); }
+function pt(g,x,y,color,r){ const c=g.ctx; c.fillStyle=color; c.beginPath(); c.arc(g.X(x),g.Y(y),r||3.5,0,2*Math.PI); c.fill(); }
+function arc(g,cx,cy,r,a0,a1,color){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=1.3; c.beginPath(); c.arc(g.X(cx),g.Y(cy),r,-a0,-a1,a1>a0); c.stroke(); c.restore(); }
+function tint(n){ return Math.max(0,Math.min(0.55,(n-1)/1.6)); }
+/* graphique cartésien simple */
+function chart(cv,xr,yr,o){
+  const F=fit(cv), ctx=F.ctx, w=F.w, h=F.h, pl=40, pr=10, pt_=10, pb=24;
+  const X=function(x){ return pl+(x-xr[0])/(xr[1]-xr[0])*(w-pl-pr); }, Y=function(y){ return pt_+(yr[1]-y)/(yr[1]-yr[0])*(h-pt_-pb); };
+  ctx.font="11px "+css("--ui"); ctx.strokeStyle=css("--line"); ctx.fillStyle=css("--muted"); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pl,pt_); ctx.lineTo(pl,h-pb); ctx.lineTo(w-pr,h-pb); ctx.stroke();
+  (o.xt||[]).forEach(function(v){ ctx.textAlign="center"; ctx.fillText(v+(o.xu||""),X(v),h-pb+14); });
+  (o.yt||[]).forEach(function(v){ ctx.textAlign="right"; ctx.fillText(v+(o.yu||""),pl-5,Y(v)+4); ctx.save(); ctx.globalAlpha=0.4; ctx.beginPath(); ctx.moveTo(pl,Y(v)); ctx.lineTo(w-pr,Y(v)); ctx.stroke(); ctx.restore(); });
+  if(o.xl){ ctx.textAlign="right"; ctx.fillText(o.xl,w-pr,h-pb-5); }
+  if(o.yl){ ctx.textAlign="left"; ctx.fillText(o.yl,pl+5,pt_+10); }
+  return {ctx:ctx,X:X,Y:Y,w:w,h:h,pl:pl,pr:pr,pt:pt_,pb:pb};
+}
+function curve(g,xs,fn,color,wd,dash){ const c=g.ctx; c.save(); c.strokeStyle=color; c.lineWidth=wd||2; c.setLineDash(dash||[]); c.beginPath(); let on=false; xs.forEach(function(x){ const y=fn(x); if(!isFinite(y)){ on=false; return; } if(!on){ c.moveTo(g.X(x),g.Y(y)); on=true; } else c.lineTo(g.X(x),g.Y(y)); }); c.stroke(); c.restore(); }
+function lin(a,b,n){ const o=[]; for(let i=0;i<=n;i++) o.push(a+(b-a)*i/n); return o; }
+function wl2rgb(w){ let r=0,g=0,b=0; if(w<440){r=-(w-440)/60;b=1;} else if(w<490){g=(w-440)/50;b=1;} else if(w<510){g=1;b=-(w-510)/20;} else if(w<580){r=(w-510)/70;g=1;} else if(w<645){r=1;g=-(w-645)/65;} else r=1; return "rgb("+[r,g,b].map(function(c){return Math.round(255*Math.pow(c,0.8));}).join(",")+")"; }
+
+/* ---------- moteur de widgets ---------- */
+const widgets=[], IMPL={};
+function initWidgets(){
+  document.querySelectorAll(".wg[data-w]").forEach(function(root){
+    const W={root:root,type:root.dataset.w,k:{},o:{},c:{}};
+    root.querySelectorAll("[data-k]").forEach(function(el){ W.k[el.dataset.k]=el; el.addEventListener("input",function(){ draw(W); }); el.addEventListener("change",function(){ draw(W); }); });
+    root.querySelectorAll("[data-o]").forEach(function(el){ W.o[el.dataset.o]=el; });
+    root.querySelectorAll("canvas[data-c]").forEach(function(el){ W.c[el.dataset.c]=el; });
+    W.v=function(k){ const el=W.k[k]; if(el.type==="checkbox") return el.checked; if(el.type==="range") return +el.value; return el.value; };
+    W.set=function(o){ Object.keys(o).forEach(function(k){ if(W.k[k].type==="checkbox") W.k[k].checked=o[k]; else W.k[k].value=o[k]; }); draw(W); };
+    const P=IMPL[W.type].presets;
+    if(P) root.querySelectorAll("[data-pre]").forEach(function(b){ b.addEventListener("click",function(){ W.set(P[b.dataset.pre]); }); });
+    if(IMPL[W.type].init) IMPL[W.type].init(W);
+    widgets.push(W);
+  });
+}
+function visible(W){ return W.root.offsetParent!==null; }
+function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
+function drawAll(){ widgets.forEach(draw); drawHero(); }
+function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
+
+/* ---------- 1. Snell-Descartes ---------- */
+IMPL.snell={presets:{airverre:{n1:1,n2:1.5,i1:40},verreair:{n1:1.5,n2:1,i1:35},eauair:{n1:1.33,n2:1,i1:45},diamant:{n1:2.42,n2:1,i1:20}},
+draw:function(W){
+  const n1=W.v("n1"), n2=W.v("n2"), i1d=W.v("i1"), i1=i1d*D2R;
+  W.o.n1.textContent=fr(n1,2)+medName(n1); W.o.n2.textContent=fr(n2,2)+medName(n2); W.o.i1.textContent=fr(i1d,1)+"°";
+  const s2=n1*Math.sin(i1)/n2, tir=s2>1, i2=tir?NaN:Math.asin(s2);
+  const g=world(W.c.scene,[-1.6,1.6],[-1.1,1.1],true), c=g.ctx;
+  c.save(); c.fillStyle=css("--medium");
+  c.globalAlpha=tint(n1); c.fillRect(0,0,g.w,g.Y(0)); c.globalAlpha=tint(n2); c.fillRect(0,g.Y(0),g.w,g.h-g.Y(0)); c.restore();
+  seg(g,-10,0,10,0,css("--ink"),1.5);
+  seg(g,0,5,0,-5,css("--muted"),1,[5,4]);
+  label(g,-1.5,0.9,"n1 = "+fr(n1,2),css("--ink")); label(g,-1.5,-0.95,"n2 = "+fr(n2,2),css("--ink"));
+  const L=1;
+  const xs=-L*Math.sin(i1), ys=L*Math.cos(i1);
+  ray(g,xs,ys,0,0,css("--ray"),2.6);
+  const refl = tir?1:Math.pow((n1*Math.cos(i1)-n2*Math.cos(i2))/(n1*Math.cos(i1)+n2*Math.cos(i2)),2);
+  ray(g,0,0,L*Math.sin(i1),L*Math.cos(i1),tir?css("--ray"):css("--muted"),tir?2.6:1.6,null,tir?1:Math.max(0.35,Math.min(1,0.35+refl*2)));
+  if(!tir) ray(g,0,0,L*Math.sin(i2),-L*Math.cos(i2),css("--ray"),2.6);
+  const r=Math.min(g.sx*0.32,60);
+  arc(g,0,0,r,Math.PI/2,Math.PI/2+i1,css("--ink")); label(g,-0.2*Math.sin(i1/2)-0.05,0.42,"i1",css("--ink"),"right");
+  if(!tir){ arc(g,0,0,r,-Math.PI/2,-Math.PI/2+i2,css("--ink")); label(g,0.12+0.2*Math.sin(i2/2),-0.45,"i2",css("--ink")); }
+  if(tir) label(g,0.35,0.55,"réflexion totale",css("--bad"));
+  // graphe i2(i1)
+  const G=chart(W.c.graph,[0,90],[0,90],{xt:[0,30,60,90],yt:[0,30,60,90],xu:"°",yu:"°",xl:"i1",yl:"i2"});
+  curve(G,lin(0,90,2),function(x){return x;},css("--line"),1,[4,4]);
+  curve(G,lin(0,90,360),function(x){ return asinS(n1*Math.sin(x*D2R)/n2)*R2D; },css("--ink"),2.2);
+  let il=NaN;
+  if(n1>n2){ il=Math.asin(n2/n1)*R2D; G.ctx.save(); G.ctx.fillStyle=css("--bad"); G.ctx.globalAlpha=0.12; G.ctx.fillRect(G.X(il),G.pt,G.X(90)-G.X(il),G.h-G.pt-G.pb); G.ctx.restore(); G.ctx.fillStyle=css("--bad"); G.ctx.fillText("réflexion totale",G.X(il)+4,G.pt+24); }
+  if(!tir){ const c2=G.ctx; c2.fillStyle=css("--ray"); c2.beginPath(); c2.arc(G.X(i1d),G.Y(i2*R2D),5,0,7); c2.fill(); }
+  let out="<div>n1 × sin(i1) = <b>"+fr(n1*Math.sin(i1),3)+"</b></div>";
+  out+= tir?"<div class='verdict-no'>n1 sin(i1) &gt; n2 : aucun angle i2 possible, réflexion totale</div>":"<div>i2 = <b>"+fr(i2*R2D,1)+"°</b>, et n2 × sin(i2) = <b>"+fr(n2*Math.sin(i2),3)+"</b></div>";
+  if(n1>n2) out+="<div>Angle limite i_lim = asin(n2/n1) = <b>"+fr(il,1)+"°</b></div>";
+  else if(n1<n2) out+="<div>Angle de réfraction maximal asin(n1/n2) = <b>"+fr(Math.asin(n1/n2)*R2D,1)+"°</b></div>";
+  out+="<div>Part réfléchie (Fresnel, indicative) : <b>"+fr(refl*100,0)+" %</b></div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 2. Prisme ---------- */
+function prismAngles(A,n,i1){ // radians
+  const r1=Math.asin(Math.sin(i1)/n), r2=A-r1, s=n*Math.sin(r2);
+  if(s>1||s<-1) return {r1:r1,r2:r2,tir:true};
+  const i2=Math.asin(s); return {r1:r1,r2:r2,i2:i2,D:i1+i2-A,tir:false};
+}
+function rot(v,a){ return [v[0]*Math.cos(a)-v[1]*Math.sin(a), v[0]*Math.sin(a)+v[1]*Math.cos(a)]; }
+function drawPrismScene(g,A,n,i1,white,disp,compact){
+  const c=g.ctx, h=1, b=Math.tan(A/2)*h;
+  const apex=[0,h], Lb=[-b,0], Rb=[b,0];
+  c.save(); c.beginPath(); c.moveTo(g.X(apex[0]),g.Y(apex[1])); c.lineTo(g.X(Lb[0]),g.Y(0)); c.lineTo(g.X(Rb[0]),g.Y(0)); c.closePath();
+  c.fillStyle=css("--medium"); c.globalAlpha=compact?0.18:tint(n)+0.05; c.fill(); c.globalAlpha=1; c.strokeStyle=compact?"#8fa3bf":css("--ink"); c.lineWidth=1.5; c.stroke(); c.restore();
+  const Lf=Math.hypot(b,h), in1=[h/Lf,-b/Lf], out2=[h/Lf,b/Lf];
+  const P1=[apex[0]+(Lb[0]-apex[0])*0.55, apex[1]+(Lb[1]-apex[1])*0.55];
+  const d0=rot(in1,i1);
+  const start=[P1[0]-d0[0]*1.6, P1[1]-d0[1]*1.6];
+  const list = white? [400,440,480,520,560,600,650,700] : [0];
+  const res={};
+  list.forEach(function(lam,k){
+    const nl = white? n+0.012*disp*(Math.pow(589.3/lam,2)-1) : n;
+    const col = white? wl2rgb(lam) : (compact?"#ffb07a":css("--ray"));
+    const a=prismAngles(A,nl,i1);
+    const d1=rot(in1,a.r1);
+    // intersection avec la face droite (apex -> Rb) ou la base
+    const ex=Rb[0]-apex[0], ey=Rb[1]-apex[1];
+    const det=d1[0]*(-ey)-d1[1]*(-ex);
+    let s=((apex[0]-P1[0])*(-ey)-(apex[1]-P1[1])*(-ex))/det, t=(d1[0]*(apex[1]-P1[1])-d1[1]*(apex[0]-P1[0]))/det;
+    let P2, onFace=true;
+    if(!(t>=0&&t<=1&&s>0)){ onFace=false; const sb=-P1[1]/d1[1]; P2=[P1[0]+d1[0]*sb,0]; }
+    else P2=[P1[0]+d1[0]*s,P1[1]+d1[1]*s];
+    if(k===0||!white) ray(g,start[0],start[1],P1[0],P1[1],white?(compact?"#ffffff":css("--ink")):col,2.4);
+    seg(g,P1[0],P1[1],P2[0],P2[1],col,white?1.6:2.4);
+    if(onFace){
+      if(a.tir){ const dr=[d1[0]-2*(d1[0]*out2[0]+d1[1]*out2[1])*out2[0], d1[1]-2*(d1[0]*out2[0]+d1[1]*out2[1])*out2[1]]; seg(g,P2[0],P2[1],P2[0]+dr[0]*0.6,P2[1]+dr[1]*0.6,col,1.6,[4,3]); }
+      else { const d2=rot(out2,-a.i2); ray(g,P2[0],P2[1],P2[0]+d2[0]*1.8,P2[1]+d2[1]*1.8,col,white?1.6:2.4); }
+    }
+    if(k===0||!white){ res.P1=P1; res.P2=P2; res.d0=d0; res.onFace=onFace; res.in1=in1; res.out2=out2; }
+  });
+  res.a=prismAngles(A,n,i1);
+  return res;
+}
+IMPL.prism={init:function(W){
+  W.root.querySelector("[data-min]").addEventListener("click",function(){ const A=W.v("A")*D2R, n=W.v("n"); const im=Math.asin(n*Math.sin(A/2)); if(isFinite(im)){ W.k.i1.value=Math.round(im*R2D*2)/2; draw(W); } });
+},draw:function(W){
+  const Ad=W.v("A"), n=W.v("n"), i1d=W.v("i1"), A=Ad*D2R, i1=i1d*D2R, white=W.v("white");
+  W.o.A.textContent=Ad+"°"; W.o.n.textContent=fr(n,2); W.o.i1.textContent=fr(i1d,1)+"°";
+  const g=world(W.c.scene,[-2.3,2.3],[-0.25,1.25],true);
+  const R=drawPrismScene(g,A,n,i1,white,5,false), a=R.a;
+  // normales et annotations
+  if(!white){
+    const P1=R.P1, P2=R.P2, n1v=R.in1, n2v=R.out2;
+    seg(g,P1[0]-n1v[0]*0.45,P1[1]-n1v[1]*0.45,P1[0]+n1v[0]*0.35,P1[1]+n1v[1]*0.35,css("--muted"),1,[4,3]);
+    label(g,P1[0]-0.5,P1[1]+0.08,"i1",css("--ink"),"right");
+    label(g,P1[0]+0.2,P1[1]-0.12,"r1",css("--ink"));
+    if(R.onFace){
+      seg(g,P2[0]-n2v[0]*0.35,P2[1]-n2v[1]*0.35,P2[0]+n2v[0]*0.45,P2[1]+n2v[1]*0.45,css("--muted"),1,[4,3]);
+      label(g,P2[0]-0.22,P2[1]-0.12,"r2",css("--ink"),"right");
+      if(!a.tir){ label(g,P2[0]+0.5,P2[1]+0.08,"i2",css("--ink")); const d0=R.d0; seg(g,P1[0],P1[1],P1[0]+d0[0]*2.2,P1[1]+d0[1]*2.2,css("--ray"),1.2,[5,4],0.6); }
+    }
+    label(g,0,1.05,"A = "+Ad+"°",css("--ink"),"center",-4);
+  }
+  // courbe D(i1)
+  const xs=lin(0,90,450), vals=xs.map(function(x){ const p=prismAngles(A,n,x*D2R); return p.tir?NaN:p.D*R2D; });
+  const fin=vals.filter(isFinite); let ymax=fin.length?Math.max.apply(null,fin):90; ymax=Math.min(180,Math.ceil((ymax+5)/10)*10);
+  const G=chart(W.c.graph,[0,90],[0,ymax],{xt:[0,15,30,45,60,75,90],yt:lin(0,ymax,ymax>=80?4:2).map(function(v){return Math.round(v);}),xu:"°",yu:"°",xl:"i1",yl:"D"});
+  let iEm; { const rl=A-Math.asin(1/n), sv=n*Math.sin(rl); iEm = sv<=-1?0 : sv>=1?NaN : Math.max(0,Math.asin(sv)*R2D); }
+  const c=G.ctx;
+  c.save(); c.fillStyle=css("--line"); c.globalAlpha=0.55;
+  const noUntil = isFinite(iEm)?iEm:90; c.fillRect(G.X(0),G.pt,G.X(noUntil)-G.X(0),G.h-G.pt-G.pb); c.restore();
+  c.fillStyle=css("--muted"); c.font="11px "+css("--ui"); c.textAlign="left"; if(noUntil>12) c.fillText("pas d'émergence",G.X(1),G.pt+26);
+  curve(G,xs,function(x){ const p=prismAngles(A,n,x*D2R); return p.tir?NaN:p.D*R2D; },css("--ink"),2.2);
+  const im=Math.asin(n*Math.sin(A/2)), Dmin=2*im-A;
+  if(isFinite(im)){ c.fillStyle=css("--pos"); c.beginPath(); c.arc(G.X(im*R2D),G.Y(Dmin*R2D),5,0,7); c.fill(); c.fillText("minimum",G.X(im*R2D)-24,G.Y(Dmin*R2D)+18); }
+  if(!a.tir){ c.fillStyle=css("--ray"); c.beginPath(); c.arc(G.X(i1d),G.Y(a.D*R2D),5,0,7); c.fill(); }
+  let out="<div>r1 = <b>"+fr(a.r1*R2D,1)+"°</b></div><div>r2 = A − r1 = <b>"+fr(a.r2*R2D,1)+"°</b></div><div>Angle limite dans le verre : <b>"+fr(Math.asin(1/n)*R2D,1)+"°</b></div>";
+  if(!R.onFace) out+="<div class='verdict-no' style='flex-basis:100%'>Le rayon atteint la base du prisme avant la seconde face.</div>";
+  else if(a.tir) out+="<div class='verdict-no' style='flex-basis:100%'>r2 dépasse l'angle limite : réflexion totale sur la seconde face, pas d'émergence.</div>";
+  else out+="<div>i2 = <b>"+fr(a.i2*R2D,1)+"°</b></div><div>D = i1 + i2 − A = <b>"+fr(a.D*R2D,1)+"°</b></div>";
+  out+="<div style='flex-basis:100%'>Émergence possible pour i1 ≥ <b>"+(isFinite(iEm)?fr(iEm,1)+"°":"aucune incidence")+"</b>. Minimum de déviation : i_m = <b>"+(isFinite(im)?fr(im*R2D,1)+"°":"–")+"</b>, D_min = <b>"+(isFinite(im)?fr(Dmin*R2D,1)+"°":"–")+"</b>, et sin((D_min + A)/2) / sin(A/2) = <b>"+(isFinite(im)?fr(Math.sin((Dmin+A)/2)/Math.sin(A/2),3):"–")+"</b> = n.</div>";
+  if(white) out+="<div style='flex-basis:100%'>Dispersion exagérée ×5 : indice de "+fr(n+0.06*(Math.pow(589.3/700,2)-1),3)+" (rouge) à "+fr(n+0.06*(Math.pow(589.3/400,2)-1),3)+" (violet). Le violet, d'indice plus élevé, est plus dévié.</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 3. Dioptre plan ---------- */
+IMPL.dplan={presets:{pieds:{n1:1.33,n2:1,h:60,ap:40},bloc:{n1:1.5,n2:1,h:40,ap:30}},
+draw:function(W){
+  const n1=W.v("n1"), n2=W.v("n2"), h=W.v("h"), apd=W.v("ap"), ap=apd*D2R;
+  W.o.n1.textContent=fr(n1,2)+medName(n1); W.o.n2.textContent=fr(n2,2)+medName(n2); W.o.h.textContent=h+" cm"; W.o.ap.textContent="±"+apd+"°";
+  const X=Math.max(30,Math.min(h*Math.tan(Math.min(ap,70*D2R))*1.25,160));
+  const g=world(W.c.scene,[-X,X],[-h*1.15,Math.max(h*0.9,X*0.5)],true), c=g.ctx;
+  c.save(); c.fillStyle=css("--medium"); c.globalAlpha=tint(n2); c.fillRect(0,0,g.w,g.Y(0)); c.globalAlpha=tint(n1); c.fillRect(0,g.Y(0),g.w,g.h-g.Y(0)); c.restore();
+  seg(g,-X*2,0,X*2,0,css("--ink"),1.5); seg(g,0,-h*1.2,0,h,css("--muted"),1,[5,4]);
+  label(g,-X*0.95,-h*1.05,"n1 = "+fr(n1,2),css("--ink")); label(g,-X*0.95,g.yr[1]*0.85,"n2 = "+fr(n2,2),css("--ink"));
+  const N=6, pts=[]; let tirCount=0;
+  for(let k=-N;k<=N;k++){
+    if(k===0) continue;
+    const i1=ap*Math.abs(k)/N, sgn=Math.sign(k), x=sgn*h*Math.tan(i1);
+    const s2=n1*Math.sin(i1)/n2;
+    const alpha=0.45+0.55*(1-Math.abs(k)/N);
+    if(s2>=1){ tirCount++; ray(g,0,-h,x,0,css("--ray"),1.2,null,0.4); seg(g,x,0,x+(x),-h,css("--ray"),1,[3,3],0.4); continue; }
+    const i2=Math.asin(s2), L=Math.max(h,X)*0.9;
+    ray(g,0,-h,x,0,css("--ray"),1.8,null,alpha);
+    ray(g,x,0,x+sgn*L*Math.sin(i2),L*Math.cos(i2),css("--ray"),1.8,null,alpha);
+    const hp=Math.abs(x)/Math.tan(i2);
+    seg(g,x,0,0,-hp,css("--img"),1.1,[4,4],alpha);
+    if(k>0) pts.push([i1,hp]);
+  }
+  pts.forEach(function(p){ pt(g,0,-p[1],css("--img"),3); });
+  const hg=h*n2/n1;
+  pt(g,0,-h,css("--ink"),5); label(g,0,-h,"A",css("--ink"),"left",16);
+  pt(g,0,-hg,css("--pos"),5); label(g,-X*0.06,-hg,"A' (Gauss)",css("--pos"),"right",4);
+  label(g,0,0,"H",css("--ink"),"left",-6);
+  // graphe HA'/HA en fonction de i1
+  const G=chart(W.c.graph,[0,90],[0,Math.max(1.2,n2/n1*1.3)],{xt:[0,30,60,90],xu:"°",yt:[0,0.5,1],xl:"i1",yl:"HA' / HA"});
+  curve(G,lin(0,89.5,360),function(x){ const s=n1*Math.sin(x*D2R)/n2; if(s>=1) return NaN; return Math.tan(x*D2R)/Math.tan(Math.asin(s)); },css("--img"),2.2);
+  curve(G,[0,90],function(){ return n2/n1; },css("--pos"),1.5,[5,4]);
+  const gc=G.ctx; gc.save(); gc.fillStyle=css("--ray"); gc.globalAlpha=0.12; gc.fillRect(G.X(0),G.pt,G.X(apd)-G.X(0),G.h-G.pt-G.pb); gc.restore();
+  const spread=pts.length? Math.max.apply(null,pts.map(function(p){return p[1];}))-Math.min.apply(null,pts.map(function(p){return p[1];})) : 0;
+  let out="<div>Gauss : HA' = HA × n2 / n1 = <b>"+fr(hg,1)+" cm</b></div><div>Étalement des images sur l'ouverture choisie : <b>"+fr(spread,1)+" cm</b></div>";
+  if(pts.length) out+="<div>Rayon le plus incliné : HA' = <b>"+fr(pts[pts.length-1][1],1)+" cm</b></div>";
+  if(tirCount) out+="<div class='verdict-no'>Les rayons au-delà de "+fr(Math.asin(n2/n1)*R2D,1)+"° subissent une réflexion totale.</div>";
+  out+="<div style='flex-basis:100%'>"+(spread<0.02*h?"<span class='verdict-ok'>Stigmatisme approché : les images se confondent.</span>":"Les images ne se superposent pas : l'image d'un point n'est pas un point.")+"</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- construction d'image (dioptre sphérique et lentille) ---------- */
+function drawImaging(g, o){
+  // o: {p, y, pp, yp, surfX(y), outParSlope (si image à l'infini), heights:[..]}
+  const col=css("--ray"), X0=g.xr[0], X1=g.xr[1];
+  const inf=!isFinite(o.pp)||Math.abs(o.pp)>5000;
+  o.heights.forEach(function(hy){
+    const sx=o.surfX(hy);
+    // entrée
+    const slopeIn=(hy-o.y)/(sx-o.p);
+    if(o.p<sx){ ray(g,o.p,o.y,sx,hy,col,1.8); }
+    else { const yStart=hy+slopeIn*(X0-sx); ray(g,X0,yStart,sx,hy,col,1.8); seg(g,sx,hy,o.p,o.y,col,1.2,[5,4],0.7); }
+    // sortie
+    if(inf){ const s=o.outParSlope; ray(g,sx,hy,X1,hy+s*(X1-sx),col,1.8); seg(g,sx,hy,X0,hy+s*(X0-sx),col,1,[3,5],0.4); return; }
+    const slopeOut=(o.yp-hy)/(o.pp-sx);
+    if(o.pp>sx){ const xe=Math.max(X1,o.pp); ray(g,sx,hy,X1,hy+slopeOut*(X1-sx),col,1.8); }
+    else { ray(g,sx,hy,X1,hy+slopeOut*(X1-sx),col,1.8); seg(g,sx,hy,o.pp,o.yp,col,1.2,[5,4],0.7); }
+  });
+}
+function drawArrowObj(g,x,y,color,dashed,lbl,lblp){
+  seg(g,x,0,x,y,color,2.6,dashed?[5,4]:null); arrowHead(g,x,0,x,y,color,9);
+  label(g,x,0,lbl,color,"center",14); label(g,x,y,lblp,color,"center",y>0?-6:14);
+}
+function clampY(y,lim){ return Math.max(-lim,Math.min(lim,y)); }
+
+IMPL.dsph={presets:{oeil:{n1:1,n2:1.5,R:10,p:-40,exact:false},concave:{n1:1,n2:1.5,R:-15,p:-30,exact:false},sortie:{n1:1.5,n2:1,R:-12,p:-40,exact:false},virt:{n1:1,n2:1.5,R:15,p:20,exact:false}},
+draw:function(W){
+  let n1=W.v("n1"), n2=W.v("n2"), R=W.v("R"), p=W.v("p"), y=W.v("y"), exact=W.v("exact");
+  if(Math.abs(R)<3){ R=R<0?-3:3; }
+  if(p===0) p=-1;
+  W.o.n1.textContent=fr(n1,2)+medName(n1); W.o.n2.textContent=fr(n2,2)+medName(n2); W.o.R.textContent=R+" cm"; W.o.p.textContent=p+" cm"; W.o.y.textContent=fr(y,1)+" cm";
+  const V=(n2-n1)/R, same=Math.abs(n2-n1)<1e-9;
+  const inv=n1/p+V, pp= same? p*n2/n1 : (Math.abs(inv)<1e-9?Infinity:n2/inv);
+  const Gt= isFinite(pp)? n1*pp/(n2*p) : Infinity, yp=Gt*y;
+  const lim=Math.max(14,Math.min(40,Math.max(y,Math.abs(isFinite(yp)?yp:0))*1.25));
+  const g=world(W.c.scene,[-95,95],[-lim,lim],false), c=g.ctx;
+  const ymaxArc=Math.min(Math.abs(R)*0.95,lim);
+  const sag=function(yy){ const s=Math.min(Math.abs(yy),Math.abs(R)*0.999); return R-Math.sign(R)*Math.sqrt(R*R-s*s); };
+  // milieux
+  c.save(); c.fillStyle=css("--medium");
+  c.globalAlpha=tint(n1); c.beginPath(); c.moveTo(g.X(-95),g.Y(lim)); c.lineTo(g.X(sag(ymaxArc)),g.Y(lim)); for(let k=0;k<=60;k++){ const yy=lim-2*lim*k/60; c.lineTo(g.X(Math.abs(yy)<=ymaxArc?sag(yy):sag(ymaxArc)),g.Y(yy)); } c.lineTo(g.X(-95),g.Y(-lim)); c.closePath(); c.fill();
+  c.globalAlpha=tint(n2); c.beginPath(); c.moveTo(g.X(95),g.Y(lim)); c.lineTo(g.X(sag(ymaxArc)),g.Y(lim)); for(let k=0;k<=60;k++){ const yy=lim-2*lim*k/60; c.lineTo(g.X(Math.abs(yy)<=ymaxArc?sag(yy):sag(ymaxArc)),g.Y(yy)); } c.lineTo(g.X(95),g.Y(-lim)); c.closePath(); c.fill(); c.restore();
+  seg(g,-95,0,95,0,css("--muted"),1);
+  if(ymaxArc<lim){ seg(g,sag(ymaxArc),ymaxArc,sag(ymaxArc),lim,css("--ink"),1,[3,3],0.5); seg(g,sag(ymaxArc),-ymaxArc,sag(ymaxArc),-lim,css("--ink"),1,[3,3],0.5); }
+  c.save(); c.strokeStyle=css("--ink"); c.lineWidth=2; c.beginPath(); for(let k=0;k<=80;k++){ const yy=-ymaxArc+2*ymaxArc*k/80; const X=g.X(sag(yy)), Y=g.Y(yy); if(k===0) c.moveTo(X,Y); else c.lineTo(X,Y); } c.stroke(); c.restore();
+  pt(g,0,0,css("--ink"),3); label(g,0,0,"S",css("--ink"),"left",14);
+  if(Math.abs(R)<95){ pt(g,R,0,css("--ink"),3); label(g,R,0,"C",css("--ink"),"center",14); }
+  if(!same){ const fp=n2/V, fo=-n1/V; if(Math.abs(fp)<95){ pt(g,fp,0,css("--pos"),3.5); label(g,fp,0,"F'",css("--pos"),"center",-8); } if(Math.abs(fo)<95){ pt(g,fo,0,css("--pos"),3.5); label(g,fo,0,"F",css("--pos"),"center",-8); } }
+  // rayons paraxiaux
+  if(!exact){
+    const hC = y*R/(R-p);
+    const hs=[y,0,hC].filter(function(v){ return Math.abs(v)<=lim*0.98; });
+    const outSlope = (0-y)/(R-p);
+    drawImaging(g,{p:p,y:y,pp:pp,yp:yp,surfX:sag,heights:hs,outParSlope:outSlope});
+  } else if(p<0){
+    // rayons exacts depuis A sur l'axe
+    const Cx=R, rad=Math.abs(R);
+    const cols=[];
+    for(let k=1;k<=7;k++){
+      const hy=ymaxArc*k/7.5;
+      const th=Math.atan2(hy,-p); const d=[Math.cos(th),Math.sin(th)];
+      // intersection avec le cercle
+      const ox=p-Cx, oy=0, b=ox*d[0]+oy*d[1], cc=ox*ox+oy*oy-rad*rad, disc=b*b-cc; if(disc<0) continue;
+      const roots=[-b-Math.sqrt(disc),-b+Math.sqrt(disc)];
+      let best=null; roots.forEach(function(t){ if(t>0){ const P=[p+d[0]*t,d[1]*t]; if(best===null||Math.abs(P[0])<Math.abs(best[0])) best=P; } });
+      if(!best) continue;
+      let nrm=[(best[0]-Cx)/rad,best[1]/rad]; if(nrm[0]*d[0]+nrm[1]*d[1]<0) nrm=[-nrm[0],-nrm[1]];
+      const mu=n1/n2, ci=nrm[0]*d[0]+nrm[1]*d[1], k2=1-mu*mu*(1-ci*ci); if(k2<0) continue;
+      const t2=[mu*d[0]+(Math.sqrt(k2)-mu*ci)*nrm[0], mu*d[1]+(Math.sqrt(k2)-mu*ci)*nrm[1]];
+      ray(g,p,0,best[0],best[1],css("--ray"),1.4,null,0.8);
+      ray(g,best[0],best[1],best[0]+t2[0]*200,best[1]+t2[1]*200,css("--ray"),1.4,null,0.8);
+      if(Math.abs(t2[1])>1e-9){ const xa=best[0]-best[1]*t2[0]/t2[1]; if(xa<best[0]) seg(g,best[0],best[1],xa,0,css("--img"),1,[4,4],0.7); cols.push(xa); if(Math.abs(xa)<95) pt(g,xa,0,css("--img"),3); }
+    }
+    W.exactPts=cols;
+  }
+  // objet et image
+  const objReal=p<0, imgReal=isFinite(pp)&&pp>0;
+  drawArrowObj(g,p,y,css("--ink"),!objReal,"A","B");
+  if(isFinite(pp)&&Math.abs(pp)<95&&!exact) drawArrowObj(g,pp,clampY(yp,lim*0.98),css("--img"),!imgReal,"A'","B'");
+  if(exact&&isFinite(pp)&&Math.abs(pp)<95){ pt(g,pp,0,css("--pos"),5); label(g,pp,0,"A' (Gauss)",css("--pos"),"center",-10); }
+  let out="";
+  if(same) out+="<div>n1 = n2 : pas de dioptre, pas de déviation.</div>";
+  out+="<div>Vergence (n2 − n1)/R = <b>"+fr(V*100,2)+" δ</b></div>";
+  out+="<div>SA' = n2 / (n1/SA + V) = <b>"+(isFinite(pp)?fr(pp,1)+" cm":"∞")+"</b></div>";
+  out+="<div>Gt = n1·SA' / (n2·SA) = <b>"+(isFinite(Gt)?fr(Gt,2):"∞")+"</b></div>";
+  out+="<div style='flex-basis:100%'>Objet "+(objReal?"réel":"virtuel")+", image "+(!isFinite(pp)?"à l'infini":(imgReal?"réelle":"virtuelle")+(isFinite(Gt)?(Gt>0?", droite":", renversée")+(Math.abs(Gt)>1?", agrandie":", réduite"):""))+". Dioptre "+(same?"sans effet":(V>0?"convergent":"divergent"))+".</div>";
+  if(exact){ if(p>=0) out+="<div class='verdict-no' style='flex-basis:100%'>Le tracé exact est proposé pour un objet réel (SA &lt; 0).</div>"; else if(W.exactPts&&W.exactPts.length){ const mn=Math.min.apply(null,W.exactPts), mx=Math.max.apply(null,W.exactPts); out+="<div style='flex-basis:100%'>Rayons exacts : ils recoupent l'axe entre <b>"+fr(mn,1)+"</b> et <b>"+fr(mx,1)+" cm</b> au lieu d'un point unique (aberration sphérique). Les rayons proches de l'axe tendent vers A' de Gauss.</div>"; } }
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- 5. Lentille mince ---------- */
+IMPL.lens={presets:{c1:{mode:"f",f:20,p:-35},c2:{mode:"f",f:20,p:-12},c3:{mode:"f",f:20,p:25},c4:{mode:"f",f:-20,p:30}},
+draw:function(W){
+  const mode=W.v("mode");
+  W.root.querySelectorAll("[data-show]").forEach(function(el){ el.style.display = el.dataset.show===mode?"":"none"; });
+  let f;
+  const n=W.v("n"), R1=W.v("R1")||0.001, R2=W.v("R2")||0.001;
+  W.o.n.textContent=fr(n,2); W.o.R1.textContent=W.v("R1")+" cm"; W.o.R2.textContent=W.v("R2")+" cm";
+  if(mode==="f"){ f=W.v("f"); if(Math.abs(f)<3) f=f<0?-3:3; W.o.f.textContent=f+" cm"; }
+  else { const V=(n-1)*(1/R1-1/R2); f= Math.abs(V)<1e-6?Infinity:1/V; }
+  let p=W.v("p"); if(p===0) p=-1; const y=W.v("y");
+  W.o.p.textContent=p+" cm"; W.o.y.textContent=fr(y,1)+" cm";
+  const inv=1/f+1/p, pp=Math.abs(inv)<1e-9?Infinity:1/inv, Gt=isFinite(pp)?pp/p:Infinity, yp=Gt*y;
+  const lim=Math.max(14,Math.min(40,Math.max(y,Math.abs(isFinite(yp)?yp:0))*1.25));
+  const g=world(W.c.scene,[-95,95],[-lim,lim],false), c=g.ctx;
+  seg(g,-95,0,95,0,css("--muted"),1);
+  // lentille
+  const conv=f>0, top=lim*0.9;
+  seg(g,0,-top,0,top,css("--ink"),2.2);
+  if(conv){ arrowHead(g,0,0,0,top,css("--ink"),10); arrowHead(g,0,0,0,-top,css("--ink"),10); }
+  else { arrowHead(g,0,top*1.6,0,top,css("--ink"),10); arrowHead(g,0,-top*1.6,0,-top,css("--ink"),10); }
+  label(g,0,0,"O",css("--ink"),"left",14);
+  if(isFinite(f)&&Math.abs(f)<95){ pt(g,f,0,css("--pos"),3.5); label(g,f,0,"F'",css("--pos"),"center",-8); pt(g,-f,0,css("--pos"),3.5); label(g,-f,0,"F",css("--pos"),"center",-8); }
+  const hF = isFinite(f)? y*f/(p+f) : y;
+  const hs=[y,0]; if(isFinite(hF)&&Math.abs(hF)<=lim*0.98 && Math.abs(p+f)>0.5) hs.push(hF);
+  drawImaging(g,{p:p,y:y,pp:pp,yp:yp,surfX:function(){return 0;},heights:hs,outParSlope:y/p});
+  const objReal=p<0, imgReal=isFinite(pp)&&pp>0;
+  drawArrowObj(g,p,y,css("--ink"),!objReal,"A","B");
+  if(isFinite(pp)&&Math.abs(pp)<95) drawArrowObj(g,pp,clampY(yp,lim*0.98),css("--img"),!imgReal,"A'","B'");
+  let out="<div>f' = <b>"+(isFinite(f)?fr(f,1)+" cm":"∞")+"</b> ("+(conv?"convergente":"divergente")+")</div>";
+  if(mode==="nr") out+="<div>1/f' = (n − 1)(1/R1 − 1/R2) = <b>"+fr(isFinite(f)?100/f:0,2)+" δ</b></div>";
+  out+="<div>OA' = 1 / (1/f' + 1/OA) = <b>"+(isFinite(pp)?fr(pp,1)+" cm":"∞")+"</b></div>";
+  out+="<div>Gt = OA'/OA = <b>"+(isFinite(Gt)?fr(Gt,2):"∞")+"</b></div><div>Ga = 1/Gt = <b>"+(isFinite(Gt)&&Gt!==0?fr(1/Gt,2):"0")+"</b></div>";
+  const nat = !isFinite(pp)?"image rejetée à l'infini (objet au foyer F)":("image "+(imgReal?"réelle":"virtuelle")+(Gt>0?", droite":", renversée")+(Math.abs(Gt)>1?", agrandie":", réduite"));
+  out+="<div style='flex-basis:100%'>Objet <b>"+(objReal?"réel":"virtuel")+"</b>, <b>"+nat+"</b>.</div>";
+  W.o.out.innerHTML=out;
+}};
+
+/* ---------- hero ---------- */
+function drawHero(){
+  const i=+$("heroI").value; $("heroV").textContent="i1 = "+i+"°";
+  const g=world($("heroCv"),[-2.4,2.4],[-0.15,1.15],true);
+  drawPrismScene(g,60*D2R,1.52,i*D2R,true,6,true);
+}
+$("heroI").addEventListener("input",drawHero);
+
+/* ---------- onglets, concepts ---------- */
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"); });
+  document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active", p.id===t); });
+  if (t==="cartes") renderCard();
+  drawAll(); save();
+}
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 5 concepts revus"; $("seenBar").style.width=(n/5*100)+"%"; }
+document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
+updSeen();
+
+/* ---------- formules ---------- */
+const FORM = [
+ {g:"Snell-Descartes", r:[
+  ["n1 × sin(i1) = n2 × sin(i2)","Angles mesurés par rapport à la normale."],
+  ["i2 = −i1","Réflexion."],
+  ["sin(i_lim) = n2 / n1","Angle limite, n1 > n2 ; réflexion totale si i1 > i_lim."],
+  ["sin(i2 max) = n1 / n2","Réfraction limite, n1 < n2 (i1 = 90°)."]]},
+ {g:"Prisme", r:[
+  ["sin(i1) = n sin(r1),   sin(i2) = n sin(r2)","Réfraction sur chaque face."],
+  ["A = r1 + r2","Géométrie du prisme."],
+  ["D = i1 + i2 − A","Déviation."],
+  ["r2 ≤ i_lim,  sin(i_lim) = 1/n","Condition d'émergence."],
+  ["i1 = i2 = i_m,  r1 = r2 = A/2,  D_min = 2 i_m − A","Minimum de déviation (trajet symétrique)."],
+  ["n = sin((D_min + A)/2) / sin(A/2)","Mesure de l'indice."],
+  ["D ≈ (n − 1) × A","Prisme d'angle faible, petite incidence."]]},
+ {g:"Dioptre plan", r:[
+  ["HA' = HA × (n2/n1) × √[(1 − (n1/n2)² sin²i1) / (1 − sin²i1)]","Cas général : dépend de i1, pas de stigmatisme."],
+  ["HA' = HA × n2 / n1   ⟺   n1/HA − n2/HA' = 0","Conditions de Gauss ; image virtuelle, du même côté."]]},
+ {g:"Dioptre sphérique", r:[
+  ["n2 × CA2 / IA2 = n1 × CA1 / IA1","Relation exacte, sans approximation."],
+  ["n2 / SA' − n1 / SA = (n2 − n1) / SC","Conjugaison dans les conditions de Gauss."],
+  ["SF' = n2 SC / (n2 − n1),   SF = −n1 SC / (n2 − n1)","Foyers image et objet."],
+  ["Gt = n1 SA' / (n2 SA)","Grandissement transversal."]]},
+ {g:"Lentille mince", r:[
+  ["1/OA' − 1/OA = 1/f'","Conjugaison (Descartes)."],
+  ["1/f' = (n − 1) × (1/R1 − 1/R2)","Distance focale ; somme des deux dioptres."],
+  ["Gt = OA' / OA,   Ga = 1/Gt,   Ga × Gt = 1","Grandissements."],
+  ["OA < 0 objet réel ;  OA' > 0 image réelle","Lumière de gauche à droite."]]}
+];
+(function(){
+  const box=$("fList"); let h="";
+  FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
+  box.innerHTML=h;
+  $("hideF").addEventListener("change", function(){ box.classList.toggle("hidef", this.checked); box.querySelectorAll(".fx").forEach(function(f){ f.classList.remove("show"); }); });
+  box.addEventListener("click", function(e){ const f=e.target.closest(".fx"); if (f && box.classList.contains("hidef")) f.classList.toggle("show"); });
+})();
+
+/* ---------- cartes ---------- */
+const CARDS = [
+ ["s1","Snell-Descartes","Loi de la réfraction ?","n1 × sin(i1) = n2 × sin(i2), angles mesurés par rapport à la normale."],
+ ["s2","Snell-Descartes","Par rapport à quoi mesure-t-on i1 et i2 ?","Par rapport à la normale au dioptre au point d'incidence, jamais par rapport à la surface."],
+ ["s3","Snell-Descartes","Quand la réflexion totale est-elle possible ?","Seulement de n1 vers n2 avec n1 > n2, pour i1 > i_lim où sin(i_lim) = n2/n1."],
+ ["s4","Snell-Descartes","Angle limite verre (1,5) → air ?","asin(1/1,5) ≈ 41,8°."],
+ ["s5","Snell-Descartes","Principe du retour inverse ?","Un trajet lumineux peut être parcouru dans les deux sens."],
+ ["s6","Snell-Descartes","Que sont les rayons incident, réfléchi, réfracté et la normale les uns par rapport aux autres ?","Coplanaires : ils sont tous dans le plan d'incidence."],
+ ["p1","Prisme","Les quatre relations du prisme ?","sin i1 = n sin r1, sin i2 = n sin r2, A = r1 + r2, D = i1 + i2 − A."],
+ ["p2","Prisme","Condition pour que le rayon ressorte du prisme ?","r2 ≤ i_lim avec sin(i_lim) = 1/n ; cela impose une incidence i1 minimale."],
+ ["p3","Prisme","Que vaut la configuration au minimum de déviation ?","Trajet symétrique : i1 = i2 = i_m et r1 = r2 = A/2, D_min = 2 i_m − A."],
+ ["p4","Prisme","Formule pour mesurer l'indice d'un prisme ?","n = sin((D_min + A)/2) / sin(A/2)."],
+ ["p5","Prisme","Angle limite et minimum de déviation : quelle différence ?","L'angle limite fixe si le rayon ressort (réflexion totale sur la seconde face). Le minimum de déviation est la configuration symétrique où D est minimale, et le rayon y sort normalement."],
+ ["p6","Prisme","D'où vient la dispersion du prisme ?","De la variation de l'indice avec la longueur d'onde : n est plus grand pour le bleu, qui est donc plus dévié."],
+ ["p7","Prisme","La dispersion augmente-t-elle ou diminue-t-elle avec l'angle au sommet A ?","Elle augmente : pour A petit, D ≈ (n − 1) A et l'écart entre couleurs vaut environ Δn × A."],
+ ["g1","Gauss","Qu'est-ce que le stigmatisme rigoureux ?","Chaque point objet a un unique point image. Seul le miroir plan l'assure pour tous les points."],
+ ["g2","Gauss","Conditions de Gauss ?","Rayons paraxiaux (peu inclinés, proches de l'axe) et objets petits et plans."],
+ ["g3","Gauss","Qu'est-ce que le stigmatisme approché ?","L'image d'un point est une tache plus petite qu'un pixel ou qu'une cellule de la rétine."],
+ ["d1","Dioptre plan","Relation de conjugaison du dioptre plan (Gauss) ?","HA' = HA × n2/n1, soit n1/HA = n2/HA'."],
+ ["d2","Dioptre plan","Le dioptre plan est-il stigmatique ?","Non : HA' dépend de l'angle i1. Il ne l'est qu'approximativement, dans les conditions de Gauss."],
+ ["d3","Dioptre plan","Pieds à 60 cm sous l'eau, vus depuis l'air : profondeur apparente ?","60 × 1/1,33 ≈ 45 cm : ils paraissent remonter."],
+ ["r1","Réel ou virtuel","Différence entre image réelle et image virtuelle ?","Réelle : les rayons y convergent, on peut la projeter sur un écran. Virtuelle : seuls les prolongements s'y croisent, visible à l'œil seulement."],
+ ["r2","Réel ou virtuel","Qu'est-ce qu'un objet virtuel ?","Un point vers lequel des rayons convergent, mais qui sont interceptés par le système avant de l'atteindre. C'est l'image d'un système précédent."],
+ ["ds1","Dioptre sphérique","Relation de conjugaison du dioptre sphérique (Gauss) ?","n2/SA' − n1/SA = (n2 − n1)/SC."],
+ ["ds2","Dioptre sphérique","Quelle relation du dioptre sphérique est exacte, sans approximation ?","n2 × CA2/IA2 = n1 × CA1/IA1. On passe à Gauss en remplaçant I par S."],
+ ["ds3","Dioptre sphérique","Quel rayon traverse un dioptre sphérique sans être dévié ?","Celui qui passe par le centre C : il arrive selon la normale."],
+ ["l1","Lentilles","Relation de conjugaison des lentilles minces ?","1/OA' − 1/OA = 1/f'."],
+ ["l2","Lentilles","Distance focale en fonction de n, R1, R2 ?","1/f' = (n − 1)(1/R1 − 1/R2)."],
+ ["l3","Lentilles","Relation entre Gt et Ga ?","Gt = OA'/OA et Ga × Gt = 1."],
+ ["l4","Lentilles","Où placer l'objet pour qu'une lentille convergente serve de loupe ?","Entre F et O : l'image est virtuelle, droite et agrandie."]
+];
+let fcCur=null, fcFlipped=false;
+(function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
+function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
+function weight(id){ const b=S.cards[id]; if (b===undefined) return 3; return [6,3,2][b]||0.5; }
+function pick(){ const p=pool(); const cand=p.length>1?p.filter(function(c){return !fcCur||c[0]!==fcCur[0];}):p; let tot=0; cand.forEach(function(c){tot+=weight(c[0]);}); let r=Math.random()*tot; for (const c of cand){ r-=weight(c[0]); if (r<=0) return c; } return cand[cand.length-1]; }
+function renderCard(){
+  if (!fcCur||pool().indexOf(fcCur)<0) fcCur=pick();
+  fcFlipped=false; $("fc").classList.remove("flipped");
+  $("fcThemeF").textContent=fcCur[1]; $("fcQ").textContent=fcCur[2]; $("fcA").textContent=fcCur[3];
+  $("fcYes").disabled=true; $("fcNo").disabled=true;
+  let n=0,f=0,c=0,a=0; pool().forEach(function(x){ const b=S.cards[x[0]]; if (b===undefined) n++; else if (b===0) f++; else if (b<3) c++; else a++; });
+  $("fcBoxes").innerHTML='<div><b>'+n+'</b>Nouvelles</div><div><b>'+f+'</b>À revoir</div><div><b>'+c+'</b>En cours</div><div><b>'+a+'</b>Acquises</div>';
+}
+function flip(){ fcFlipped=!fcFlipped; $("fc").classList.toggle("flipped",fcFlipped); if (fcFlipped){ $("fcYes").disabled=false; $("fcNo").disabled=false; } }
+$("fc").addEventListener("click",flip);
+$("fc").addEventListener("keydown",function(e){ if (e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+$("fcFlip").addEventListener("click",flip);
+$("fcYes").addEventListener("click",function(){ const id=fcCur[0]; S.cards[id]=Math.min(3,(S.cards[id]||0)+1); save(); fcCur=pick(); renderCard(); });
+$("fcNo").addEventListener("click",function(){ S.cards[fcCur[0]]=0; save(); fcCur=pick(); renderCard(); });
+$("fcReset").addEventListener("click",function(){ if (confirm("Remettre toutes les cartes à zéro ?")){ S.cards={}; save(); fcCur=null; renderCard(); } });
+
+/* ---------- exercices ---------- */
+const EX = [
+ {id:"e1",axis:"Optique géométrique",pts:0.5,unit:"°",ans:41.81,tol:0.01,
+  q:"Quel est l'angle au-delà duquel un rayon se propageant dans un verre d'indice 1,50 est totalement réfléchi à l'interface avec l'air ?",
+  c:"<p>Réflexion totale du verre vers l'air : n1 = 1,50 &gt; n2 = 1.</p><div class='fblock'>sin(i_lim) = n2 / n1 = 1 / 1,50   →   i_lim = 41,8°</div>"},
+ {id:"e2",axis:"Optique géométrique",pts:1,unit:"°",ans:70.1,tol:0.01,
+  q:"Un faisceau laser se propage dans l'eau (n = 1,33) et arrive sur la surface avec une incidence de 45°. Sous quel angle ressort-il dans l'air ?",
+  c:"<p>On vérifie d'abord qu'il ressort : i_lim = asin(1/1,33) = 48,8° &gt; 45°, donc pas de réflexion totale.</p><div class='fblock'>sin(i2) = 1,33 × sin(45°) = 0,940   →   i2 = 70,1°</div><p>Le rayon s'écarte de la normale, puisqu'il va vers un milieu moins réfringent.</p>"},
+ {id:"e3",axis:"Optique géométrique",pts:1,unit:"",ans:1.414,tol:0.01,
+  q:"Dans une pièce en verre, un rayon frappe une face en contact avec l'air sous une incidence de 45°. Quel indice minimal doit avoir le verre pour que le rayon soit totalement réfléchi ?",
+  c:"<p>Il faut que 45° dépasse l'angle limite : sin(45°) ≥ sin(i_lim) = 1/n.</p><div class='fblock'>n ≥ 1 / sin(45°) = √2 ≈ 1,414</div><p>C'est le principe des prismes à réflexion totale des jumelles : un verre courant (n ≈ 1,5) suffit.</p>"},
+ {id:"e4",axis:"Lentilles & Prismes",pts:1,unit:"°",ans:37.18,tol:0.01,
+  q:"Un prisme d'angle au sommet 60° est taillé dans un verre d'indice 1,50. Quelle est sa déviation minimale ?",
+  c:"<p>Au minimum de déviation, le trajet est symétrique : r1 = r2 = A/2 = 30°.</p><div class='fblock'>sin(i_m) = 1,50 × sin(30°) = 0,75   →   i_m = 48,59°<br>D_min = 2 i_m − A = 97,18 − 60 = 37,2°</div>"},
+ {id:"e5",axis:"Lentilles & Prismes",pts:1.5,unit:"",ans:1.648,tol:0.005,
+  q:"Sur un goniomètre, on mesure pour un prisme d'angle 60° une déviation minimale de 51,0°. Quel est l'indice du verre ?",
+  c:"<p>On utilise la relation au minimum de déviation, et non l'angle limite :</p><div class='fblock'>n = sin((D_min + A)/2) / sin(A/2) = sin(55,5°) / sin(30°) = 0,8241 / 0,5 = 1,648</div><p>Erreur fréquente : chercher un angle limite ; il ne sert qu'à savoir si le rayon ressort.</p>"},
+ {id:"e6",axis:"Lentilles & Prismes",pts:1,unit:"°",ans:27.92,tol:0.01,
+  q:"Même prisme qu'à l'exercice 4 (A = 60°, n = 1,50). En dessous de quelle incidence i1 le rayon ne ressort-il plus par la seconde face ?",
+  c:"<p>Le rayon ressort tant que r2 ≤ i_lim = asin(1/1,5) = 41,81°. À la limite :</p><div class='fblock'>r1 = A − r2 = 60 − 41,81 = 18,19°<br>sin(i1) = 1,50 × sin(18,19°) = 0,468   →   i1 = 27,9°</div><p>En dessous de 27,9°, r1 diminue, r2 augmente et dépasse l'angle limite : réflexion totale sur la seconde face. C'est la zone grisée du schéma.</p>"},
+ {id:"e7",axis:"Optique géométrique",pts:1,unit:"cm",ans:90.2,tol:0.01,
+  q:"Un poisson nage à 1,20 m sous la surface d'un lac (n = 1,33). À quelle profondeur apparente le voit un pêcheur qui regarde presque à la verticale ?",
+  c:"<p>Regard presque vertical : conditions de Gauss, dioptre plan de l'eau (objet) vers l'air (observateur).</p><div class='fblock'>HA' = HA × n2 / n1 = 120 × 1 / 1,33 = 90,2 cm</div><p>Le poisson paraît remonter d'environ 30 cm. En regardant de biais, il paraîtrait encore moins profond.</p>"},
+ {id:"e8",axis:"Optique géométrique",pts:1,unit:"cm",ans:10,tol:0.01,
+  q:"Une tige de verre (n = 1,50) se termine par une surface convexe de rayon 2,0 cm. Un petit objet est placé dans l'air, sur l'axe, 10 cm avant le sommet. Où se forme son image, mesurée depuis le sommet ?",
+  c:"<p>Dioptre sphérique air → verre, avec SA = −10 cm et SC = +2 cm (centre à droite, dans le verre).</p><div class='fblock'>1,50 / SA' − 1 / (−10) = (1,50 − 1) / 2 = 0,25<br>1,50 / SA' = 0,25 − 0,10 = 0,15   →   SA' = +10 cm</div><p>L'image est réelle, 10 cm à l'intérieur du verre. Erreur fréquente : oublier le signe de SA, ce qui donne 1,50 / SA' = 0,35.</p>"},
+ {id:"e9",axis:"Lentilles & Prismes",pts:1,unit:"cm",ans:60,tol:0.01,
+  q:"Une lentille biconvexe symétrique en verre (n = 1,50) a des faces de rayon 20 cm. Un objet est placé 30 cm avant la lentille. Où se forme l'image ?",
+  c:"<p>Biconvexe : R1 = +20 cm, R2 = −20 cm.</p><div class='fblock'>1/f' = 0,50 × (1/20 + 1/20) = 0,05   →   f' = 20 cm<br>1/OA' = 1/f' + 1/OA = 1/20 − 1/30 = 1/60   →   OA' = 60 cm</div><p>Image réelle, renversée, agrandie deux fois (Gt = 60 / −30 = −2).</p>"},
+ {id:"e10",axis:"Lentilles & Prismes",pts:1,unit:"",ans:2,tol:0.01,
+  q:"Même lentille, mais l'objet est maintenant à 10 cm devant elle. Quel est le grandissement transversal ?",
+  c:"<p>L'objet est entre F et O :</p><div class='fblock'>1/OA' = 1/20 − 1/10 = −1/20   →   OA' = −20 cm<br>Gt = OA' / OA = −20 / −10 = 2</div><p>Image virtuelle, droite, agrandie deux fois : c'est le fonctionnement d'une loupe.</p>"}
+];
+const GF={full:1,half:0.5,zero:0};
+function renderEx(){
+  $("exList").innerHTML=EX.map(function(e,k){
+    return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
+  }).join("");
+  document.querySelectorAll(".ex").forEach(function(box){
+    const e=EX.find(function(x){return x.id===box.dataset.id;}); const inp=box.querySelector("input"); const st=S.ex[e.id];
+    if (st){ inp.value=st.v||""; if (st.v) check(box,e,false); if (st.g) setGrade(box,e,st.g,false); }
+    box.querySelector("[data-check]").addEventListener("click",function(){ check(box,e,true); });
+    inp.addEventListener("keydown",function(ev){ if (ev.key==="Enter") check(box,e,true); });
+    box.querySelectorAll("[data-g]").forEach(function(b){ b.addEventListener("click",function(){ setGrade(box,e,b.dataset.g,true); }); });
+  });
+  updScore();
+}
+function check(box,e,user){
+  const raw=box.querySelector("input").value.trim().replace(/\s/g,"").replace(",",".").replace("−","-");
+  const v=parseFloat(raw), out=box.querySelector(".verdict");
+  if (!isFinite(v)){ out.className="verdict no"; out.textContent="Entre une valeur numérique, par exemple 41,8."; return; }
+  const ok=Math.abs(v-e.ans)<=Math.abs(e.ans)*e.tol+1e-9;
+  out.className="verdict "+(ok?"ok":"no");
+  const dec = String(e.ans).indexOf(".")>=0 ? String(e.ans).split(".")[1].length : 0;
+  out.textContent = ok ? "Dans la tolérance. Vérifie quand même que ta méthode correspond à la correction." : "Hors tolérance : la valeur attendue est "+fr(e.ans,dec)+(e.unit?" "+e.unit:"")+". Repère dans la correction où ton raisonnement a divergé.";
+  box.querySelector(".corr").classList.add("show");
+  S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].v=box.querySelector("input").value;
+  if (user && ok && !S.ex[e.id].g) setGrade(box,e,"full",true);
+  save();
+}
+function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+$("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
+$("exJson").addEventListener("click",function(){
+  const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
+  const sc={}; Object.keys(ax).forEach(function(a){ sc[a]=Math.round(ax[a].got/ax[a].max*100); });
+  const d=new Date(), date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  $("jsonOut").value=JSON.stringify({date:date,subject:"optique",scores:sc},null,2); $("jsonZone").style.display="block";
+});
+$("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
+
+/* ---------- démarrage ---------- */
+initWidgets();
+renderEx();
+showTab(S.tab||"concepts");
+let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script>
+</body>
+</html>
