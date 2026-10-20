@@ -23,17 +23,24 @@ export default async function handler(req, res) {
     res.status(404).send("Calendrier non configuré");
     return;
   }
-  try {
-    const r = await fetch(withDates(base), { headers: { "User-Agent": "PHOT3A-app" } });
-    const txt = await r.text();
-    if (!r.ok || txt.indexOf("BEGIN:VCALENDAR") < 0) {
-      res.status(502).send("ADE indisponible");
-      return;
+  const target = withDates(base);
+  const tries = [target, target.replace(/^https:/, "http:")];
+  const errors = [];
+  for (const url of tries) {
+    try {
+      const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (PHOT3A-app)", "Accept": "text/calendar,*/*" }, redirect: "follow" });
+      const txt = await r.text();
+      if (r.ok && txt.indexOf("BEGIN:VCALENDAR") >= 0) {
+        res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+        res.setHeader("Cache-Control", "public, s-maxage=10800, stale-while-revalidate=86400");
+        res.status(200).send(txt);
+        return;
+      }
+      errors.push(url.slice(0, 5) + " HTTP " + r.status + " " + txt.slice(0, 120).replace(/\s+/g, " "));
+    } catch (e) {
+      const c = e && e.cause;
+      errors.push(url.slice(0, 5) + " " + ((c && (c.code || c.message)) || (e && e.message) || "erreur"));
     }
-    res.setHeader("Content-Type", "text/calendar; charset=utf-8");
-    res.setHeader("Cache-Control", "public, s-maxage=10800, stale-while-revalidate=86400");
-    res.status(200).send(txt);
-  } catch (e) {
-    res.status(502).send("ADE injoignable");
   }
+  res.status(502).send("ADE injoignable — " + errors.join(" | "));
 }
