@@ -84,8 +84,15 @@ function getText(url, ca) {
 }
 
 export default async function handler(req, res) {
-  const src = String((req.query && req.query.src) || "spe");
-  const base = src === "tc" ? (process.env.ADE_TC_URL || DEFAULTS.tc) : (process.env.ADE_SPE_URL || DEFAULTS.spe);
+  const q = req.query || {};
+  const TPL = "https://" + HOST + "/jsp/custom/modules/plannings/anonymous_cal.jsp?projectId=2&calType=ical&resources=";
+  let base;
+  if (q.res !== undefined) {
+    if (!/^\d{1,6}$/.test(String(q.res))) { res.status(400).send("Ressource ADE invalide"); return; }
+    base = TPL + q.res;
+  } else {
+    base = String(q.src || "spe") === "tc" ? (process.env.ADE_TC_URL || DEFAULTS.tc) : (process.env.ADE_SPE_URL || DEFAULTS.spe);
+  }
   if (!base || !base.startsWith("https://" + HOST + "/")) { res.status(404).send("Calendrier non configuré"); return; }
   const url = withDates(base);
   try {
