@@ -27,7 +27,7 @@
   color-scheme:dark;
 }
 :root[data-theme="light"]{
-  --bg:#F3F5FA; --surface:#FFFFFF; --ink:#0E1220; --muted:#5B6378; --line:#DCE1EC; --soft:#ECEFF6;
+  --bg:#E4E7EE; --surface:#EEF0F5; --ink:#161B28; --muted:#586074; --line:#CDD3DE; --soft:#DDE1E9;
   --good:#059669; --bad:#E11D48; --warn:#B45309; --acc:#2563EB;
   --m1:#2563EB; --m2:#EA580C; --m3:#7C3AED; --m4:#0891B2; --m5:#CA8A04; --m6:#16A34A; --m7:#A855F7; --m8:#64748B;
   --glow:0 0 0; color-scheme:light;
@@ -235,7 +235,11 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 "use strict";
 /* ================= maquette 2025-2026 (identique en 2026-2027) ================= */
 // [code, nom, coef dans le module, a des TP, uniquement TP]
-const MODS=[
+/* ================= spécialités (une entrée par maquette) ================= */
+// mods : [code, nom, coef dans le module, a des TP, uniquement TP] ; ade : numéros de ressource ADE ; map : nom ADE normalisé -> code matière
+const SPECS={
+ phot3a:{name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
+  mods:[
  {c:"f1o1",nm:450,n:"Électronique I",coef:19,ects:7,col:"--m1",m:[["f1o1-1","Électronique analogique 1",7,1,0],["f1o1-2","Systèmes numériques",3,0,0],["f1o1-3","Informatique et algorithmique",5,0,0],["f1o1-4","Langage orienté objet",4,0,0]]},
  {c:"f1o2",nm:610,n:"Optique",coef:18,ects:7,col:"--m2",m:[["f1o2-1","Optique géométrique",5,0,0],["f1o2-2","Optique ondulatoire",8,0,0],["f1o2-3","Optique instrumentale",5,1,1]]},
  {c:"f1c3",nm:420,n:"Mathématiques pour l'ingénieur I",coef:13,ects:5,col:"--m3",m:[["f1c3-1","Analyse",6,1,0],["f1c3-2","Algèbre / Calcul scientifique",5,1,0],["f1c3-3","Remise à niveau et outils",2,1,0]]},
@@ -244,26 +248,30 @@ const MODS=[
  {c:"f1c4",nm:530,n:"L'ingénieur face aux enjeux sociétaux I",coef:3,ects:2,col:"--m6",m:[["f1c4-1","Développement durable",1,0,0],["f1c4-2","Énergie : transition et sobriété",2,0,0]]},
  {c:"f1c8",nm:400,n:"Initiative I",coef:3,ects:1,col:"--m7",m:[["f1c8-1","Option (MOOC libre)",3,0,0]]},
  {c:"f2c9",nm:780,n:"Périodes en entreprise I",coef:24,ects:30,col:"--m8",s2:1,m:[["f2c9-1","Périodes en entreprise",12,0,0],["f2c9-2","Rapport",6,0,0],["f2c9-3","Soutenance",6,0,0]]}
-];
-const MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); });
-const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
-const ADE_MAP=[["electronique analogique 1","f1o1-1"],["systemes numeriques","f1o1-2"],["informatique & algorithmique","f1o1-3"],["informatique et algorithmique","f1o1-3"],["algorithmique et programmation","f1o1-3"],["langage oriente objet","f1o1-4"],["optique geometrique","f1o2-1"],["optique ondulatoire","f1o2-2"],["optique instrumentale","f1o2-3"],["economie generale et d'entreprise","f1c2-1"],["economie d'entreprise et generale","f1c2-1"],["economie d'entreprise","f1c2-2"],["economie generale","f1c2-1"],["periode en entreprise","f2c9-1"],["solidworks","f1c8-1"],["algebre","f1c3-2"],["remise a niveau","f1c3-3"],["analyse","f1c3-1"],["anglais","f1c1-1"],["communication professionnelle","f1c1-2"],["certification en langue francaise","f1c1-3"],["economie","f1c2-1"],["droit social","f1c2-3"],["developpement durable","f1c4-1"],["energie","f1c4-2"]];
-const REV={
+],
+  map:[["electronique analogique 1","f1o1-1"],["systemes numeriques","f1o1-2"],["informatique & algorithmique","f1o1-3"],["informatique et algorithmique","f1o1-3"],["algorithmique et programmation","f1o1-3"],["langage oriente objet","f1o1-4"],["optique geometrique","f1o2-1"],["optique ondulatoire","f1o2-2"],["optique instrumentale","f1o2-3"],["economie generale et d'entreprise","f1c2-1"],["economie d'entreprise et generale","f1c2-1"],["economie d'entreprise","f1c2-2"],["economie generale","f1c2-1"],["periode en entreprise","f2c9-1"],["solidworks","f1c8-1"],["algebre","f1c3-2"],["remise a niveau","f1c3-3"],["analyse","f1c3-1"],["anglais","f1c1-1"],["communication professionnelle","f1c1-2"],["certification en langue francaise","f1c1-3"],["economie","f1c2-1"],["droit social","f1c2-3"],["developpement durable","f1c4-1"],["energie","f1c4-2"]],
+  rev:{
  "f1o2-2":[["Optique ondulatoire","optique-ondulatoire.html","optique-ondulatoire.html"]],
  "f1o2-1":[["Optique géométrique","optique-geometrique.html","optique-geometrique.html"],["Optique matricielle","optique-matricielle.html","optique-matricielle.html"]],
  "f1o1-2":[["Systèmes numériques","systemes-numeriques.html","systemes-numeriques.html"]],
  "f1c3-1":[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]],
  "f1c2-1":[["Économie : gérer la rareté","economie.html","economie.html"]]
+}}
 };
+let SPEC=null, MODS=[], MAT={}, ADE_MAP=[], REV={};
+function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; ADE_MAP=SPEC.map; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); }
+
+const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
 const RES={aise:"à l'aise",moyen:"moyen",pas:"pas à l'aise"};
 const TYPES={DS:"DS / examen",TP:"TP noté",DM:"Devoir"};
 
 /* ================= état ================= */
 const LKEY="polytech-hub-v1";
-const DEF={v:1,evals:[],matRes:{},groups:[],plan:[],planFrozen:null,settings:{hours:6,dayBase:60,weekend:240,minGap:60,gaps:true,floor:30,marge:2,pred:{aise:14,moyen:10,pas:6},horizon:42},ui:{tab:"home",week:0,month:0,pview:"week",day:null,treeMode:"known",dvf:"todo",dsub:"dev"}};
+const DEF={v:1,spec:"phot3a",evals:[],matRes:{},groups:[],plan:[],planFrozen:null,settings:{hours:6,dayBase:60,weekend:240,minGap:60,gaps:true,floor:30,marge:2,pred:{aise:14,moyen:10,pas:6},horizon:42},ui:{tab:"home",week:0,month:0,pview:"week",day:null,treeMode:"known",dvf:"todo",dsub:"dev"}};
 let S=JSON.parse(JSON.stringify(DEF)), ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}, EVALL=[];
 function normAde(o){ if(!o) return {ev:[],at:null}; if(o.events) return {ev:o.events,at:o.importedAt||null}; return {ev:o.ev||[],at:o.at||null}; }
 try{ const r=localStorage.getItem(LKEY); if(r){ const o=JSON.parse(r); if(o.S) S=merge(S,o.S); if(o.ADE){ if(o.ADE.events) ADE.spe=normAde(o.ADE); else { ADE.spe=normAde(o.ADE.spe); ADE.tc=normAde(o.ADE.tc); } } } }catch(e){}
+applySpec(S.spec);
 function merge(a,b){ const o=JSON.parse(JSON.stringify(a)); Object.keys(b||{}).forEach(function(k){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])&&o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k])) o[k]=merge(o[k],b[k]); else o[k]=b[k]; }); return o; }
 const SB_URL="https://hnncnpsiyntconapkdii.supabase.co", SB_KEY="sb_publishable_wpPi9KP2TCr9IEd4zB5epg_tbmZM2xD";
 let sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0;
@@ -286,7 +294,7 @@ async function pull(first){
   const localHas=S.evals.length||S.plan.length;
   if(r.data&&r.data.app){
     if(first&&owner!==user.id&&localHas&&!confirm("Ce compte contient déjà des données. OK : utiliser celles du compte. Annuler : remplacer le compte par les données de cet appareil.")){ dirtyApp=true; flush(); }
-    else if(!dirtyApp){ const ui=S.ui; S=merge(DEF,r.data.app); S.ui=ui; persistLocal(); renderAll(); }
+    else if(!dirtyApp){ const ui=S.ui; S=merge(DEF,r.data.app); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll(); }
   } else if(localHas){ dirtyApp=true; flush(); }
   try{ localStorage.setItem("polytech-owner",user.id); }catch(e){}
   setSync("on");
@@ -893,8 +901,10 @@ $("auth").addEventListener("click",async function(ev){ const b=ev.target.closest
 $("acct").addEventListener("click",function(){
   const d=$("dlg");
   d.innerHTML='<form method="dialog"><h2 style="margin-top:0">Compte</h2>'+(user?'<p>Connecté : <b>'+esc(user.email)+'</b></p><p class="small muted">Tes devoirs, notes, groupes et plan sont enregistrés sur ton compte et synchronisés entre tes appareils. Personne d\'autre n\'y a accès.</p>':'<p class="small muted">Mode sans compte : les données restent sur cet appareil uniquement.</p>')+
+   '<label class="f" style="margin-top:10px">Spécialité<select id="specSel">'+Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("")+'</select></label><p class="small muted">D\'autres spécialités arriveront avec leurs maquettes.</p>'+
    '<div class="row" style="justify-content:space-between;margin-top:14px">'+(user?'<button class="btn danger" value="out">Se déconnecter</button>':'<button class="btn primary" value="in">Se connecter / créer un compte</button>')+'<button class="btn" value="ok">Fermer</button></div></form>';
   d.showModal();
+  $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs restent, mais les matières et coefficients changent.")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
   d.onclose=async function(){ if(d.returnValue==="out"){ await sb.auth.signOut(); user=null; S=JSON.parse(JSON.stringify(DEF)); persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
 });
 async function newPassword(){ const pw=prompt("Nouveau mot de passe (6 caractères minimum) :"); if(!pw||pw.length<6) return; const r=await sb.auth.updateUser({password:pw}); toast(r.error?r.error.message:"Mot de passe modifié"); }
@@ -913,7 +923,7 @@ async function refreshAde(force){
   let changed=false;
   for(const k of ["spe","tc"]){
     const a=ADE[k]; if(!force&&a.auto&&a.at&&Date.now()-a.at<3*3600e3) continue;
-    try{ const r=await fetch("/api/ade?src="+k,{cache:"no-store"}); if(!r.ok) continue; const ev=parseICS(await r.text()); if(ev.length){ ADE[k]={ev:ev,at:Date.now(),auto:true}; changed=true; } }catch(e){}
+    try{ const r=await fetch("/api/ade?res="+SPEC.ade[k],{cache:"no-store"}); if(!r.ok) continue; const ev=parseICS(await r.text()); if(ev.length){ ADE[k]={ev:ev,at:Date.now(),auto:true}; changed=true; } }catch(e){}
   }
   if(changed){ rebuildAde(); persistLocal(); renderAll(); }
   return changed;
@@ -921,7 +931,6 @@ async function refreshAde(force){
 refreshAde(false);
 if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function(){});
 })();
-</script>})();
 </script>
 </body>
 </html>
