@@ -253,7 +253,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 /* ================= spécialités (une entrée par maquette) ================= */
 // mods : [code, nom, coef dans le module, a des TP, uniquement TP] ; ade : numéros de ressource ADE ; map : nom ADE normalisé -> code matière
 const SPECS={
- phot3a:{short:"PHOT 3A",name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
+ phot3a:{short:"PHOT 3A",groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
   mods:[
  {c:"f1o1",nm:450,n:"Électronique I",coef:19,ects:7,col:"--m1",m:[["f1o1-1","Électronique analogique 1",7,1,0],["f1o1-2","Systèmes numériques",3,0,0],["f1o1-3","Informatique et algorithmique",5,0,0],["f1o1-4","Langage orienté objet",4,0,0]]},
  {c:"f1o2",nm:610,n:"Optique",coef:18,ects:7,col:"--m2",m:[["f1o2-1","Optique géométrique",5,0,0],["f1o2-2","Optique ondulatoire",8,0,0],["f1o2-3","Optique instrumentale",5,1,1]]},
@@ -426,7 +426,7 @@ function rebuildAde(){ const seen={}; EVALL=[]; ["spe","tc"].forEach(function(k)
 function selGroups(x){ return (x.g||[]).filter(function(g){ return SEL.test(g); }); }
 function visibleEv(x){ const sg=selGroups(x); if(!sg.length||!S.groups.length) return true; return sg.some(function(g){ return S.groups.indexOf(g)>=0; }); }
 function EV(){ return EVALL.filter(visibleEv); }
-function allGroups(){ const c={}; EVALL.forEach(function(x){ selGroups(x).forEach(function(g){ c[g]=(c[g]||0)+1; }); }); return Object.keys(c).sort().map(function(g){ return [g,c[g]]; }); }
+function allGroups(){ const c={}; (SPEC&&SPEC.groups||[]).forEach(function(g){ c[g]=0; }); (S.groups||[]).forEach(function(g){ c[g]=c[g]||0; }); EVALL.forEach(function(x){ selGroups(x).forEach(function(g){ c[g]=(c[g]||0)+1; }); }); return Object.keys(c).sort().map(function(g){ return [g,c[g]]; }); }
 function lastImport(){ return Math.max(ADE.spe.at||0,ADE.tc.at||0)||null; }
 function adeCode(sum){ const n=norm(sum); for(const p of ADE_MAP) if(n.indexOf(p[0])>=0) return p[1]; return null; }
 
@@ -756,7 +756,7 @@ function openAdeDlg(){
   const d=$("dlg"); const G=allGroups();
   const row=function(k,lab){ const a=ADE[k]; return '<div class="card" style="margin:0 0 10px"><div class="row" style="justify-content:space-between"><b>'+lab+'</b><span class="small muted">'+(a.at?a.ev.length+" créneaux · "+(a.auto?"synchro auto ":"importé ")+"le "+new Date(a.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"pas encore chargé")+'</span></div><label class="btn sm" style="cursor:pointer;margin-top:8px;display:inline-block">Choisir le fichier .ics<input type="file" accept=".ics,text/calendar" data-ics="'+k+'" hidden></label></div>'; };
   d.innerHTML='<form method="dialog"><h2 style="margin-top:0">Planning ADE</h2><p class="small muted">Le planning se met à jour tout seul depuis ADE (toutes les 3 h quand l\'appli est ouverte). Si ADE est indisponible, tu peux importer un fichier .ics à la main. Tes devoirs ne sont jamais touchés.</p><button class="btn sm" type="button" id="adeNow">Mettre à jour maintenant</button>'+row("spe","Spécialité")+row("tc","Tronc commun")+
-   (G.length?'<h3 style="font-size:1rem;margin:14px 0 6px">Mes groupes</h3><p class="small muted" style="margin:0 0 6px">Coche les groupes dont tu fais partie : les cours réservés aux autres groupes seront masqués. Les cours de toute la promo restent toujours affichés.</p><div class="grid2">'+G.map(function(g){ return '<label class="chk"><input type="checkbox" data-grp="'+esc(g[0])+'"'+(S.groups.indexOf(g[0])>=0?" checked":"")+'> '+esc(g[0])+' <span class="small muted">('+g[1]+')</span></label>'; }).join("")+'</div>':'')+
+   (G.length?'<h3 style="font-size:1rem;margin:14px 0 6px">Mes groupes</h3><p class="small muted" style="margin:0 0 6px">Coche les groupes dont tu fais partie : les cours réservés aux autres groupes seront masqués. Les cours de toute la promo restent toujours affichés.</p><div class="grid2">'+G.map(function(g){ return '<label class="chk"><input type="checkbox" data-grp="'+esc(g[0])+'"'+(S.groups.indexOf(g[0])>=0?" checked":"")+'> '+esc(g[0])+' <span class="small muted">('+(g[1]?g[1]+' cours':'aucun cours pour l\'instant')+')</span></label>'; }).join("")+'</div>':'')+
    '<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn primary" value="ok">Fermer</button></div></form>';
   d.showModal();
   d.querySelectorAll("[data-ics]").forEach(function(inp){ inp.addEventListener("change",function(){ const f=inp.files[0], k=inp.dataset.ics; if(!f) return; f.text().then(function(txt){ const ev=parseICS(txt); if(!ev.length){ toast("Aucun créneau trouvé dans ce fichier"); return; } ADE[k]={ev:ev,at:Date.now()}; rebuildAde(); save(k); toast(ev.length+" créneaux importés"); renderAll(); openAdeDlg(); }); }); });
