@@ -582,7 +582,9 @@ function lanes(items){ items.sort(function(a,b){ return a.a-b.a||b.b-a.b; }); co
   items.forEach(function(it){ let m=it.lane; items.forEach(function(o){ if(o.a<it.b&&o.b>it.a) m=Math.max(m,o.lane); }); it.n=m+1; }); return items; }
 function renderPlan(){
   const t=today(), v=S.ui.pview, mobile=window.innerWidth<700;
-  let h='<div class="ptool"><div class="seg" role="group"><button data-pv="week" aria-pressed="'+(v==="week")+'">Semaine</button><button data-pv="month" aria-pressed="'+(v==="month")+'">Mois</button></div>';
+  const li=lastImport(), auto=ADE.spe.auto||ADE.tc.auto;
+  let h='<div class="small muted" style="margin:2px 0 8px">'+(li?'ADE '+(auto?'synchronisé':'importé')+' le '+esc(new Date(li).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}))+' à '+fTime.format(new Date(li)):'ADE pas encore synchronisé')+' · <a href="#" data-adedlg="1" style="color:var(--acc)">mettre à jour</a></div>';
+  h+='<div class="ptool"><div class="seg" role="group"><button data-pv="week" aria-pressed="'+(v==="week")+'">Semaine</button><button data-pv="month" aria-pressed="'+(v==="month")+'">Mois</button></div>';
   if(allGroups().length&&!S.groups.length) h+='<div class="card" style="border-color:var(--warn)"><b class="wn">Choisis tes groupes</b><div class="small muted">Le tronc commun contient les cours de tous les groupes (A, B, C…) aux mêmes heures. Indique les tiens pour masquer les autres.</div><button class="btn sm" data-adedlg="1" style="margin-top:8px">Choisir mes groupes</button></div>';
   if(v==="week"){
     const mon=addDays(t,-weekday(t)+7*S.ui.week), sun=addDays(mon,6);
