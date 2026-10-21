@@ -338,28 +338,43 @@ if(!S.settings.v2){ S.settings.gaps=false; S.settings.v2=true; }
 applySpec(S.spec);
 function merge(a,b){ const o=JSON.parse(JSON.stringify(a)); Object.keys(b||{}).forEach(function(k){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])&&o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k])) o[k]=merge(o[k],b[k]); else o[k]=b[k]; }); return o; }
 const SB_URL="https://hnncnpsiyntconapkdii.supabase.co", SB_KEY="sb_publishable_wpPi9KP2TCr9IEd4zB5epg_tbmZM2xD";
-let sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0;
+let sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0, remoteCount=0, allowEmpty=false;
 try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){ sb=null; }
 function persistLocal(){ try{ localStorage.setItem(LKEY,JSON.stringify({S:S,ADE:ADE})); }catch(e){} }
-function save(which){ persistLocal(); if(which==="spe"||which==="tc") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
+function backup(tag){ try{ const k="polytech-backups"; const L=JSON.parse(localStorage.getItem(k)||"[]"); const last=L[0]; if(!S.evals.length&&!S.plan.length) return; if(last&&tag==="auto"&&Date.now()-last.at<3600e3) return; L.unshift({at:Date.now(),tag:tag,spec:S.spec,n:S.evals.length,S:payload()}); localStorage.setItem(k,JSON.stringify(L.slice(0,15))); }catch(e){} }
+function save(which){ persistLocal(); backup("auto"); if(which==="spe"||which==="tc") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
 function payload(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; return d; }
 async function flush(){
-  if(!user||!sb||writing||!dirtyApp) return; writing=true; dirtyApp=false;
-  try{ const r=await sb.from("user_state").upsert({user_id:user.id,app:payload(),updated_at:new Date().toISOString()}); if(r.error) throw r.error; setSync("on"); }
+  if(!user||!sb||writing||!dirtyApp) return;
+  if(!S.evals.length&&remoteCount>0&&!allowEmpty){ setSync("err","envoi bloqué : la sauvegarde du compte contient des devoirs"); return; }
+  writing=true; dirtyApp=false;
+  try{ const r=await sb.from("user_state").upsert({user_id:user.id,app:payload(),updated_at:new Date().toISOString()}); if(r.error) throw r.error; remoteCount=S.evals.length; setSync("on"); }
   catch(e){ dirtyApp=true; setSync("err",e&&(e.message||e.code)); }
   writing=false; if(dirtyApp) setTimeout(flush,3000);
 }
+function unionById(a,b){ const m={}; (a||[]).forEach(function(x){ m[x.id]=x; }); (b||[]).forEach(function(x){ if(!m[x.id]) m[x.id]=x; }); return Object.keys(m).map(function(k){ return m[k]; }); }
 async function pull(first){
   if(!user||!sb) return;
   const r=await sb.from("user_state").select("app,updated_at").eq("user_id",user.id).maybeSingle();
   if(r.error){ setSync("err",r.error.message); return; }
   lastPull=Date.now();
+  const R=r.data&&r.data.app, rn=R&&R.evals?R.evals.length+(R.plan||[]).length:0, ln=S.evals.length+S.plan.length;
+  remoteCount=R&&R.evals?R.evals.length:0;
   let owner=null; try{ owner=localStorage.getItem("polytech-owner"); }catch(e){}
-  const localHas=S.evals.length||S.plan.length;
-  if(r.data&&r.data.app){
-    if(first&&owner!==user.id&&localHas&&!confirm("Ce compte contient déjà des données. OK : utiliser celles du compte. Annuler : remplacer le compte par les données de cet appareil.")){ dirtyApp=true; flush(); }
-    else if(!dirtyApp){ const ui=S.ui; S=merge(DEF,r.data.app); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll(); }
-  } else if(localHas){ dirtyApp=true; flush(); }
+  if(!R||!rn){
+    // compte vide : on y envoie ce qui est sur l'appareil, sans rien effacer ici
+    if(ln){ dirtyApp=true; allowEmpty=false; flush(); }
+  } else if(!ln){
+    dirtyApp=false; const ui=S.ui; S=merge(DEF,R); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll();
+  } else if(first&&owner!==user.id){
+    // deux jeux de données : on fusionne (rien n'est perdu), puis on renvoie le tout
+    backup("avant fusion");
+    const ui=S.ui, loc=S; S=merge(DEF,R); S.ui=ui;
+    S.evals=unionById(R.evals,loc.evals); S.plan=unionById(R.plan,loc.plan);
+    applySpec(S.spec); rebuildAde(); persistLocal(); renderAll(); dirtyApp=true; flush(); toast("Données de l'appareil et du compte fusionnées");
+  } else if(!dirtyApp){
+    backup("avant synchro"); const ui=S.ui; S=merge(DEF,R); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll();
+  }
   try{ localStorage.setItem("polytech-owner",user.id); }catch(e){}
   setSync("on");
 }
@@ -383,6 +398,7 @@ function weekday(k){ return (new Date(k+"T12:00:00Z").getUTCDay()+6)%7; }
 function longDay(k){ return new Date(k+"T12:00:00Z").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); }
 function shortDay(k){ return new Date(k+"T12:00:00Z").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"}); }
 function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },2200); }
+function matName(code){ return MAT[code]?MAT[code].n:"Autre spécialité"; }
 function matColor(code){ const m=MAT[code]; return m?modColor(m.mod):css("--muted"); }
 
 /* ================= ADE ================= */
@@ -540,7 +556,7 @@ function storeSes(x,patch){ if(x.auto){ const o={id:uid(),k:x.k,a:x.a,mins:x.min
 function openSes(x,isNew){
   const d=$("dlg");
   d.innerHTML='<form method="dialog" id="sF"><h2 style="margin-top:0">'+(isNew?"Ajouter une révision":"Modifier la révision")+'</h2><div class="grid2">'+
-   '<label class="f" style="grid-column:1/-1">Pour<select name="ev"><option value="">Révision libre (choisir la matière)</option>'+planEvals().map(function(e){ return '<option value="'+e.id+'"'+(x.ev===e.id?" selected":"")+'>'+esc((e.title||TYPES[e.type])+" · "+MAT[e.mat].n+" · "+shortDay(e.date))+'</option>'; }).join("")+'</select></label>'+
+   '<label class="f" style="grid-column:1/-1">Pour<select name="ev"><option value="">Révision libre (choisir la matière)</option>'+planEvals().map(function(e){ return '<option value="'+e.id+'"'+(x.ev===e.id?" selected":"")+'>'+esc((e.title||TYPES[e.type])+" · "+matName(e.mat)+" · "+shortDay(e.date))+'</option>'; }).join("")+'</select></label>'+
    '<label class="f" data-matrow>Matière<select name="mat">'+matOptions(x.mat)+'</select></label>'+
    '<label class="f">Jour<input type="date" name="k" value="'+esc(x.k)+'" required></label>'+
    '<label class="f">Début (facultatif)<input type="time" name="a" value="'+(x.a!=null?String(Math.floor(x.a/60)).padStart(2,"0")+":"+String(x.a%60).padStart(2,"0"):"")+'"></label>'+
@@ -562,7 +578,7 @@ function openSes(x,isNew){
 function sesRow(x,showDay){
   const past=x.k<today(), e=x.ev&&S.evals.find(function(q){ return q.id===x.ev; });
   const sub=[showDay?esc(shortDay(x.k)):"",e?esc(e.title||TYPES[e.type]):"",esc(x.label)].filter(Boolean).join(" · ")+(past&&!x.done?' · <span class="late">non validé</span>':'');
-  return '<div class="hw'+(x.done?" done":"")+'"><input type="checkbox" data-sesdone="'+esc(x.id)+'"'+(x.done?" checked":"")+' aria-label="Heures validées"><span class="dot" style="color:'+matColor(x.mat)+'"></span><div class="b" data-ses="'+esc(x.id)+'" style="cursor:pointer"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:nowrap"><span class="n">'+esc(MAT[x.mat]?MAT[x.mat].n:x.mat)+'</span><span class="small muted" style="white-space:nowrap">'+dur(x.mins)+'</span></div><div class="l">'+sub+'</div></div></div>';
+  return '<div class="hw'+(x.done?" done":"")+'"><input type="checkbox" data-sesdone="'+esc(x.id)+'"'+(x.done?" checked":"")+' aria-label="Heures validées"><span class="dot" style="color:'+matColor(x.mat)+'"></span><div class="b" data-ses="'+esc(x.id)+'" style="cursor:pointer"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:nowrap"><span class="n">'+esc(matName(x.mat))+'</span><span class="small muted" style="white-space:nowrap">'+dur(x.mins)+'</span></div><div class="l">'+sub+'</div></div></div>';
 }
 function renderPlanView(){
   const t=today(), W=weekPlan();
@@ -570,7 +586,7 @@ function renderPlanView(){
   let h='<div class="card"><div class="row" style="justify-content:space-between"><b>Avancement par devoir</b><button class="btn sm" data-recalc="1">Recalculer</button></div>';
   if(!W.info.length) h+='<div class="empty">Aucun devoir ni DS à venir : rien à planifier. Tu peux ajouter une révision à la main.</div>';
   W.info.forEach(function(x){ const e=x.e, c=matColor(e.mat), B=Math.max(x.B,x.done+x.plan,1);
-    h+='<div class="pbar"><div class="row" style="justify-content:space-between;gap:6px"><span><span class="dot" style="color:'+c+'"></span> <b>'+esc(MAT[e.mat].n)+'</b> <span class="muted small">· '+esc(e.title||TYPES[e.type])+' · '+esc(shortDay(e.date))+'</span></span><span class="small num">'+dur(x.done)+' / '+dur(x.B)+'</span></div>'+
+    h+='<div class="pbar"><div class="row" style="justify-content:space-between;gap:6px"><span><span class="dot" style="color:'+c+'"></span> <b>'+esc(matName(e.mat))+'</b> <span class="muted small">· '+esc(e.title||TYPES[e.type])+' · '+esc(shortDay(e.date))+'</span></span><span class="small num">'+dur(x.done)+' / '+dur(x.B)+'</span></div>'+
       '<div class="pb" style="--c:'+c+'"><i style="width:'+(x.done/B*100)+'%"></i><u style="left:'+(x.done/B*100)+'%;width:'+(x.plan/B*100)+'%"></u></div>'+
       '<div class="small muted">'+(x.done>=x.B?'<span class="ok">Objectif atteint</span>':dur(Math.max(0,x.B-x.done))+' restantes')+(x.plan?' · '+dur(x.plan)+' planifiées':'')+(x.miss?' · <span class="ko">'+dur(x.miss)+' sans créneau : ajoute du temps ou baisse l\'objectif</span>':'')+' · <a href="#" data-edit="'+e.id+'">changer l\'objectif</a></div></div>'; });
   h+='</div>';
@@ -583,7 +599,7 @@ function renderPlanView(){
   });
   const byM={}; S.plan.forEach(function(p){ if(p.done&&!p.removed) byM[p.mat]=(byM[p.mat]||0)+p.mins; });
   const keys=Object.keys(byM).sort(function(a,b){ return byM[b]-byM[a]; });
-  h+='<h2>Bilan des heures validées</h2><div class="card">'+(keys.length?'<table class="t"><tbody>'+keys.map(function(m){ return '<tr><td><span class="dot" style="color:'+matColor(m)+'"></span> '+esc(MAT[m]?MAT[m].n:m)+'</td><td class="num">'+dur(byM[m])+'</td></tr>'; }).join("")+'<tr><td><b>Total</b></td><td class="num"><b>'+dur(keys.reduce(function(s,m){return s+byM[m];},0))+'</b></td></tr></tbody></table>':'<div class="empty">Coche « heures validées » après chaque révision pour suivre ton temps ici.</div>')+'</div>';
+  h+='<h2>Bilan des heures validées</h2><div class="card">'+(keys.length?'<table class="t"><tbody>'+keys.map(function(m){ return '<tr><td><span class="dot" style="color:'+matColor(m)+'"></span> '+esc(matName(m))+'</td><td class="num">'+dur(byM[m])+'</td></tr>'; }).join("")+'<tr><td><b>Total</b></td><td class="num"><b>'+dur(keys.reduce(function(s,m){return s+byM[m];},0))+'</b></td></tr></tbody></table>':'<div class="empty">Coche « heures validées » après chaque révision pour suivre ton temps ici.</div>')+'</div>';
   return h;
 }
 function firstPage(m){ const L=REV[m]; if(!L) return null; const l=L.find(function(x){ return x[2]; }); return l||null; }
@@ -605,12 +621,12 @@ function renderHome(){
   const td=weekPlan().sessions.filter(function(x){ return x.k===t; });
   h+='<div class="sec row" style="justify-content:space-between"><span>Révisions du jour</span><a href="#" data-goplan="1">Plan</a></div><div class="card hc">';
   const grp={}; td.forEach(function(x){ (grp[x.mat]=grp[x.mat]||[]).push(x); });
-  h+=td.length?Object.keys(grp).map(function(m){ const L=grp[m], mins=L.reduce(function(a,x){return a+x.mins;},0), done=L.every(function(x){return x.done;}); return homeRow(matColor(m),esc(MAT[m]?MAT[m].n:m),dur(mins),' data-ses="'+esc(L[0].id)+'"','<input type="checkbox" data-sesdone="'+esc(L.map(function(x){return x.id;}).join(","))+'"'+(done?" checked":"")+' aria-label="Heures validées">'); }).join(""):'<div class="empty">Rien de prévu aujourd\'hui.</div>';
+  h+=td.length?Object.keys(grp).map(function(m){ const L=grp[m], mins=L.reduce(function(a,x){return a+x.mins;},0), done=L.every(function(x){return x.done;}); return homeRow(matColor(m),esc(matName(m)),dur(mins),' data-ses="'+esc(L[0].id)+'"','<input type="checkbox" data-sesdone="'+esc(L.map(function(x){return x.id;}).join(","))+'"'+(done?" checked":"")+' aria-label="Heures validées">'); }).join(""):'<div class="empty">Rien de prévu aujourd\'hui.</div>';
   h+='</div>';
   const hw=S.evals.filter(function(e){ return e.type==="DM"&&!e.done&&e.date<=addDays(t,14); }).sort(function(a,b){ return a.date<b.date?-1:1; });
-  h+='<div class="sec">Devoirs</div><div class="card hc">'+(hw.length?hw.map(function(e){ return homeRow(matColor(e.mat),esc(e.title||MAT[e.mat].n),dueTxt(e.date),' data-edit="'+e.id+'"','<input type="checkbox" data-done="'+e.id+'" aria-label="Fait">'); }).join(""):'<div class="empty">Aucun devoir dans les 14 jours.</div>')+'</div>';
+  h+='<div class="sec">Devoirs</div><div class="card hc">'+(hw.length?hw.map(function(e){ return homeRow(matColor(e.mat),esc(e.title||matName(e.mat)),dueTxt(e.date),' data-edit="'+e.id+'"','<input type="checkbox" data-done="'+e.id+'" aria-label="Fait">'); }).join(""):'<div class="empty">Aucun devoir dans les 14 jours.</div>')+'</div>';
   const P=priorities();
-  h+='<div class="sec">DS et TP notés</div><div class="card hc">'+(P.length?P.slice(0,6).map(function(p){ const e=p.e; return '<div class="hr" data-edit="'+e.id+'"><span class="dot" style="color:'+matColor(e.mat)+'"></span><span class="ht" style="white-space:normal"><span style="display:block">'+esc((e.title||e.type)+" "+MAT[e.mat].n)+'</span><span class="hd">'+dueTxt(e.date)+'</span></span><span class="pill '+p.lvl+'">'+{hi:"haute",mid:"moyenne",lo:"basse",none:"faible"}[p.lvl]+'</span></div>'; }).join(""):'<div class="empty">Aucun DS ou TP à venir.</div>')+'</div>';
+  h+='<div class="sec">DS et TP notés</div><div class="card hc">'+(P.length?P.slice(0,6).map(function(p){ const e=p.e; return '<div class="hr" data-edit="'+e.id+'"><span class="dot" style="color:'+matColor(e.mat)+'"></span><span class="ht" style="white-space:normal"><span style="display:block">'+esc((e.title||e.type)+" "+matName(e.mat))+'</span><span class="hd">'+dueTxt(e.date)+'</span></span><span class="pill '+p.lvl+'">'+{hi:"haute",mid:"moyenne",lo:"basse",none:"faible"}[p.lvl]+'</span></div>'; }).join(""):'<div class="empty">Aucun DS ou TP à venir.</div>')+'</div>';
   const al=[]; MODS.forEach(function(M){ if(M.s2) return; const ms=modStats(M); if(ms.known!=null&&ms.known<SEUIL_MOD) al.push([modColor(M),esc(M.n),'<span class="ko">'+fr(ms.known,1)+'</span>']); M.m.forEach(function(x){ const st=matStats(x[0]); if(st.known!=null&&st.known<SEUIL_MAT) al.push([modColor(M),esc(x[1]),'<span class="ko">'+fr(st.known,1)+' · élim.</span>']); }); });
   if(al.length) h+='<div class="sec">À surveiller</div><div class="card hc">'+al.map(function(a){ return homeRow(a[0],a[1],a[2],' data-gotab="notes"'); }).join("")+'</div>';
   $("home").innerHTML=h;
@@ -624,7 +640,7 @@ function evHTML(x,noDay){
 /* ================= rendu : planning ================= */
 function itemsOn(k){ return S.evals.filter(function(e){ return e.date===k; }); }
 function coursesOn(k){ return EV().filter(function(x){ return dayKey(new Date(x.s))===k; }); }
-function chipHTML(e){ const ds=e.type!=="DM"; return '<div class="chip'+(ds?" ds":"")+(e.type==="DM"&&e.done?" done":"")+'" style="--c:'+matColor(e.mat)+'" data-edit="'+e.id+'" title="'+esc(TYPES[e.type]+" · "+(MAT[e.mat]?MAT[e.mat].n:""))+'">'+(ds?"⚑ ":"✎ ")+esc(e.title||(ds?e.type+" ":"")+(MAT[e.mat]?MAT[e.mat].n:""))+(hasNote(e)?' <span class="'+gcls(+e.note,SEUIL_NOTE)+'">'+fr(+e.note,1)+'</span>':'')+'</div>'; }
+function chipHTML(e){ const ds=e.type!=="DM"; return '<div class="chip'+(ds?" ds":"")+(e.type==="DM"&&e.done?" done":"")+'" style="--c:'+matColor(e.mat)+'" data-edit="'+e.id+'" title="'+esc(TYPES[e.type]+" · "+(MAT[e.mat]?matName(e.mat):""))+'">'+(ds?"⚑ ":"✎ ")+esc(e.title||(ds?e.type+" ":"")+(MAT[e.mat]?matName(e.mat):""))+(hasNote(e)?' <span class="'+gcls(+e.note,SEUIL_NOTE)+'">'+fr(+e.note,1)+'</span>':'')+'</div>'; }
 function minsParis(ms){ const p=fTime.format(new Date(ms)).split(":"); return +p[0]*60+(+p[1]); }
 function lanes(items){ items.sort(function(a,b){ return a.a-b.a||b.b-a.b; }); const cols=[]; items.forEach(function(it){ let c=0; while(cols[c]&&cols[c]>it.a) c++; cols[c]=it.b; it.lane=c; });
   items.forEach(function(it){ let m=it.lane; items.forEach(function(o){ if(o.a<it.b&&o.b>it.a) m=Math.max(m,o.lane); }); it.n=m+1; }); return items; }
@@ -672,7 +688,7 @@ function dayGrid(days,t,mobile){
   if(!mobile) days.forEach(function(k){ g+='<div class="hd'+(k===t?" today":"")+'" data-day="'+k+'">'+esc(new Date(k+"T12:00:00Z").toLocaleDateString("fr-FR",{weekday:"short",timeZone:"UTC"}))+'<b>'+(+k.slice(8))+'</b></div>'; });
   else g+='<div class="hd" style="cursor:default;text-align:left;padding-left:8px">Échéances et devoirs</div>';
   g+='<div class="adl">jour</div>';
-  days.forEach(function(k){ const it=itemsOn(k).filter(function(e){ return e.type==="DM"||!e.time; }); const rv=[]; (planIdx[k]||[]).forEach(function(x){ if(x.a!=null) return; rv.push('<div class="chip rv'+(x.done?" vd":"")+'" style="--c:'+matColor(x.mat)+'" data-ses="'+esc(x.id)+'" title="Révision ('+esc(x.label)+')">'+(x.done?"✓ ":"📖 ")+esc(MAT[x.mat].n)+' · '+dur(x.mins)+'</div>'); }); g+='<div class="ad">'+it.map(chipHTML).join("")+rv.join("")+'</div>'; });
+  days.forEach(function(k){ const it=itemsOn(k).filter(function(e){ return e.type==="DM"||!e.time; }); const rv=[]; (planIdx[k]||[]).forEach(function(x){ if(x.a!=null) return; rv.push('<div class="chip rv'+(x.done?" vd":"")+'" style="--c:'+matColor(x.mat)+'" data-ses="'+esc(x.id)+'" title="Révision ('+esc(x.label)+')">'+(x.done?"✓ ":"📖 ")+esc(matName(x.mat))+' · '+dur(x.mins)+'</div>'); }); g+='<div class="ad">'+it.map(chipHTML).join("")+rv.join("")+'</div>'; });
   g+='<div class="hrs" style="height:'+H+'px">'; for(let m=lo+60;m<hi;m+=60) g+='<span style="top:'+Y(m)+'px">'+(m/60)+'h</span>'; g+='</div>';
   const nowM=minsParis(Date.now());
   days.forEach(function(k,di){
@@ -686,8 +702,8 @@ function dayGrid(days,t,mobile){
     g+='<div class="col'+(k===t?" today":"")+'" style="height:'+H+'px">';
     items.forEach(function(it){ const top=Y(it.a), hgt=Math.max(22,Y(it.b)-Y(it.a)-2), w=100/it.n, l=it.lane*w;
       const st='top:'+top+'px;height:'+hgt+'px;left:calc('+l+'% + 2px);width:calc('+w+'% - 4px);';
-      if(it.r){ const x=it.r; g+='<div class="blk rv'+(x.done?" vd":"")+'" style="'+st+'--c:'+matColor(x.mat)+'" data-ses="'+esc(x.id)+'" title="Révision"><b>'+(x.done?"✓ ":"📖 ")+esc(MAT[x.mat].n)+'</b><span class="s">révision · '+hm(it.a)+'–'+hm(it.b)+'</span></div>'; }
-      else if(it.e){ const e=it.e; g+='<div class="blk ds" style="'+st+'--c:'+matColor(e.mat)+'" data-edit="'+e.id+'"><b>⚑ '+esc(e.type+(e.title?" · "+e.title:""))+'</b><span class="s">'+esc(MAT[e.mat]?MAT[e.mat].n:"")+'</span><span class="s">'+esc(e.time)+'</span></div>'; }
+      if(it.r){ const x=it.r; g+='<div class="blk rv'+(x.done?" vd":"")+'" style="'+st+'--c:'+matColor(x.mat)+'" data-ses="'+esc(x.id)+'" title="Révision"><b>'+(x.done?"✓ ":"📖 ")+esc(matName(x.mat))+'</b><span class="s">révision · '+hm(it.a)+'–'+hm(it.b)+'</span></div>'; }
+      else if(it.e){ const e=it.e; g+='<div class="blk ds" style="'+st+'--c:'+matColor(e.mat)+'" data-edit="'+e.id+'"><b>⚑ '+esc(e.type+(e.title?" · "+e.title:""))+'</b><span class="s">'+esc(MAT[e.mat]?matName(e.mat):"")+'</span><span class="s">'+esc(e.time)+'</span></div>'; }
       else { const x=it.x; g+='<div class="blk'+(rt?" rt":"")+'" style="'+st+'--c:'+matColor(x.code)+'" data-blk="'+esc(x.id)+'" role="button" tabindex="0" aria-expanded="false"><b>'+esc(x.t)+(x.tp?' <span class="tp-pill">TP</span>':'')+'</b><span class="s">'+fTime.format(new Date(x.s))+'–'+fTime.format(new Date(x.e))+'</span><span class="s">'+esc(x.loc)+'</span>'+moreHTML(x)+'</div>'; }
     });
     if(k===t&&nowM>lo&&nowM<hi) g+='<div class="nowl" style="top:'+Y(nowM)+'px"></div>';
@@ -732,7 +748,7 @@ function openEval(e,isNew){
       const o={id:ev.id||uid(),mat:F.mat.value,type:F.type.value,title:F.title.value.trim(),date:F.date.value||today(),time:F.time.value,ressenti:F.ressenti.value,note:F.note.value===""?null:Math.max(0,Math.min(20,+F.note.value)),poids:F.poids.value===""?null:+F.poids.value,graded:dm?F.graded.checked:false,done:dm?F.done.checked:false,hours:F.hours.value===""?null:+F.hours.value};
       const i=S.evals.findIndex(function(x){return x.id===o.id;}); if(i>=0) S.evals[i]=o; else S.evals.push(o);
       save(); renderAll(); toast("Enregistré");
-    } else if(r==="del"){ S.evals=S.evals.filter(function(x){return x.id!==ev.id;}); save(); renderAll(); toast("Supprimé"); }
+    } else if(r==="del"){ allowEmpty=true; S.evals=S.evals.filter(function(x){return x.id!==ev.id;}); save(); renderAll(); toast("Supprimé"); }
   };
 }
 
@@ -744,7 +760,7 @@ function openAdeDlg(){
    '<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn primary" value="ok">Fermer</button></div></form>';
   d.showModal();
   d.querySelectorAll("[data-ics]").forEach(function(inp){ inp.addEventListener("change",function(){ const f=inp.files[0], k=inp.dataset.ics; if(!f) return; f.text().then(function(txt){ const ev=parseICS(txt); if(!ev.length){ toast("Aucun créneau trouvé dans ce fichier"); return; } ADE[k]={ev:ev,at:Date.now()}; rebuildAde(); save(k); toast(ev.length+" créneaux importés"); renderAll(); openAdeDlg(); }); }); });
-  const an=$("adeNow"); if(an) an.addEventListener("click",async function(){ an.textContent="Mise à jour…"; const ok=await refreshAde(true); toast(ok?"Planning mis à jour":"ADE injoignable pour l'instant"); openAdeDlg(); });
+  const an=$("adeNow"); if(an) an.addEventListener("click",async function(){ an.textContent="Mise à jour…"; const ok=await refreshAde(true); toast(!(SPEC.ade&&(SPEC.ade.spe||SPEC.ade.tc))?"Pas encore de lien ADE pour cette spécialité":ok?"Planning mis à jour":"ADE injoignable pour l'instant"); openAdeDlg(); });
   d.querySelectorAll("[data-grp]").forEach(function(cb){ cb.addEventListener("change",function(){ const g=cb.dataset.grp; S.groups=S.groups.filter(function(x){return x!==g;}); if(cb.checked) S.groups.push(g); save(); renderAll(); }); });
   d.onclose=null;
 }
@@ -754,7 +770,7 @@ function moreHTML(x){
   let h='<div class="more"><dl><dt>Horaires</dt><dd>'+fTime.format(new Date(x.s))+' – '+fTime.format(new Date(x.e))+'</dd>'+(bats.length?'<dt>Bâtiment</dt><dd>'+esc(bats.join(", "))+'</dd>':'')+(rooms.length?'<dt>Salle</dt><dd>'+esc(rooms.join(", "))+'</dd>':'')+(x.who?'<dt>Enseignant</dt><dd>'+esc(x.who)+'</dd>':'')+'</dl>';
   if(x.code&&MAT[x.code]){
     const t=today(), L2=S.evals.filter(function(e){ return e.mat===x.code&&(e.type==="DM"?!e.done:e.date>=t); }).sort(function(a,b){ return a.date<b.date?-1:1; }).slice(0,4);
-    h+='<div style="font-weight:600;margin-top:4px">'+esc(MAT[x.code].n)+' : devoirs et DS</div>'+(L2.length?L2.map(function(e){ return '<div class="it" data-edit="'+e.id+'"><span>'+(e.type==="DM"?"✎":"⚑")+'</span><span style="flex:1">'+esc(e.title||TYPES[e.type])+'</span><span class="muted">'+esc(shortDay(e.date))+'</span></div>'; }).join(""):'<div class="muted">Rien de prévu.</div>');
+    h+='<div style="font-weight:600;margin-top:4px">'+esc(matName(x.code))+' : devoirs et DS</div>'+(L2.length?L2.map(function(e){ return '<div class="it" data-edit="'+e.id+'"><span>'+(e.type==="DM"?"✎":"⚑")+'</span><span style="flex:1">'+esc(e.title||TYPES[e.type])+'</span><span class="muted">'+esc(shortDay(e.date))+'</span></div>'; }).join(""):'<div class="muted">Rien de prévu.</div>');
   }
   h+='<button class="btn sm add" data-ade="'+esc(x.id)+'">＋ Ajouter un devoir ou un DS</button></div>';
   return h;
@@ -765,7 +781,7 @@ function relDay(k){ const d=diffDays(today(),k); return d===0?"aujourd'hui":d===
 function hwHTML(e){
   const t=today(), late=e.type==="DM"&&!e.done&&e.date<t;
   return '<div class="hw'+(e.type==="DM"&&e.done?" done":"")+'">'+(e.type==="DM"?'<input type="checkbox" data-done="'+e.id+'"'+(e.done?" checked":"")+' aria-label="Fait">':'<span style="width:22px;text-align:center;color:var(--bad);font-weight:700">⚑</span>')+
-   '<span class="dot" style="background:currentColor;color:'+matColor(e.mat)+'"></span><div class="b"><div class="n">'+esc(e.title||TYPES[e.type])+'</div><div class="l">'+esc(MAT[e.mat]?MAT[e.mat].n:e.mat)+' · '+(e.type==="DM"?"pour le ":"")+esc(shortDay(e.date))+(e.time?" "+e.time:"")+' · <span class="'+(late?"late":"")+'">'+(late?"en retard ("+relDay(e.date)+")":relDay(e.date))+'</span>'+(e.type!=="DM"?' · '+e.type:'')+(e.type==="DM"&&e.graded?' · noté':'')+(hasNote(e)?' · <b class="'+gcls(+e.note,SEUIL_NOTE)+'">'+fr(+e.note,2)+'/20</b>':'')+'</div></div><button class="btn sm" data-edit="'+e.id+'">Modifier</button></div>';
+   '<span class="dot" style="background:currentColor;color:'+matColor(e.mat)+'"></span><div class="b"><div class="n">'+esc(e.title||TYPES[e.type])+'</div><div class="l">'+esc(matName(e.mat))+' · '+(e.type==="DM"?"pour le ":"")+esc(shortDay(e.date))+(e.time?" "+e.time:"")+' · <span class="'+(late?"late":"")+'">'+(late?"en retard ("+relDay(e.date)+")":relDay(e.date))+'</span>'+(e.type!=="DM"?' · '+e.type:'')+(e.type==="DM"&&e.graded?' · noté':'')+(hasNote(e)?' · <b class="'+gcls(+e.note,SEUIL_NOTE)+'">'+fr(+e.note,2)+'/20</b>':'')+'</div></div><button class="btn sm" data-edit="'+e.id+'">Modifier</button></div>';
 }
 function devInfo(){
   const W=weekPlan(), st=S.settings, planned7=W.sessions.filter(function(x){ return x.k<=W.days[6]; }).reduce(function(a,x){ return a+x.mins; },0);
@@ -826,15 +842,18 @@ function renderNotes(){
     '<label class="f">Note probable « à l\'aise »<input type="number" min="0" max="20" step="0.5" data-pred="aise" value="'+S.settings.pred.aise+'"></label>'+
     '<label class="f">Note probable « moyen »<input type="number" min="0" max="20" step="0.5" data-pred="moyen" value="'+S.settings.pred.moyen+'"></label>'+
     '<label class="f">Note probable « pas à l\'aise »<input type="number" min="0" max="20" step="0.5" data-pred="pas" value="'+S.settings.pred.pas+'"></label></div>'+
-    '<details class="fold"><summary>Sauvegarde</summary><div class="row"><button class="btn sm" id="expBtn">Exporter (JSON)</button><button class="btn sm" id="impBtn">Importer le JSON collé</button></div><textarea id="bk" placeholder="Le JSON exporté apparaît ici ; colle un JSON pour l\'importer."></textarea></details></div>';
+    '<details class="fold"><summary>Sauvegarde</summary><div class="row"><button class="btn sm" id="expBtn">Exporter (JSON)</button><button class="btn sm" id="impBtn">Importer le JSON collé</button><button class="btn sm" id="bkList">Sauvegardes automatiques</button></div><div id="bkOut"></div><textarea id="bk" placeholder="Le JSON exporté apparaît ici ; colle un JSON pour l\'importer."></textarea></details></div>';
   $("notes").innerHTML=h;
   $("oasisGo").addEventListener("click",parseOasis);
   $("expBtn").addEventListener("click",function(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; $("bk").value=JSON.stringify(d,null,1); $("bk").select(); });
-  $("impBtn").addEventListener("click",function(){ try{ const o=JSON.parse($("bk").value); if(!o||!Array.isArray(o.evals)) throw 0; const ui=S.ui; S=merge(DEF,o); S.ui=ui; save(); renderAll(); toast("Données importées"); }catch(e){ toast("JSON invalide"); } });
+  $("bkList").addEventListener("click",function(){ let L=[]; try{ L=JSON.parse(localStorage.getItem("polytech-backups")||"[]"); }catch(e){}
+    $("bkOut").innerHTML=L.length?'<table class="t"><tbody>'+L.map(function(b,i){ return '<tr><td>'+esc(new Date(b.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))+'<div class="small muted">'+esc((SPECS[b.spec]||{}).short||"")+' · '+b.n+' devoir'+(b.n>1?"s":"")+' · '+esc(b.tag)+'</div></td><td class="num"><button class="btn sm" data-bk="'+i+'">Restaurer</button></td></tr>'; }).join("")+'</tbody></table>':'<p class="small muted">Aucune sauvegarde sur cet appareil.</p>';
+    $("bkOut").querySelectorAll("[data-bk]").forEach(function(btn){ btn.addEventListener("click",function(){ const b=L[+btn.dataset.bk]; if(!confirm("Restaurer cette sauvegarde ("+b.n+" devoirs) ? Les données actuelles seront remplacées.")) return; backup("avant restauration"); const ui=S.ui; S=merge(DEF,b.S); S.ui=ui; applySpec(S.spec); rebuildAde(); allowEmpty=true; save(); renderAll(); toast("Sauvegarde restaurée"); }); }); });
+  $("impBtn").addEventListener("click",function(){ try{ const o=JSON.parse($("bk").value); if(!o||!Array.isArray(o.evals)) throw 0; backup("avant import"); const ui=S.ui; S=merge(DEF,o); S.ui=ui; applySpec(S.spec); rebuildAde(); save(); renderAll(); toast("Données importées"); }catch(e){ toast("JSON invalide"); } });
 }
 function parseOasis(){
   const txt=$("oasisIn").value, lines=txt.split(/\n/).map(function(l){return l.trim();}).filter(Boolean);
-  const names=[]; Object.keys(MAT).forEach(function(k){ names.push([norm(MAT[k].n),k]); });
+  const names=[]; Object.keys(MAT).forEach(function(k){ names.push([norm(matName(k)),k]); });
   names.push(["informatique & algorithmique","f1o1-3"],["algebre","f1c3-2"],["optique intrumentale","f1o2-3"],["economie generale","f1c2-1"],["economie d'entreprise","f1c2-2"],["energie","f1c4-2"],["developpement durable","f1c4-1"]);
   names.sort(function(a,b){ return b[0].length-a[0].length; });
   const found=[]; let cur=null;
@@ -845,7 +864,7 @@ function parseOasis(){
   });
   const out=$("oasisOut");
   if(!found.length){ out.innerHTML='<p class="small ko">Aucune note reconnue. Envoie-moi un exemple de collage pour que j\'adapte la lecture.</p>'; return; }
-  out.innerHTML='<table class="t"><thead><tr><th></th><th>Matière</th><th class="num">Note</th><th>Ligne lue</th></tr></thead><tbody>'+found.map(function(f,i){ return '<tr><td><input type="checkbox" checked data-oi="'+i+'"></td><td>'+esc(MAT[f.mat].n)+'</td><td class="num">'+fr(f.note,2)+'</td><td class="small muted">'+esc(f.line.slice(0,80))+'</td></tr>'; }).join("")+'</tbody></table><button class="btn primary" id="oasisOk" style="margin-top:8px">Enregistrer les notes cochées</button><p class="small muted">Chaque note complète le plus ancien devoir sans note de la matière ; s\'il n\'y en a pas, un devoir « Note Oasis » est créé.</p>';
+  out.innerHTML='<table class="t"><thead><tr><th></th><th>Matière</th><th class="num">Note</th><th>Ligne lue</th></tr></thead><tbody>'+found.map(function(f,i){ return '<tr><td><input type="checkbox" checked data-oi="'+i+'"></td><td>'+esc(matName(f.mat))+'</td><td class="num">'+fr(f.note,2)+'</td><td class="small muted">'+esc(f.line.slice(0,80))+'</td></tr>'; }).join("")+'</tbody></table><button class="btn primary" id="oasisOk" style="margin-top:8px">Enregistrer les notes cochées</button><p class="small muted">Chaque note complète le plus ancien devoir sans note de la matière ; s\'il n\'y en a pas, un devoir « Note Oasis » est créé.</p>';
   $("oasisOk").addEventListener("click",function(){
     let n=0; out.querySelectorAll("[data-oi]").forEach(function(cb){ if(!cb.checked) return; const f=found[+cb.dataset.oi];
       const pend=S.evals.filter(function(e){ return e.mat===f.mat&&counts(e)&&!hasNote(e); }).sort(function(a,b){ return a.date<b.date?-1:1; })[0];
@@ -986,8 +1005,8 @@ $("acct").addEventListener("click",function(){
    '<label class="f" style="margin-top:10px">Spécialité<select id="specSel">'+Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("")+'</select></label><p class="small muted">Maquettes 3A 2025-2026. Le planning ADE automatique n\'est disponible que pour PHOT pour l\'instant.</p>'+
    '<div class="row" style="justify-content:space-between;margin-top:14px">'+(user?'<button class="btn danger" value="out">Se déconnecter</button>':'<button class="btn primary" value="in">Se connecter / créer un compte</button>')+'<button class="btn" value="ok">Fermer</button></div></form>';
   d.showModal();
-  $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs restent, mais les matières et coefficients changent.")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
-  d.onclose=async function(){ if(d.returnValue==="out"){ await sb.auth.signOut(); user=null; S=JSON.parse(JSON.stringify(DEF)); persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
+  $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs et notes actuels seront masqués (ils réapparaîtront si tu reviens sur "+(SPECS[S.spec]||{}).short+").")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
+  d.onclose=async function(){ if(d.returnValue==="out"){ backup("avant déconnexion"); await sb.auth.signOut(); user=null; dirtyApp=false; S=JSON.parse(JSON.stringify(DEF)); persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
 });
 async function newPassword(){ const pw=prompt("Nouveau mot de passe (6 caractères minimum) :"); if(!pw||pw.length<6) return; const r=await sb.auth.updateUser({password:pw}); toast(r.error?r.error.message:"Mot de passe modifié"); }
 (async function(){
