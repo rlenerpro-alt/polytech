@@ -253,7 +253,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 /* ================= spécialités (une entrée par maquette) ================= */
 // mods : [code, nom, coef dans le module, a des TP, uniquement TP] ; ade : numéros de ressource ADE ; map : nom ADE normalisé -> code matière
 const SPECS={
- phot3a:{short:"PHOT 3A",groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
+ phot3a:{short:"PHOT 3A",groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
   mods:[
  {c:"f1o1",nm:450,n:"Électronique I",coef:19,ects:7,col:"--m1",m:[["f1o1-1","Électronique analogique 1",7,1,0],["f1o1-2","Systèmes numériques",3,0,0],["f1o1-3","Informatique et algorithmique",5,0,0],["f1o1-4","Langage orienté objet",4,0,0]]},
  {c:"f1o2",nm:610,n:"Optique",coef:18,ects:7,col:"--m2",m:[["f1o2-1","Optique géométrique",5,0,0],["f1o2-2","Optique ondulatoire",8,0,0],["f1o2-3","Optique instrumentale",5,1,1]]},
@@ -272,7 +272,7 @@ const SPECS={
  "f1c3-1":[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]],
  "f1c2-1":[["Économie : gérer la rareté","economie.html","economie.html"]]
 }},
- elec3a:{short:"ELEC 3A",name:"ELEC 3A — Électronique et informatique pour l'embarqué (FISE)",ade:{spe:null,tc:null},
+ elec3a:{short:"ELEC 3A",name:"ELEC 3A — Électronique et informatique pour l'embarqué",ade:{spe:941,tc:1380},alias:[["fonctions de l'electronique","c1e1-1"],["composants de l'electronique","c1e1-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
@@ -287,7 +287,7 @@ const SPECS={
    {c:"c2e3",nm:650,hue:45,n:"Projet",coef:4,ects:2,sem:2,m:[["c2e3-1", "Projet", 4, 0, 0]]},
    {c:"c2c8",nm:675,hue:22,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
    {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
- info3a:{short:"INFO 3A",name:"INFO 3A — Informatique et ingénierie mathématique (FISE)",ade:{spe:null,tc:null},
+ info3a:{short:"INFO 3A",name:"INFO 3A — Informatique et ingénierie mathématique",ade:{spe:1067,tc:1380},alias:[["uml","c1i2-2"],["bases de donnees","c1i3-1"],["base du developpement logiciel","c1i2-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:423,hue:249,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
@@ -303,7 +303,7 @@ const SPECS={
    {c:"c2i3",nm:654,hue:41,n:"Interaction et programmation",coef:6,ects:4,sem:2,m:[["c2i3-1", "Interaction humain-machine", 4, 0, 0], ["c2i3-2", "Projet d'application", 2, 0, 0]]},
    {c:"c2c8",nm:677,hue:21,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
    {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
- mate3a:{short:"MATE 3A",name:"MATE 3A — Matériaux : mécanique et énergie (FISE)",ade:{spe:null,tc:null},
+ mate3a:{short:"MATE 3A",name:"MATE 3A — Matériaux : mécanique et énergie",ade:{spe:933,tc:1380},alias:[["conception assistee par ordinateur","c1m3-2"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1","APP3 MATE Gr1","APP3 MATE Gr2"],groupRes:{"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
@@ -322,7 +322,7 @@ const SPECS={
 let SPEC=null, MODS=[], MAT={}, ADE_MAP=[], REV={};
 function autoMap(){ const L=[]; MODS.forEach(function(M){ M.m.forEach(function(x){ L.push([norm(x[1]),x[0]]); }); }); L.sort(function(a,b){ return b[0].length-a[0].length; }); return L; }
 function modColor(M){ if(M&&M.hue!=null){ const lt=document.documentElement.getAttribute("data-theme")==="light"; return "hsl("+M.hue+","+(lt?"70%":"80%")+","+(lt?"42%":"62%")+")"; } return css(M.col); }
-function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); ADE_MAP=SPEC.map||autoMap(); const h1=document.querySelector("header h1"); if(h1) h1.textContent=SPEC.short||"Polytech"; document.title=SPEC.short||"Polytech"; }
+function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); ADE_MAP=SPEC.map||autoMap().concat(SPEC.alias||[]).sort(function(a,b){ return b[0].length-a[0].length; }); const h1=document.querySelector("header h1"); if(h1) h1.textContent=SPEC.short||"Polytech"; document.title=SPEC.short||"Polytech"; }
 
 const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
 const RES={aise:"à l'aise",moyen:"moyen",pas:"pas à l'aise"};
@@ -331,9 +331,9 @@ const TYPES={DS:"DS / examen",TP:"TP noté",DM:"Devoir"};
 /* ================= état ================= */
 const LKEY="polytech-hub-v1";
 const DEF={v:1,spec:"phot3a",workDays:{},evals:[],matRes:{},groups:[],plan:[],planFrozen:null,settings:{hours:6,dayBase:60,weekend:240,freeDay:480,minGap:60,gaps:false,floor:30,marge:2,pred:{aise:14,moyen:10,pas:6},horizon:42},ui:{tab:"home",week:0,month:0,pview:"week",day:null,treeMode:"known",dvf:"todo",dsub:"dev"}};
-let S=JSON.parse(JSON.stringify(DEF)), ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}, EVALL=[];
-function normAde(o){ if(!o) return {ev:[],at:null}; if(o.events) return {ev:o.events,at:o.importedAt||null}; return {ev:o.ev||[],at:o.at||null}; }
-try{ const r=localStorage.getItem(LKEY); if(r){ const o=JSON.parse(r); if(o.S) S=merge(S,o.S); if(o.ADE){ if(o.ADE.events) ADE.spe=normAde(o.ADE); else { ADE.spe=normAde(o.ADE.spe); ADE.tc=normAde(o.ADE.tc); } } } }catch(e){}
+let S=JSON.parse(JSON.stringify(DEF)), ADE={spe:{ev:[],at:null},tc:{ev:[],at:null},grp:{ev:[],at:null}}, EVALL=[];
+function normAde(o){ if(!o) return {ev:[],at:null}; if(o.events) return {ev:o.events,at:o.importedAt||null}; return {ev:o.ev||[],at:o.at||null,auto:o.auto,res:o.res}; }
+try{ const r=localStorage.getItem(LKEY); if(r){ const o=JSON.parse(r); if(o.S) S=merge(S,o.S); if(o.ADE){ if(o.ADE.events) ADE.spe=normAde(o.ADE); else { ADE.spe=normAde(o.ADE.spe); ADE.tc=normAde(o.ADE.tc); if(o.ADE.grp) ADE.grp=normAde(o.ADE.grp); } } } }catch(e){}
 if(!S.settings.v2){ S.settings.gaps=false; S.settings.v2=true; }
 applySpec(S.spec);
 function merge(a,b){ const o=JSON.parse(JSON.stringify(a)); Object.keys(b||{}).forEach(function(k){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])&&o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k])) o[k]=merge(o[k],b[k]); else o[k]=b[k]; }); return o; }
@@ -342,7 +342,7 @@ let sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0, remo
 try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){ sb=null; }
 function persistLocal(){ try{ localStorage.setItem(LKEY,JSON.stringify({S:S,ADE:ADE})); }catch(e){} }
 function backup(tag){ try{ const k="polytech-backups"; const L=JSON.parse(localStorage.getItem(k)||"[]"); const last=L[0]; if(!S.evals.length&&!S.plan.length) return; if(last&&tag==="auto"&&Date.now()-last.at<3600e3) return; L.unshift({at:Date.now(),tag:tag,spec:S.spec,n:S.evals.length,S:payload()}); localStorage.setItem(k,JSON.stringify(L.slice(0,15))); }catch(e){} }
-function save(which){ persistLocal(); backup("auto"); if(which==="spe"||which==="tc") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
+function save(which){ persistLocal(); backup("auto"); if(which==="spe"||which==="tc"||which==="grp") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
 function payload(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; return d; }
 async function flush(){
   if(!user||!sb||writing||!dirtyApp) return;
@@ -421,13 +421,15 @@ function parseICS(txt){
     if(p){ if(x.loc&&p.loc.indexOf(x.loc)<0) p.loc+=" / "+x.loc; if(x.who&&p.who.indexOf(x.who)<0) p.who+=" / "+x.who; } else m.push(x); });
   return m;
 }
-const SEL=/Gr[A-Z]\b|^FC\d$|AngSout|RAN |SolidWorks/;
-function rebuildAde(){ const seen={}; EVALL=[]; ["spe","tc"].forEach(function(k){ (ADE[k].ev||[]).forEach(function(x){ if(!seen[x.id]){ seen[x.id]=1; EVALL.push(x); } }); }); EVALL.sort(function(a,b){ return a.s-b.s; }); }
+const SEL=/Gr[A-Z]\b|Gr\d\b|^FC\d$|AngSout|RAN |SolidWorks/;
+function rebuildAde(){ const seen={}; EVALL=[]; ["spe","tc","grp"].forEach(function(k){ ((ADE[k]&&ADE[k].ev)||[]).forEach(function(x){ if(!seen[x.id]){ seen[x.id]=1; EVALL.push(x); } }); }); EVALL.sort(function(a,b){ return a.s-b.s; }); }
 function selGroups(x){ return (x.g||[]).filter(function(g){ return SEL.test(g); }); }
 function visibleEv(x){ const sg=selGroups(x); if(!sg.length||!S.groups.length) return true; return sg.some(function(g){ return S.groups.indexOf(g)>=0; }); }
 function EV(){ return EVALL.filter(visibleEv); }
 function allGroups(){ const c={}; (SPEC&&SPEC.groups||[]).forEach(function(g){ c[g]=0; }); (S.groups||[]).forEach(function(g){ c[g]=c[g]||0; }); EVALL.forEach(function(x){ selGroups(x).forEach(function(g){ c[g]=(c[g]||0)+1; }); }); return Object.keys(c).sort().map(function(g){ return [g,c[g]]; }); }
-function lastImport(){ return Math.max(ADE.spe.at||0,ADE.tc.at||0)||null; }
+function adeResOf(v){ v=String(v||"").trim(); const m=v.match(/[?&]resources=(\d{1,6})/)||v.match(/^(\d{1,6})$/); return m?+m[1]:null; }
+function grpRes(){ if(S.settings.adeGrp) return S.settings.adeGrp; const R=(SPEC&&SPEC.groupRes)||{}; for(const g of (S.groups||[])) if(R[g]) return R[g]; return null; }
+function lastImport(){ return Math.max(ADE.spe.at||0,ADE.tc.at||0,ADE.grp.at||0)||null; }
 function adeCode(sum){ const n=norm(sum); for(const p of ADE_MAP) if(n.indexOf(p[0])>=0) return p[1]; return null; }
 
 /* ================= calculs de notes ================= */
@@ -646,7 +648,7 @@ function lanes(items){ items.sort(function(a,b){ return a.a-b.a||b.b-a.b; }); co
   items.forEach(function(it){ let m=it.lane; items.forEach(function(o){ if(o.a<it.b&&o.b>it.a) m=Math.max(m,o.lane); }); it.n=m+1; }); return items; }
 function renderPlan(){
   const t=today(), v=S.ui.pview, mobile=window.innerWidth<700;
-  const li=lastImport(), auto=ADE.spe.auto||ADE.tc.auto;
+  const li=lastImport(), auto=ADE.spe.auto||ADE.tc.auto||ADE.grp.auto;
   let h='<div class="small muted" style="margin:2px 0 8px">'+(li?'ADE '+(auto?'synchronisé':'importé')+' le '+esc(new Date(li).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}))+' à '+fTime.format(new Date(li)):'ADE pas encore synchronisé')+' · <a href="#" data-adedlg="1" style="color:var(--acc)">mettre à jour</a></div>';
   h+='<div class="ptool"><div class="seg" role="group"><button data-pv="week" aria-pressed="'+(v==="week")+'">Semaine</button><button data-pv="month" aria-pressed="'+(v==="month")+'">Mois</button></div>';
   if(allGroups().length&&!S.groups.length) h+='<div class="card" style="border-color:var(--warn)"><b class="wn">Choisis tes groupes</b><div class="small muted">Le tronc commun contient les cours de tous les groupes (A, B, C…) aux mêmes heures. Indique les tiens pour masquer les autres.</div><button class="btn sm" data-adedlg="1" style="margin-top:8px">Choisir mes groupes</button></div>';
@@ -756,12 +758,14 @@ function openAdeDlg(){
   const d=$("dlg"); const G=allGroups();
   const row=function(k,lab){ const a=ADE[k]; return '<div class="card" style="margin:0 0 10px"><div class="row" style="justify-content:space-between"><b>'+lab+'</b><span class="small muted">'+(a.at?a.ev.length+" créneaux · "+(a.auto?"synchro auto ":"importé ")+"le "+new Date(a.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"pas encore chargé")+'</span></div><label class="btn sm" style="cursor:pointer;margin-top:8px;display:inline-block">Choisir le fichier .ics<input type="file" accept=".ics,text/calendar" data-ics="'+k+'" hidden></label></div>'; };
   d.innerHTML='<form method="dialog"><h2 style="margin-top:0">Planning ADE</h2><p class="small muted">Le planning se met à jour tout seul depuis ADE (toutes les 3 h quand l\'appli est ouverte). Si ADE est indisponible, tu peux importer un fichier .ics à la main. Tes devoirs ne sont jamais touchés.</p><button class="btn sm" type="button" id="adeNow">Mettre à jour maintenant</button>'+row("spe","Spécialité")+row("tc","Tronc commun")+
+   '<div class="card" style="margin:0 0 10px"><div class="row" style="justify-content:space-between"><b>Mon groupe</b><span class="small muted">'+(ADE.grp.at?ADE.grp.ev.length+" créneaux · ressource "+ADE.grp.res:grpRes()?"pas encore chargé":"aucun lien")+'</span></div><p class="small muted" style="margin:6px 0">Certains cours de groupe n\'apparaissent que dans le calendrier ADE du groupe. Colle ici le lien ADE de ton groupe (ou son numéro de ressource).'+(S.settings.adeGrp?'':(grpRes()?' Lien connu utilisé automatiquement pour ton groupe.':''))+'</p><div class="row" style="gap:6px"><input id="adeGrpIn" placeholder="https://planning…resources=914…" value="'+(S.settings.adeGrp||"")+'" style="flex:1;min-width:0"><button class="btn sm" type="button" id="adeGrpOk">OK</button></div></div>'+
    (G.length?'<h3 style="font-size:1rem;margin:14px 0 6px">Mes groupes</h3><p class="small muted" style="margin:0 0 6px">Coche les groupes dont tu fais partie : les cours réservés aux autres groupes seront masqués. Les cours de toute la promo restent toujours affichés.</p><div class="grid2">'+G.map(function(g){ return '<label class="chk"><input type="checkbox" data-grp="'+esc(g[0])+'"'+(S.groups.indexOf(g[0])>=0?" checked":"")+'> '+esc(g[0])+' <span class="small muted">('+(g[1]?g[1]+' cours':'aucun cours pour l\'instant')+')</span></label>'; }).join("")+'</div>':'')+
    '<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn primary" value="ok">Fermer</button></div></form>';
   d.showModal();
   d.querySelectorAll("[data-ics]").forEach(function(inp){ inp.addEventListener("change",function(){ const f=inp.files[0], k=inp.dataset.ics; if(!f) return; f.text().then(function(txt){ const ev=parseICS(txt); if(!ev.length){ toast("Aucun créneau trouvé dans ce fichier"); return; } ADE[k]={ev:ev,at:Date.now()}; rebuildAde(); save(k); toast(ev.length+" créneaux importés"); renderAll(); openAdeDlg(); }); }); });
   const an=$("adeNow"); if(an) an.addEventListener("click",async function(){ an.textContent="Mise à jour…"; const ok=await refreshAde(true); toast(!(SPEC.ade&&(SPEC.ade.spe||SPEC.ade.tc))?"Pas encore de lien ADE pour cette spécialité":ok?"Planning mis à jour":"ADE injoignable pour l'instant"); openAdeDlg(); });
-  d.querySelectorAll("[data-grp]").forEach(function(cb){ cb.addEventListener("change",function(){ const g=cb.dataset.grp; S.groups=S.groups.filter(function(x){return x!==g;}); if(cb.checked) S.groups.push(g); save(); renderAll(); }); });
+  d.querySelectorAll("[data-grp]").forEach(function(cb){ cb.addEventListener("change",async function(){ const g=cb.dataset.grp; S.groups=S.groups.filter(function(x){return x!==g;}); if(cb.checked) S.groups.push(g); save(); renderAll(); if((grpRes()||null)!==(ADE.grp.res||null)){ await refreshAde(true); openAdeDlg(); } }); });
+  const go=$("adeGrpOk"); if(go) go.addEventListener("click",async function(){ const v=$("adeGrpIn").value.trim(), r=adeResOf(v); if(v&&!r){ toast("Lien non reconnu : il doit contenir resources=…"); return; } S.settings.adeGrp=r; save(); go.textContent="…"; const ok=await refreshAde(true); toast(!r&&!grpRes()?"Lien du groupe retiré":ok?"Calendrier du groupe chargé":"ADE injoignable pour l'instant"); openAdeDlg(); });
   d.onclose=null;
 }
 function locParts(loc){ return String(loc||"").split(/\s*(?:\/|,)\s*/).filter(Boolean).map(function(p){ const m=p.match(/^(?:Bat\s*)?(\d{3})\s*-\s*(.+)$/i); return m?{b:m[1],r:m[2]}:{b:"",r:p}; }); }
@@ -987,7 +991,7 @@ renderAll(); showTab(S.ui.tab||"home"); setSync("local");
 function authMsg(m,bad){ const el=$("authMsg"); el.textContent=m; el.className="small "+(bad?"ko":"muted"); }
 function showAuth(on){ $("auth").hidden=!on; }
 function setAcct(){ const b=$("acct"); b.textContent=user?"Compte":"Se connecter"; }
-function authSpecPick(){ const v=$("authSpec").value; if(v&&v!==S.spec&&!S.evals.length){ S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); persistLocal(); renderAll(); refreshAde(true); } }
+function authSpecPick(){ const v=$("authSpec").value; if(v&&v!==S.spec&&!S.evals.length){ S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null},grp:{ev:[],at:null}}; rebuildAde(); persistLocal(); renderAll(); refreshAde(true); } }
 $("authSpec").innerHTML=Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("");
 async function onLogin(u){ authSpecPick(); user=u; try{ localStorage.removeItem("polytech-mode"); }catch(e){} showAuth(false); setAcct(); await pull(true); }
 $("authF").addEventListener("submit",async function(ev){ ev.preventDefault(); if(!sb){ authMsg("Service de compte indisponible (hors ligne ?).",true); return; } const F=ev.target; authMsg("Connexion…");
@@ -1005,7 +1009,7 @@ $("acct").addEventListener("click",function(){
    '<label class="f" style="margin-top:10px">Spécialité<select id="specSel">'+Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("")+'</select></label><p class="small muted">Maquettes 3A 2025-2026. Le planning ADE automatique n\'est disponible que pour PHOT pour l\'instant.</p>'+
    '<div class="row" style="justify-content:space-between;margin-top:14px">'+(user?'<button class="btn danger" value="out">Se déconnecter</button>':'<button class="btn primary" value="in">Se connecter / créer un compte</button>')+'<button class="btn" value="ok">Fermer</button></div></form>';
   d.showModal();
-  $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs et notes actuels seront masqués (ils réapparaîtront si tu reviens sur "+(SPECS[S.spec]||{}).short+").")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
+  $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs et notes actuels seront masqués (ils réapparaîtront si tu reviens sur "+(SPECS[S.spec]||{}).short+").")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null},grp:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
   d.onclose=async function(){ if(d.returnValue==="out"){ backup("avant déconnexion"); await sb.auth.signOut(); user=null; dirtyApp=false; S=JSON.parse(JSON.stringify(DEF)); persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
 });
 async function newPassword(){ const pw=prompt("Nouveau mot de passe (6 caractères minimum) :"); if(!pw||pw.length<6) return; const r=await sb.auth.updateUser({password:pw}); toast(r.error?r.error.message:"Mot de passe modifié"); }
@@ -1022,9 +1026,10 @@ document.addEventListener("visibilitychange",function(){ if(document.visibilityS
 async function refreshAde(force){
   if(!/^https?:/.test(location.protocol)) return;
   let changed=false;
-  for(const k of ["spe","tc"]){
-    const a=ADE[k]; if(!SPEC.ade||!SPEC.ade[k]) continue; if(!force&&a.auto&&a.at&&Date.now()-a.at<3*3600e3) continue;
-    try{ const r=await fetch("/api/ade?res="+SPEC.ade[k],{cache:"no-store"}); if(!r.ok) continue; const ev=parseICS(await r.text()); if(ev.length){ ADE[k]={ev:ev,at:Date.now(),auto:true}; changed=true; } }catch(e){}
+  const gr=grpRes(); if(!gr&&ADE.grp.res){ ADE.grp={ev:[],at:null}; changed=true; }
+  for(const k of ["spe","tc","grp"]){
+    const a=ADE[k], res=k==="grp"?gr:(SPEC.ade&&SPEC.ade[k]); if(!res) continue; if(!force&&a.auto&&a.res===res&&a.at&&Date.now()-a.at<3*3600e3) continue;
+    try{ const r=await fetch("/api/ade?res="+res,{cache:"no-store"}); if(!r.ok) continue; const ev=parseICS(await r.text()); if(ev.length){ ADE[k]={ev:ev,at:Date.now(),auto:true,res:res}; changed=true; } }catch(e){}
   }
   if(changed){ rebuildAde(); persistLocal(); renderAll(); }
   return changed;
