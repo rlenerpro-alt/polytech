@@ -237,7 +237,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 </main>
 <dialog id="dlg"></dialog>
 <div id="auth" hidden><div class="abox"><div class="spec"></div><h1 style="margin:0 0 4px">PHOT 3A</h1><p class="small muted" style="margin:0 0 16px">Planning ADE, devoirs, notes et plan de révision. Tes données sont privées : toi seul y as accès.</p>
-<form id="authF"><label class="f">Email<input type="email" name="email" autocomplete="email" required></label><label class="f" style="margin-top:10px">Mot de passe<input type="password" name="pw" autocomplete="current-password" minlength="6" required></label>
+<form id="authF"><label class="f" style="margin-bottom:10px">Spécialité<select name="spec" id="authSpec"></select></label><label class="f">Email<input type="email" name="email" autocomplete="email" required></label><label class="f" style="margin-top:10px">Mot de passe<input type="password" name="pw" autocomplete="current-password" minlength="6" required></label>
 <div class="row" style="margin-top:14px"><button class="btn primary" type="submit" data-am="in">Se connecter</button><button class="btn" type="button" data-am="up">Créer un compte</button></div>
 <div class="row" style="margin-top:10px"><button class="btn sm" type="button" data-am="forgot">Mot de passe oublié</button><button class="btn sm" type="button" data-am="local">Continuer sans compte</button></div>
 <p class="small" id="authMsg" role="status" style="min-height:1.4em;margin:12px 0 0"></p></form></div></div>
@@ -253,7 +253,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 /* ================= spécialités (une entrée par maquette) ================= */
 // mods : [code, nom, coef dans le module, a des TP, uniquement TP] ; ade : numéros de ressource ADE ; map : nom ADE normalisé -> code matière
 const SPECS={
- phot3a:{name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
+ phot3a:{short:"PHOT 3A",name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
   mods:[
  {c:"f1o1",nm:450,n:"Électronique I",coef:19,ects:7,col:"--m1",m:[["f1o1-1","Électronique analogique 1",7,1,0],["f1o1-2","Systèmes numériques",3,0,0],["f1o1-3","Informatique et algorithmique",5,0,0],["f1o1-4","Langage orienté objet",4,0,0]]},
  {c:"f1o2",nm:610,n:"Optique",coef:18,ects:7,col:"--m2",m:[["f1o2-1","Optique géométrique",5,0,0],["f1o2-2","Optique ondulatoire",8,0,0],["f1o2-3","Optique instrumentale",5,1,1]]},
@@ -271,10 +271,58 @@ const SPECS={
  "f1o1-2":[["Systèmes numériques","systemes-numeriques.html","systemes-numeriques.html"]],
  "f1c3-1":[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]],
  "f1c2-1":[["Économie : gérer la rareté","economie.html","economie.html"]]
-}}
+}},
+ elec3a:{short:"ELEC 3A",name:"ELEC 3A — Électronique et informatique pour l'embarqué (FISE)",ade:{spe:null,tc:null},
+  mods:[
+   {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
+   {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
+   {c:"c1e1",nm:450,hue:225,n:"Electronique I",coef:16,ects:11,sem:1,m:[["c1e1-1", "Electronique analogique", 4.5, 0, 0], ["c1e1-2", "Electronique numérique", 4, 0, 0], ["c1e1-3", "Conception mécatronique", 2, 0, 0], ["c1e1-4", "Laboratoire d'électronique", 5.5, 1, 1]]},
+   {c:"c1e2",nm:475,hue:202,n:"Informatique et mathématiques",coef:11,ects:6,sem:1,m:[["c1e2-1", "Mathématiques du traitement du signal", 5, 0, 0], ["c1e2-2", "Algorithmique et programmation", 4, 0, 0], ["c1e2-3", "Laboratoire d'informatique", 2, 0, 0]]},
+   {c:"c2c1",nm:500,hue:180,n:"Langue et communication II",coef:5,ects:3,sem:2,m:[["c2c1-1", "Anglais", 3, 0, 0], ["c2c1-2", "Communication en public", 2, 0, 0]]},
+   {c:"c2c2",nm:525,hue:158,n:"L'entreprise et son environnement I",coef:4,ects:2,sem:2,m:[["c2c2-1", "Économie d'entreprise", 2, 0, 0], ["c2c2-2", "Projet d'économie", 2, 0, 0]]},
+   {c:"c2c3",nm:550,hue:135,n:"Sciences de base II",coef:8,ects:5,sem:2,m:[["c2c3-1", "Probabilités et Statistiques", 4, 0, 0], ["c2c3-2", "Algèbre / Calcul scientifique", 4, 0, 0]]},
+   {c:"c2c4",nm:575,hue:112,n:"L'ingénieur face aux enjeux sociétaux I",coef:3,ects:3,sem:2,m:[["c2c4-1", "Développement durable : objectifs et parties prenantes", 1, 0, 0], ["c2c4-2", "Energie : transition et sobriété", 2, 0, 0]]},
+   {c:"c2e1",nm:600,hue:90,n:"Electronique II",coef:12,ects:7,sem:2,m:[["c2e1-1", "Automatique", 4, 0, 0], ["c2e1-2", "Capteurs et acquisitions", 3, 0, 0], ["c2e1-3", "Conversion d'énergie", 5, 0, 0]]},
+   {c:"c2e2",nm:625,hue:68,n:"Informatique pour l'embarqué",coef:9,ects:5,sem:2,m:[["c2e2-1", "Informatique industrielle", 3, 0, 0], ["c2e2-2", "Microcontroleurs", 3, 0, 0], ["c2e2-3", "Réseaux", 3, 0, 0]]},
+   {c:"c2e3",nm:650,hue:45,n:"Projet",coef:4,ects:2,sem:2,m:[["c2e3-1", "Projet", 4, 0, 0]]},
+   {c:"c2c8",nm:675,hue:22,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
+   {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
+ info3a:{short:"INFO 3A",name:"INFO 3A — Informatique et ingénierie mathématique (FISE)",ade:{spe:null,tc:null},
+  mods:[
+   {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
+   {c:"c1c2",nm:423,hue:249,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
+   {c:"c1i1",nm:446,hue:229,n:"Fondements théoriques I",coef:8,ects:4,sem:1,m:[["c1i1-1", "Algorithmique 1", 5, 0, 0], ["c1i1-2", "Informatique théorique", 3, 0, 0]]},
+   {c:"c1i2",nm:469,hue:208,n:"Modélisation et programmation",coef:11,ects:7,sem:1,m:[["c1i2-1", "Bases du développement logiciel", 4, 0, 0], ["c1i2-2", "Unified Modeling Language (UML)", 3, 0, 0], ["c1i2-3", "Langages JVM 1", 4, 0, 0]]},
+   {c:"c1i3",nm:492,hue:187,n:"Données et interfaces",coef:10,ects:6,sem:1,m:[["c1i3-1", "Bases de données relationnelles 1", 3, 0, 0], ["c1i3-2", "Développement web et mobile 1", 4, 0, 0], ["c1i3-3", "Informatique graphique 1", 3, 0, 0]]},
+   {c:"c2c1",nm:515,hue:166,n:"Langue et communication II",coef:5,ects:3,sem:2,m:[["c2c1-1", "Anglais", 3, 0, 0], ["c2c1-2", "Communication en public", 2, 0, 0]]},
+   {c:"c2c2",nm:538,hue:146,n:"L'entreprise et son environnement I",coef:4,ects:2,sem:2,m:[["c2c2-1", "Économie d'entreprise", 2, 0, 0], ["c2c2-2", "Projet d'économie", 2, 0, 0]]},
+   {c:"c2c3",nm:562,hue:124,n:"Sciences de base II",coef:8,ects:5,sem:2,m:[["c2c3-1", "Probabilités et Statistiques", 4, 0, 0], ["c2c3-2", "Algèbre / Calcul scientifique", 4, 0, 0]]},
+   {c:"c2c4",nm:585,hue:104,n:"L'ingénieur face aux enjeux sociétaux I",coef:3,ects:3,sem:2,m:[["c2c4-1", "Développement durable : objectifs et parties prenantes", 1, 0, 0], ["c2c4-2", "Energie : transition et sobriété", 2, 0, 0]]},
+   {c:"c2i1",nm:608,hue:83,n:"Fondements théoriques II",coef:6,ects:4,sem:2,m:[["c2i1-1", "Algorithmique 2", 3, 0, 0], ["c2i1-2", "Algorithmique numérique 1", 3, 0, 0]]},
+   {c:"c2i2",nm:631,hue:62,n:"Systèmes et réseaux",coef:11,ects:6,sem:2,m:[["c2i2-1", "Architecture", 4, 0, 0], ["c2i2-2", "Systèmes d'exploitation", 4, 0, 0], ["c2i2-3", "Réseaux 1", 3, 0, 0]]},
+   {c:"c2i3",nm:654,hue:41,n:"Interaction et programmation",coef:6,ects:4,sem:2,m:[["c2i3-1", "Interaction humain-machine", 4, 0, 0], ["c2i3-2", "Projet d'application", 2, 0, 0]]},
+   {c:"c2c8",nm:677,hue:21,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
+   {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
+ mate3a:{short:"MATE 3A",name:"MATE 3A — Matériaux : mécanique et énergie (FISE)",ade:{spe:null,tc:null},
+  mods:[
+   {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
+   {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
+   {c:"c1m1",nm:450,hue:225,n:"Sciences des matériaux I",coef:14,ects:8,sem:1,m:[["c1m1-1", "Physique des ondes", 3, 0, 0], ["c1m1-2", "Thermodynamique classique", 3, 0, 0], ["c1m1-3", "Structure cristalline de la matière", 5, 0, 0], ["c1m1-4", "Liaison chimique dans les matériaux", 3, 0, 0]]},
+   {c:"c1m2",nm:475,hue:202,n:"Mécanique & énergie I",coef:11,ects:6,sem:1,m:[["c1m2-1", "Mécanique statique des solides", 4, 0, 0], ["c1m2-2", "Mécanique des fluides", 3, 0, 0], ["c1m2-3", "Production d'énergie", 4, 0, 0]]},
+   {c:"c1m3",nm:500,hue:180,n:"Outils pour l'ingénieur I",coef:5,ects:3,sem:1,m:[["c1m3-1", "Traitement et exploitation de données", 3, 0, 0], ["c1m3-2", "Conception assistée par ordinateur (CAO)", 2, 0, 0]]},
+   {c:"c2c1",nm:525,hue:158,n:"Langue et communication II",coef:5,ects:3,sem:2,m:[["c2c1-1", "Anglais", 3, 0, 0], ["c2c1-2", "Communication en public", 2, 0, 0]]},
+   {c:"c2c2",nm:550,hue:135,n:"L'entreprise et son environnement I",coef:4,ects:2,sem:2,m:[["c2c2-1", "Économie d'entreprise", 2, 0, 0], ["c2c2-2", "Projet d'économie", 2, 0, 0]]},
+   {c:"c2c3",nm:575,hue:112,n:"Sciences de base II",coef:8,ects:5,sem:2,m:[["c2c3-1", "Probabilités et Statistiques", 4, 0, 0], ["c2c3-2", "Algèbre / Calcul scientifique", 4, 0, 0]]},
+   {c:"c2c4",nm:600,hue:90,n:"L'ingénieur face aux enjeux sociétaux I",coef:3,ects:3,sem:2,m:[["c2c4-1", "Développement durable : objectifs et parties prenantes", 1, 0, 0], ["c2c4-2", "Energie : transition et sobriété", 2, 0, 0]]},
+   {c:"c2m1",nm:625,hue:68,n:"Science des matériaux II",coef:9,ects:6,sem:2,m:[["c2m1-1", "Physique statistique", 3, 0, 0], ["c2m1-2", "Diagramme de phase", 2, 0, 0], ["c2m1-3", "Structure chimique des polymères", 4, 0, 0]]},
+   {c:"c2m2",nm:650,hue:45,n:"Mécanique & énergie II",coef:13,ects:8,sem:2,m:[["c2m2-1", "Elasticité", 3, 0, 0], ["c2m2-2", "Résistance des matériaux", 3, 0, 0], ["c2m2-3", "Mécanique expérimentale", 4, 1, 1], ["c2m2-4", "Mécanique quantique", 3, 0, 0]]},
+   {c:"c2c8",nm:675,hue:22,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
+   {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]}
 };
 let SPEC=null, MODS=[], MAT={}, ADE_MAP=[], REV={};
-function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; ADE_MAP=SPEC.map; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); }
+function autoMap(){ const L=[]; MODS.forEach(function(M){ M.m.forEach(function(x){ L.push([norm(x[1]),x[0]]); }); }); L.sort(function(a,b){ return b[0].length-a[0].length; }); return L; }
+function modColor(M){ if(M&&M.hue!=null){ const lt=document.documentElement.getAttribute("data-theme")==="light"; return "hsl("+M.hue+","+(lt?"70%":"80%")+","+(lt?"42%":"62%")+")"; } return css(M.col); }
+function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); ADE_MAP=SPEC.map||autoMap(); const h1=document.querySelector("header h1"); if(h1) h1.textContent=SPEC.short||"Polytech"; document.title=SPEC.short||"Polytech"; }
 
 const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
 const RES={aise:"à l'aise",moyen:"moyen",pas:"pas à l'aise"};
@@ -335,7 +383,7 @@ function weekday(k){ return (new Date(k+"T12:00:00Z").getUTCDay()+6)%7; }
 function longDay(k){ return new Date(k+"T12:00:00Z").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); }
 function shortDay(k){ return new Date(k+"T12:00:00Z").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"}); }
 function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },2200); }
-function matColor(code){ const m=MAT[code]; return m?css(m.mod.col):css("--muted"); }
+function matColor(code){ const m=MAT[code]; return m?modColor(m.mod):css("--muted"); }
 
 /* ================= ADE ================= */
 function parseICS(txt){
@@ -563,7 +611,7 @@ function renderHome(){
   h+='<div class="sec">Devoirs</div><div class="card hc">'+(hw.length?hw.map(function(e){ return homeRow(matColor(e.mat),esc(e.title||MAT[e.mat].n),dueTxt(e.date),' data-edit="'+e.id+'"','<input type="checkbox" data-done="'+e.id+'" aria-label="Fait">'); }).join(""):'<div class="empty">Aucun devoir dans les 14 jours.</div>')+'</div>';
   const P=priorities();
   h+='<div class="sec">DS et TP notés</div><div class="card hc">'+(P.length?P.slice(0,6).map(function(p){ const e=p.e; return '<div class="hr" data-edit="'+e.id+'"><span class="dot" style="color:'+matColor(e.mat)+'"></span><span class="ht" style="white-space:normal"><span style="display:block">'+esc((e.title||e.type)+" "+MAT[e.mat].n)+'</span><span class="hd">'+dueTxt(e.date)+'</span></span><span class="pill '+p.lvl+'">'+{hi:"haute",mid:"moyenne",lo:"basse",none:"faible"}[p.lvl]+'</span></div>'; }).join(""):'<div class="empty">Aucun DS ou TP à venir.</div>')+'</div>';
-  const al=[]; MODS.forEach(function(M){ if(M.s2) return; const ms=modStats(M); if(ms.known!=null&&ms.known<SEUIL_MOD) al.push([css(M.col),esc(M.n),'<span class="ko">'+fr(ms.known,1)+'</span>']); M.m.forEach(function(x){ const st=matStats(x[0]); if(st.known!=null&&st.known<SEUIL_MAT) al.push([css(M.col),esc(x[1]),'<span class="ko">'+fr(st.known,1)+' · élim.</span>']); }); });
+  const al=[]; MODS.forEach(function(M){ if(M.s2) return; const ms=modStats(M); if(ms.known!=null&&ms.known<SEUIL_MOD) al.push([modColor(M),esc(M.n),'<span class="ko">'+fr(ms.known,1)+'</span>']); M.m.forEach(function(x){ const st=matStats(x[0]); if(st.known!=null&&st.known<SEUIL_MAT) al.push([modColor(M),esc(x[1]),'<span class="ko">'+fr(st.known,1)+' · élim.</span>']); }); });
   if(al.length) h+='<div class="sec">À surveiller</div><div class="card hc">'+al.map(function(a){ return homeRow(a[0],a[1],a[2],' data-gotab="notes"'); }).join("")+'</div>';
   $("home").innerHTML=h;
 }
@@ -752,7 +800,7 @@ function renderNotes(){
   h+='<div class="row" style="justify-content:space-between;margin-top:4px"><h2 style="margin:0">Notes et coefficients</h2><button class="btn primary sm" data-new="DS">+ DS / TP</button></div>';
   MODS.forEach(function(M){
     const ms=modStats(M);
-    h+='<div class="card mod" style="border-left-color:'+css(M.col)+'"><h3><span>'+esc(M.n)+'<span class="nm">'+M.nm+' nm</span> <span class="small muted">· coef '+M.coef+' · '+M.ects+' ECTS'+(M.s2?" · semestre 2":"")+'</span></span><span class="big '+gcls(ms.known,SEUIL_MOD)+'">'+(ms.known==null?'<span class="small muted">pas encore de note</span>':fr(ms.known,2)+'<span class="small muted"> /20</span>')+'</span></h3>';
+    h+='<div class="card mod" style="border-left-color:'+modColor(M)+'"><h3><span>'+esc(M.n)+'<span class="nm">'+M.nm+' nm</span> <span class="small muted">'+(M.sem?'· S'+M.sem+' ':'')+'· coef '+M.coef+' · '+M.ects+' ECTS'+(M.s2&&!M.sem?" · semestre 2":"")+'</span></span><span class="big '+gcls(ms.known,SEUIL_MOD)+'">'+(ms.known==null?'<span class="small muted">pas encore de note</span>':fr(ms.known,2)+'<span class="small muted"> /20</span>')+'</span></h3>';
     h+='<table class="t"><thead><tr><th>Matière</th><th class="num">Coef</th><th>Ressenti</th><th class="num">Moyenne</th></tr></thead><tbody>';
     M.m.forEach(function(x){
       const st=matStats(x[0]);
@@ -830,7 +878,7 @@ function drawRadars(){
     c.restore();
     for(let i=0;i<n;i++){ const p=P(i,20); c.strokeStyle=css("--line"); c.beginPath(); c.moveTo(cx,cy); c.lineTo(p[0],p[1]); c.stroke(); }
     const vals=[]; for(let i=0;i<n;i++){ const x=M.m[i]; if(!x){ vals.push(null); continue; } const s=matStats(x[0]); vals.push(mode==="proj"?s.proj:s.known); }
-    const col=css(M.col);
+    const col=modColor(M);
     c.beginPath(); vals.forEach(function(v,i){ const p=P(i,v==null?0:Math.max(0,Math.min(20,v))); if(i) c.lineTo(p[0],p[1]); else c.moveTo(p[0],p[1]); }); c.closePath();
     c.globalAlpha=0.22; c.fillStyle=col; c.fill(); c.globalAlpha=1; c.strokeStyle=col; c.lineWidth=2; c.stroke();
     c.font="11px "+css("--ui"); c.textBaseline="middle";
@@ -847,10 +895,10 @@ function renderCours(){
   let h='';
   MODS.forEach(function(M){
     if(M.s2) return;
-    h+='<h2 style="font-size:1.05rem;display:flex;gap:8px;align-items:center"><span class="dot" style="color:'+css(M.col)+'"></span>'+esc(M.n)+' <span class="small muted" style="font-weight:400">coef '+M.coef+'</span></h2><div class="mats">';
+    h+='<h2 style="font-size:1.05rem;display:flex;gap:8px;align-items:center"><span class="dot" style="color:'+modColor(M)+'"></span>'+esc(M.n)+' <span class="small muted" style="font-weight:400">coef '+M.coef+'</span></h2><div class="mats">';
     M.m.forEach(function(x){
       const k=x[0], L=REV[k]||[], p=byMat[k], st=matStats(k);
-      h+='<div class="mcard" style="--c:'+css(M.col)+'"><div class="row" style="justify-content:space-between"><h4>'+esc(x[1])+'</h4><span class="small muted">coef '+x[2]+'</span></div>';
+      h+='<div class="mcard" style="--c:'+modColor(M)+'"><div class="row" style="justify-content:space-between"><h4>'+esc(x[1])+'</h4><span class="small muted">coef '+x[2]+'</span></div>';
       h+=L.length?L.map(function(l){ return l[2]?'<a class="pg" href="#" data-page="'+l[2]+'" data-pt="'+esc(l[0])+'">'+esc(l[0])+'<span>Ouvrir</span></a>':'<a class="pg" href="'+l[1]+'" target="_blank" rel="noopener">'+esc(l[0])+'<span>↗</span></a>'; }).join(""):'<div class="small muted" style="padding:6px 0">Pas encore de page.</div>';
       h+='</div>';
     });
@@ -920,11 +968,13 @@ renderAll(); showTab(S.ui.tab||"home"); setSync("local");
 function authMsg(m,bad){ const el=$("authMsg"); el.textContent=m; el.className="small "+(bad?"ko":"muted"); }
 function showAuth(on){ $("auth").hidden=!on; }
 function setAcct(){ const b=$("acct"); b.textContent=user?"Compte":"Se connecter"; }
-async function onLogin(u){ user=u; try{ localStorage.removeItem("polytech-mode"); }catch(e){} showAuth(false); setAcct(); await pull(true); }
+function authSpecPick(){ const v=$("authSpec").value; if(v&&v!==S.spec&&!S.evals.length){ S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); persistLocal(); renderAll(); refreshAde(true); } }
+$("authSpec").innerHTML=Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("");
+async function onLogin(u){ authSpecPick(); user=u; try{ localStorage.removeItem("polytech-mode"); }catch(e){} showAuth(false); setAcct(); await pull(true); }
 $("authF").addEventListener("submit",async function(ev){ ev.preventDefault(); if(!sb){ authMsg("Service de compte indisponible (hors ligne ?).",true); return; } const F=ev.target; authMsg("Connexion…");
   const r=await sb.auth.signInWithPassword({email:F.email.value.trim(),password:F.pw.value}); if(r.error){ authMsg(r.error.message==="Invalid login credentials"?"Email ou mot de passe incorrect.":r.error.message,true); return; } onLogin(r.data.user); });
 $("auth").addEventListener("click",async function(ev){ const b=ev.target.closest("[data-am]"); if(!b||b.type==="submit") return; const F=$("authF"), em=F.email.value.trim();
-  if(b.dataset.am==="local"){ try{ localStorage.setItem("polytech-mode","local"); }catch(e){} showAuth(false); setSync("local"); setAcct(); return; }
+  if(b.dataset.am==="local"){ authSpecPick(); try{ localStorage.setItem("polytech-mode","local"); }catch(e){} showAuth(false); setSync("local"); setAcct(); return; }
   if(!sb){ authMsg("Service de compte indisponible (hors ligne ?).",true); return; }
   if(!em){ authMsg("Indique ton email.",true); return; }
   if(b.dataset.am==="up"){ if(F.pw.value.length<6){ authMsg("Mot de passe : 6 caractères minimum.",true); return; } authMsg("Création du compte…"); const r=await sb.auth.signUp({email:em,password:F.pw.value,options:{emailRedirectTo:location.origin}}); if(r.error){ authMsg(r.error.message,true); return; } if(r.data.session) onLogin(r.data.user); else authMsg("Compte créé. Ouvre le lien de confirmation reçu par email, puis reviens te connecter ici."); }
@@ -933,7 +983,7 @@ $("auth").addEventListener("click",async function(ev){ const b=ev.target.closest
 $("acct").addEventListener("click",function(){
   const d=$("dlg");
   d.innerHTML='<form method="dialog"><h2 style="margin-top:0">Compte</h2>'+(user?'<p>Connecté : <b>'+esc(user.email)+'</b></p><p class="small muted">Tes devoirs, notes, groupes et plan sont enregistrés sur ton compte et synchronisés entre tes appareils. Personne d\'autre n\'y a accès.</p>':'<p class="small muted">Mode sans compte : les données restent sur cet appareil uniquement.</p>')+
-   '<label class="f" style="margin-top:10px">Spécialité<select id="specSel">'+Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("")+'</select></label><p class="small muted">D\'autres spécialités arriveront avec leurs maquettes.</p>'+
+   '<label class="f" style="margin-top:10px">Spécialité<select id="specSel">'+Object.keys(SPECS).map(function(k){ return '<option value="'+k+'"'+(S.spec===k?" selected":"")+'>'+esc(SPECS[k].name)+'</option>'; }).join("")+'</select></label><p class="small muted">Maquettes 3A 2025-2026. Le planning ADE automatique n\'est disponible que pour PHOT pour l\'instant.</p>'+
    '<div class="row" style="justify-content:space-between;margin-top:14px">'+(user?'<button class="btn danger" value="out">Se déconnecter</button>':'<button class="btn primary" value="in">Se connecter / créer un compte</button>')+'<button class="btn" value="ok">Fermer</button></div></form>';
   d.showModal();
   $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs restent, mais les matières et coefficients changent.")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
@@ -954,7 +1004,7 @@ async function refreshAde(force){
   if(!/^https?:/.test(location.protocol)) return;
   let changed=false;
   for(const k of ["spe","tc"]){
-    const a=ADE[k]; if(!force&&a.auto&&a.at&&Date.now()-a.at<3*3600e3) continue;
+    const a=ADE[k]; if(!SPEC.ade||!SPEC.ade[k]) continue; if(!force&&a.auto&&a.at&&Date.now()-a.at<3*3600e3) continue;
     try{ const r=await fetch("/api/ade?res="+SPEC.ade[k],{cache:"no-store"}); if(!r.ok) continue; const ev=parseICS(await r.text()); if(ev.length){ ADE[k]={ev:ev,at:Date.now(),auto:true}; changed=true; } }catch(e){}
   }
   if(changed){ rebuildAde(); persistLocal(); renderAll(); }
