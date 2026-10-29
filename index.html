@@ -338,46 +338,67 @@ if(!S.settings.v2){ S.settings.gaps=false; S.settings.v2=true; }
 applySpec(S.spec);
 function merge(a,b){ const o=JSON.parse(JSON.stringify(a)); Object.keys(b||{}).forEach(function(k){ if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])&&o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k])) o[k]=merge(o[k],b[k]); else o[k]=b[k]; }); return o; }
 const SB_URL="https://hnncnpsiyntconapkdii.supabase.co", SB_KEY="sb_publishable_wpPi9KP2TCr9IEd4zB5epg_tbmZM2xD";
-let sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0, remoteCount=0, allowEmpty=false;
+let BASE={i:{},r:null}; try{ const o=JSON.parse(localStorage.getItem(LKEY)||"{}"); if(o.BASE&&o.BASE.i) BASE=o.BASE; }catch(e){}
+let again=false, sb=null, user=null, dirtyApp=false, wT=null, writing=false, lastPull=0, remoteCount=0, allowEmpty=false;
 try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){ sb=null; }
-function persistLocal(){ try{ localStorage.setItem(LKEY,JSON.stringify({S:S,ADE:ADE})); }catch(e){} }
+function persistLocal(){ try{ localStorage.setItem(LKEY,JSON.stringify({S:S,ADE:ADE,BASE:BASE})); }catch(e){} }
 function backup(tag){ try{ const k="polytech-backups"; const L=JSON.parse(localStorage.getItem(k)||"[]"); const last=L[0]; if(!S.evals.length&&!S.plan.length) return; if(last&&tag==="auto"&&Date.now()-last.at<3600e3) return; L.unshift({at:Date.now(),tag:tag,spec:S.spec,n:S.evals.length,S:payload()}); localStorage.setItem(k,JSON.stringify(L.slice(0,15))); }catch(e){} }
-function save(which){ persistLocal(); backup("auto"); if(which==="spe"||which==="tc"||which==="grp") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
+function save(which){ stamp(); persistLocal(); backup("auto"); if(which==="spe"||which==="tc"||which==="grp") return; dirtyApp=true; clearTimeout(wT); wT=setTimeout(flush,700); }
 function payload(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; return d; }
-async function flush(){
-  if(!user||!sb||writing||!dirtyApp) return;
-  if(!S.evals.length&&remoteCount>0&&!allowEmpty){ setSync("err","envoi bloqué : la sauvegarde du compte contient des devoirs"); return; }
-  writing=true; dirtyApp=false;
-  try{ const r=await sb.from("user_state").upsert({user_id:user.id,app:payload(),updated_at:new Date().toISOString()}); if(r.error) throw r.error; remoteCount=S.evals.length; setSync("on"); }
-  catch(e){ dirtyApp=true; setSync("err",e&&(e.message||e.code)); }
-  writing=false; if(dirtyApp) setTimeout(flush,3000);
+/* ---- synchronisation : fusion élément par élément ----
+   Chaque devoir / séance porte l'heure de sa dernière modification (u). À chaque synchro on relit le compte,
+   on garde pour chaque élément la version la plus récente (appareil ou compte), on applique les suppressions
+   (S.del) et on renvoie le résultat : deux appareils ne s'écrasent plus. */
+function itemKey(o){ const c=Object.assign({},o); delete c.u; return JSON.stringify(c); }
+function restOf(x){ const c=JSON.parse(JSON.stringify(x||{})); ["ui","evals","plan","del","ru","planFrozen"].forEach(function(k){ delete c[k]; }); return canon(c); }
+function canon(v){ if(Array.isArray(v)) return "["+v.map(canon).join(",")+"]"; if(v&&typeof v==="object") return "{"+Object.keys(v).sort().filter(function(k){ return v[k]!==undefined; }).map(function(k){ return JSON.stringify(k)+":"+canon(v[k]); }).join(",")+"}"; return JSON.stringify(v); }
+function derived(o){ return o.frozen&&!o.done&&!o.locked&&!o.u; } // séance figée automatiquement, jamais touchée
+function snap(x){ const b={i:{},r:restOf(x)}; (x.evals||[]).concat(x.plan||[]).forEach(function(o){ b.i[o.id]=itemKey(o); }); return b; }
+function stamp(){
+  if(BASE.r===null){ BASE=snap(S); return; } // première ouverture de cette version : rien n'est marqué « plus récent »
+  const now=Date.now(), seen={}; S.del=S.del||{};
+  S.evals.concat(S.plan).forEach(function(o){ seen[o.id]=1; if(BASE.i[o.id]!==itemKey(o)&&!(derived(o)&&BASE.i[o.id]===undefined)) o.u=now; });
+  Object.keys(BASE.i).forEach(function(id){ if(seen[id]) return; let o=null; try{ o=JSON.parse(BASE.i[id]); }catch(e){} if(!o||!derived(o)) S.del[id]=now; });
+  if(BASE.r!==null&&restOf(S)!==BASE.r) S.ru=now;
+  BASE=snap(S);
 }
-function unionById(a,b){ const m={}; (a||[]).forEach(function(x){ m[x.id]=x; }); (b||[]).forEach(function(x){ if(!m[x.id]) m[x.id]=x; }); return Object.keys(m).map(function(k){ return m[k]; }); }
-async function pull(first){
+function mergeState(R,L){
+  const del={}; [R.del,L.del].forEach(function(d){ Object.keys(d||{}).forEach(function(k){ del[k]=Math.max(del[k]||0,d[k]); }); });
+  const old=Date.now()-120*864e5; Object.keys(del).forEach(function(k){ if(del[k]<old) delete del[k]; });
+  function arr(a,b){ const m={}; (a||[]).concat(b||[]).forEach(function(o){ const p=m[o.id]; if(!p||(o.u||0)>(p.u||0)) m[o.id]=o; }); return Object.keys(m).map(function(k){ return m[k]; }).filter(function(o){ return !(del[o.id]&&del[o.id]>=(o.u||0)); }); }
+  const top=(L.ru||0)>(R.ru||0)?L:R, M=merge(DEF,top);
+  M.evals=arr(R.evals,L.evals); M.plan=dedupe(arr(R.plan,L.plan)); M.del=del; M.ru=Math.max(R.ru||0,L.ru||0)||undefined; M.planFrozen=L.planFrozen; M.ui=L.ui;
+  return M;
+}
+function dedupe(P){ // une même séance figée sur deux appareils : on garde la validée / la plus récente
+  const best={}, out=[];
+  P.forEach(function(o){ if(!o.frozen||o.locked){ out.push(o); return; } const k=o.k+"|"+(o.ev||o.mat); const b=best[k]; const sc=function(x){ return (x.done?2e13:0)+(x.u||0); }; if(!b||sc(o)>sc(b)) best[k]=o; });
+  return out.concat(Object.keys(best).map(function(k){ return best[k]; }));
+}
+async function syncNow(){
   if(!user||!sb) return;
-  const r=await sb.from("user_state").select("app,updated_at").eq("user_id",user.id).maybeSingle();
-  if(r.error){ setSync("err",r.error.message); return; }
-  lastPull=Date.now();
-  const R=r.data&&r.data.app, rn=R&&R.evals?R.evals.length+(R.plan||[]).length:0, ln=S.evals.length+S.plan.length;
-  remoteCount=R&&R.evals?R.evals.length:0;
-  let owner=null; try{ owner=localStorage.getItem("polytech-owner"); }catch(e){}
-  if(!R||!rn){
-    // compte vide : on y envoie ce qui est sur l'appareil, sans rien effacer ici
-    if(ln){ dirtyApp=true; allowEmpty=false; flush(); }
-  } else if(!ln){
-    dirtyApp=false; const ui=S.ui; S=merge(DEF,R); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll();
-  } else if(first&&owner!==user.id){
-    // deux jeux de données : on fusionne (rien n'est perdu), puis on renvoie le tout
-    backup("avant fusion");
-    const ui=S.ui, loc=S; S=merge(DEF,R); S.ui=ui;
-    S.evals=unionById(R.evals,loc.evals); S.plan=unionById(R.plan,loc.plan);
-    applySpec(S.spec); rebuildAde(); persistLocal(); renderAll(); dirtyApp=true; flush(); toast("Données de l'appareil et du compte fusionnées");
-  } else if(!dirtyApp){
-    backup("avant synchro"); const ui=S.ui; S=merge(DEF,R); S.ui=ui; applySpec(S.spec); rebuildAde(); persistLocal(); renderAll();
-  }
-  try{ localStorage.setItem("polytech-owner",user.id); }catch(e){}
-  setSync("on");
+  if(writing){ again=true; return; }
+  writing=true; clearTimeout(wT);
+  try{
+    stamp();
+    const r=await sb.from("user_state").select("app").eq("user_id",user.id).maybeSingle();
+    if(r.error) throw r.error;
+    lastPull=Date.now();
+    const R=r.data&&r.data.app&&r.data.app.evals?r.data.app:null, before=canon(payload());
+    if(R){ backup("avant synchro"); S=mergeState(R,S); applySpec(S.spec); }
+    BASE=snap(S); persistLocal();
+    const out=payload();
+    if(!R||canon(out)!==canon(Object.assign({},R,{ui:undefined}))){ const w=await sb.from("user_state").upsert({user_id:user.id,app:out,updated_at:new Date().toISOString()}); if(w.error) throw w.error; }
+    dirtyApp=false; setSync("on");
+    if(canon(out)!==before){ rebuildAde(); renderAll(); }
+    try{ localStorage.setItem("polytech-owner",user.id); }catch(e){}
+  }catch(e){ dirtyApp=true; setSync("err",e&&(e.message||e.code)); setTimeout(syncNow,5000); }
+  writing=false;
+  if(again){ again=false; syncNow(); }
 }
+function flush(){ if(dirtyApp) return syncNow(); }
+function pull(){ return syncNow(); }
+function unionById(a,b){ const m={}; (a||[]).forEach(function(x){ m[x.id]=x; }); (b||[]).forEach(function(x){ if(!m[x.id]) m[x.id]=x; }); return Object.keys(m).map(function(k){ return m[k]; }); }
 function setSync(st,code){ const el=$("sync"); el.className="sync "+(st==="on"?"on":st==="local"?"local":""); el.lastChild.textContent= st==="on"?"Synchronisé":st==="local"?"Sur cet appareil seulement":"Erreur de synchronisation"+(code?" ("+code+")":""); }
 
 /* ================= utilitaires ================= */
@@ -550,11 +571,11 @@ function freezeToday(){
   const t=today(); if(S.planFrozen===t) return;
   const W=weekPlan(), td=W.sessions.filter(function(x){ return x.auto&&x.k===t; });
   if(!td.length) return;
-  td.forEach(function(x){ S.plan.push({id:uid(),k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,frozen:true}); });
-  S.planFrozen=t; save();
+  td.forEach(function(x){ const id="fz|"+x.id; if(S.plan.some(function(p){ return p.id===id; })) return; S.plan.push({id:id,k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,frozen:true}); });
+  S.planFrozen=t; persistLocal();
 }
 function findSes(id){ if(id.indexOf("auto|")===0) return weekPlan().sessions.find(function(x){ return x.id===id; }); return S.plan.find(function(x){ return x.id===id; }); }
-function storeSes(x,patch){ if(x.auto){ const o={id:uid(),k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,locked:true}; Object.assign(o,patch||{}); S.plan.push(o); return o; } Object.assign(x,patch||{}); return x; }
+function storeSes(x,patch){ if(x.auto){ const o={id:"lk|"+x.id,k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,locked:true}; Object.assign(o,patch||{}); S.plan.push(o); return o; } Object.assign(x,patch||{}); return x; }
 function openSes(x,isNew){
   const d=$("dlg");
   d.innerHTML='<form method="dialog" id="sF"><h2 style="margin-top:0">'+(isNew?"Ajouter une révision":"Modifier la révision")+'</h2><div class="grid2">'+
@@ -1010,7 +1031,7 @@ $("acct").addEventListener("click",function(){
    '<div class="row" style="justify-content:space-between;margin-top:14px">'+(user?'<button class="btn danger" value="out">Se déconnecter</button>':'<button class="btn primary" value="in">Se connecter / créer un compte</button>')+'<button class="btn" value="ok">Fermer</button></div></form>';
   d.showModal();
   $("specSel").addEventListener("change",function(){ const v=this.value; if(v===S.spec) return; if(S.evals.length&&!confirm("Changer de spécialité ? Tes devoirs et notes actuels seront masqués (ils réapparaîtront si tu reviens sur "+(SPECS[S.spec]||{}).short+").")){ this.value=S.spec; return; } S.spec=v; applySpec(v); ADE={spe:{ev:[],at:null},tc:{ev:[],at:null},grp:{ev:[],at:null}}; rebuildAde(); save(); renderAll(); refreshAde(true); });
-  d.onclose=async function(){ if(d.returnValue==="out"){ backup("avant déconnexion"); await sb.auth.signOut(); user=null; dirtyApp=false; S=JSON.parse(JSON.stringify(DEF)); persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
+  d.onclose=async function(){ if(d.returnValue==="out"){ backup("avant déconnexion"); await sb.auth.signOut(); user=null; dirtyApp=false; S=JSON.parse(JSON.stringify(DEF)); BASE={i:{},r:null}; persistLocal(); try{ localStorage.removeItem("polytech-owner"); }catch(e){} renderAll(); showAuth(true); setAcct(); } else if(d.returnValue==="in") showAuth(true); };
 });
 async function newPassword(){ const pw=prompt("Nouveau mot de passe (6 caractères minimum) :"); if(!pw||pw.length<6) return; const r=await sb.auth.updateUser({password:pw}); toast(r.error?r.error.message:"Mot de passe modifié"); }
 (async function(){
