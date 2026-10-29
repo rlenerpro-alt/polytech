@@ -350,29 +350,29 @@ function payload(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; return d
    on garde pour chaque élément la version la plus récente (appareil ou compte), on applique les suppressions
    (S.del) et on renvoie le résultat : deux appareils ne s'écrasent plus. */
 function itemKey(o){ const c=Object.assign({},o); delete c.u; return JSON.stringify(c); }
-function restOf(x){ const c=JSON.parse(JSON.stringify(x||{})); ["ui","evals","plan","del","ru","planFrozen"].forEach(function(k){ delete c[k]; }); return canon(c); }
+function restOf(x){ const c=JSON.parse(JSON.stringify(x||{})); ["ui","evals","plan","del","dl","ru","planFrozen"].forEach(function(k){ delete c[k]; }); return canon(c); }
 function canon(v){ if(Array.isArray(v)) return "["+v.map(canon).join(",")+"]"; if(v&&typeof v==="object") return "{"+Object.keys(v).sort().filter(function(k){ return v[k]!==undefined; }).map(function(k){ return JSON.stringify(k)+":"+canon(v[k]); }).join(",")+"}"; return JSON.stringify(v); }
 function derived(o){ return o.frozen&&!o.done&&!o.locked&&!o.u; } // séance figée automatiquement, jamais touchée
 function snap(x){ const b={i:{},r:restOf(x)}; (x.evals||[]).concat(x.plan||[]).forEach(function(o){ b.i[o.id]=itemKey(o); }); return b; }
 function stamp(){
   if(BASE.r===null){ BASE=snap(S); return; } // première ouverture de cette version : rien n'est marqué « plus récent »
-  const now=Date.now(), seen={}; S.del=S.del||{};
+  const now=Date.now(), seen={}; S.dl=S.dl||{};
   S.evals.concat(S.plan).forEach(function(o){ seen[o.id]=1; if(BASE.i[o.id]!==itemKey(o)&&!(derived(o)&&BASE.i[o.id]===undefined)) o.u=now; });
-  Object.keys(BASE.i).forEach(function(id){ if(seen[id]) return; let o=null; try{ o=JSON.parse(BASE.i[id]); }catch(e){} if(!o||!derived(o)) S.del[id]=now; });
+  Object.keys(BASE.i).forEach(function(id){ if(seen[id]) return; let o=null; try{ o=JSON.parse(BASE.i[id]); }catch(e){} if(!o||!derived(o)) S.dl[id]=now; });
   if(BASE.r!==null&&restOf(S)!==BASE.r) S.ru=now;
   BASE=snap(S);
 }
 function mergeState(R,L){
-  const del={}; [R.del,L.del].forEach(function(d){ Object.keys(d||{}).forEach(function(k){ del[k]=Math.max(del[k]||0,d[k]); }); });
+  const del={}; [R.dl,L.dl].forEach(function(d){ Object.keys(d||{}).forEach(function(k){ del[k]=Math.max(del[k]||0,d[k]); }); });
   const old=Date.now()-120*864e5; Object.keys(del).forEach(function(k){ if(del[k]<old) delete del[k]; });
   function arr(a,b){ const m={}; (a||[]).concat(b||[]).forEach(function(o){ const p=m[o.id]; if(!p||(o.u||0)>(p.u||0)) m[o.id]=o; }); return Object.keys(m).map(function(k){ return m[k]; }).filter(function(o){ return !(del[o.id]&&del[o.id]>=(o.u||0)); }); }
   const top=(L.ru||0)>(R.ru||0)?L:R, M=merge(DEF,top);
-  M.evals=arr(R.evals,L.evals); M.plan=dedupe(arr(R.plan,L.plan)); M.del=del; M.ru=Math.max(R.ru||0,L.ru||0)||undefined; M.planFrozen=L.planFrozen; M.ui=L.ui;
+  M.evals=arr(R.evals,L.evals); M.plan=dedupe(arr(R.plan,L.plan)); M.dl=del; delete M.del; M.ru=Math.max(R.ru||0,L.ru||0)||undefined; M.planFrozen=L.planFrozen; M.ui=L.ui;
   return M;
 }
 function dedupe(P){ // une même séance figée sur deux appareils : on garde la validée / la plus récente
   const best={}, out=[];
-  P.forEach(function(o){ if(!o.frozen||o.locked){ out.push(o); return; } const k=o.k+"|"+(o.ev||o.mat); const b=best[k]; const sc=function(x){ return (x.done?2e13:0)+(x.u||0); }; if(!b||sc(o)>sc(b)) best[k]=o; });
+  P.forEach(function(o){ if(!o.frozen||o.locked){ out.push(o); return; } const k=[o.k,o.ev||o.mat,o.a,o.mins,o.label].join("|"); const b=best[k]; const sc=function(x){ return (x.done?2e13:0)+(x.u||0); }; if(!b||sc(o)>sc(b)) best[k]=o; });
   return out.concat(Object.keys(best).map(function(k){ return best[k]; }));
 }
 async function syncNow(){
@@ -575,7 +575,7 @@ function freezeToday(){
   S.planFrozen=t; persistLocal();
 }
 function findSes(id){ if(id.indexOf("auto|")===0) return weekPlan().sessions.find(function(x){ return x.id===id; }); return S.plan.find(function(x){ return x.id===id; }); }
-function storeSes(x,patch){ if(x.auto){ const o={id:"lk|"+x.id,k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,locked:true}; Object.assign(o,patch||{}); S.plan.push(o); return o; } Object.assign(x,patch||{}); return x; }
+function storeSes(x,patch){ if(x.auto){ const o={id:uid(),k:x.k,a:x.a,mins:x.mins,mat:x.mat,ev:x.ev,label:x.label,done:false,locked:true}; Object.assign(o,patch||{}); S.plan.push(o); return o; } Object.assign(x,patch||{}); return x; }
 function openSes(x,isNew){
   const d=$("dlg");
   d.innerHTML='<form method="dialog" id="sF"><h2 style="margin-top:0">'+(isNew?"Ajouter une révision":"Modifier la révision")+'</h2><div class="grid2">'+
