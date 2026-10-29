@@ -78,6 +78,29 @@ details.fold > .body{padding:0 0 16px}
 .def b{display:block;margin-bottom:2px}
 .trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
 .trap b{display:block;margin-bottom:2px;color:var(--even)}
+.hyp{border:1px dashed var(--line);border-left:4px solid var(--odd);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
+.hyp b{display:block;margin-bottom:2px;color:var(--odd)}
+.hyp ul{margin:4px 0 0;padding-left:20px}
+.nuance{border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg);color:var(--ink)}
+.nuance b{display:block;margin-bottom:2px;color:var(--muted)}
+.legend3{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.85rem;color:var(--muted);margin:6px 0 14px;font-family:var(--ui)}
+.legend3 span{display:inline-flex;align-items:center;gap:6px}
+.legend3 i{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}
+table.sch{border-collapse:collapse;width:100%;font-size:.88rem;font-family:var(--ui)}
+table.sch th,table.sch td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
+table.sch th{background:var(--soft);font-weight:600}
+.pred{border:1px solid var(--line);border-left:4px solid var(--odd);border-radius:8px;padding:12px 14px;margin:0 0 14px;background:var(--surface)}
+.pred .pq{font-weight:600;margin:0 0 8px}
+.pred .pq small{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-bottom:2px}
+.pred .opts{display:flex;flex-wrap:wrap;gap:8px}
+.pred .opts .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.pred textarea{width:100%;box-sizing:border-box;margin-top:8px;min-height:44px;font:inherit;font-size:.9rem;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.pred .pres{margin-top:8px;font-size:.92rem}
+.pred .pres details{margin-top:6px}
+.pred .redo{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;padding:0;margin-left:8px}
+.wg.locked .presets,.wg.locked .controls,.wg.locked canvas,.wg.locked .readout,.wg.locked .stepbar,.wg.locked .yrs,.wg.locked .rounds{opacity:.3;pointer-events:none;filter:grayscale(1)}
+.stepbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.rounds{font-family:var(--mono);font-size:.85rem;margin:10px 0 0;padding:8px 12px;background:var(--soft);border-radius:6px;max-height:190px;overflow:auto;line-height:1.6}
 .q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
 .q > p{margin:0 0 6px;font-family:var(--text)}
 .q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
@@ -276,7 +299,9 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
 <section class="panel active" id="concepts"><div class="wrap">
   <h2>Concepts</h2>
   <p class="lead">Dix blocs dans l'ordre de ton cours : la rareté et ses conséquences, les grandes écoles de pensée, puis les acteurs, la valeur ajoutée, le PIB et la croissance. L'outil interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées.</p>
+  <div class="legend3" aria-label="Légende des encadrés"><span><i style="border-left:4px solid var(--ink)"></i>Définition : à savoir pour l'examen</span><span><i style="border-left:4px solid var(--odd)"></i>Hypothèses du modèle : ce qui doit être vrai pour raisonner ainsi</span><span><i style="border-left:4px solid var(--muted)"></i>Nuance : limites et cas particuliers</span></div>
   <div class="progress-line"><span id="seenCount">0 / 10 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+  <div class="row" style="gap:8px;margin:-4px 0 14px;font-size:.88rem"><span class="small" style="color:var(--muted)">Ta progression est gardée dans ce navigateur seulement.</span><button class="btn" type="button" id="progOut">Exporter ma progression</button><label class="btn" style="cursor:pointer">Importer<input type="file" id="progIn" accept="application/json,.json" hidden></label></div>
 
 <!-- 1 RARETE -->
 <article class="concept" data-id="c1">
@@ -284,16 +309,18 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
   <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Si tout était abondant, il n'y aurait rien à gérer et pas d'économie. Toute la discipline naît d'une tension : nos besoins ne cessent de grandir, alors que la terre, le travail et les machines sont en quantité finie. Produire une chose, c'est donc renoncer à une autre. Ton cours le dit sans détour : quand la rareté n'est pas gérée, elle engendre des conflits.</p></div>
   <div class="wg" data-w="fpp">
     <h4>🔬 Une économie qui ne produit que deux choses</h4>
-    <p class="hint">La courbe verte est la frontière de ce que l'économie peut produire avec ses facteurs. Le point rouge représente les besoins. Répartis le travail entre nourriture et machines, puis augmente la population, le capital technique ou le progrès technique. La courbe pointillée grise est la situation de départ.</p>
-    <div class="presets"><button class="btn" type="button" data-pre="base">Départ</button><button class="btn" type="button" data-pre="pop">Population en hausse</button><button class="btn" type="button" data-pre="tech">Progrès technique</button><button class="btn" type="button" data-pre="tout">Tout pour la nourriture</button></div>
+    <p class="hint">La courbe verte est la frontière de ce que l'économie peut produire avec ses facteurs. Le point rouge représente les besoins. Le dernier curseur déplace ton choix le long de la frontière ; les autres déplacent la frontière elle-même. La droite pointillée au point choisi a pour pente le coût d'opportunité marginal. La courbe grise est la situation de départ.</p>
+<div class="pred" data-pred="fpp" data-ok="up"><p class="pq"><small>Avant de toucher aux curseurs · coût d'opportunité</small>Tu envoies de plus en plus de travail vers la nourriture. Le nombre de machines sacrifiées pour une tonne de nourriture de plus…</p><div class="opts"><button class="btn" type="button" data-pv="up">augmente</button><button class="btn" type="button" data-pv="down">diminue</button><button class="btn" type="button" data-pv="same">reste le même</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Il augmente.</b> Chaque secteur a des rendements décroissants : les derniers travailleurs envoyés aux champs y produisent peu, alors qu'ils produisaient beaucoup à l'usine. On sacrifie donc de plus en plus de machines par tonne gagnée. C'est ce qui rend la frontière bombée. Vérifie-le en lisant le coût marginal quand tu pousses le dernier curseur vers 100 %.</p></template></div>
+    <div class="presets"><button class="btn" type="button" data-pre="base">Départ</button><button class="btn" type="button" data-pre="pop">Population en hausse</button><button class="btn" type="button" data-pre="cap">Plus de capital</button><button class="btn" type="button" data-pre="tech">Progrès technique agricole</button><button class="btn" type="button" data-pre="tout">Tout pour la nourriture</button></div>
     <canvas class="cv" data-c="cv" style="height:300px"></canvas>
     <div class="controls">
       <div class="ctl"><label>Travail disponible <span data-o="L"></span></label><input type="range" data-k="L" min="20" max="100" step="1" value="60"></div>
       <div class="ctl"><label>Capital technique <span data-o="K"></span></label><input type="range" data-k="K" min="10" max="100" step="1" value="50"></div>
       <div class="ctl"><label>Progrès technique <span data-o="tech"></span></label><input type="range" data-k="tech" min="1" max="2" step="0.1" value="1"></div>
+      <div class="ctl"><label>Le progrès technique touche</label><select data-k="tg"><option value="both">les deux secteurs</option><option value="A">l'agriculture seulement</option><option value="B">l'industrie seulement</option></select></div>
       <div class="ctl"><label>Part du travail vers la nourriture <span data-o="x"></span></label><input type="range" data-k="x" min="0" max="100" step="1" value="50"></div>
     </div>
-    <div class="readout"><span>Nourriture : <b data-o="a"></b></span><span>Machines : <b data-o="b"></b></span><span>Coût d'une tonne de plus : <b data-o="oc"></b></span></div>
+    <div class="readout"><span>Nourriture : <b data-o="a"></b></span><span>Machines : <b data-o="b"></b></span><span>Coût marginal d'une tonne de plus : <b data-o="oc"></b></span><span>Coût moyen depuis « tout en machines » : <b data-o="om"></b></span></div>
     <div class="readout" data-o="verdict"></div>
   </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
@@ -310,9 +337,18 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
     <p>Se déplacer le long de la frontière a un <b>coût d'opportunité</b>.</p>
     <div class="def"><b>Coût d'opportunité</b>Ce à quoi on renonce pour obtenir quelque chose : la quantité de l'autre bien qu'il faut sacrifier.</div>
     <div class="fblock">coût d'opportunité de A = quantité de B perdue / quantité de A gagnée</div>
-    <p>La courbe est bombée vers l'extérieur car les rendements sont décroissants : les premiers travailleurs envoyés aux champs sont très productifs, les suivants le sont de moins en moins. Le coût d'une tonne de nourriture supplémentaire augmente donc à mesure qu'on se spécialise. Plus de travail, plus de capital ou du progrès technique repoussent la frontière, mais les besoins, eux, se déplacent aussi.</p>
+    <div class="hyp"><b>Hypothèses du modèle de l'outil</b><ul>
+      <li>Deux biens seulement ; tout le travail est employé (plein emploi) ; la technique et le capital sont donnés à un instant.</li>
+      <li>Fonctions de production : nourriture A = 20 × tA × (K/50)^0,2 × (L × x / 10)^0,7 et machines B = 10 × tB × (K/50)^0,4 × (L × (1 − x) / 10)^0,7, avec x la part du travail vers la nourriture.</li>
+      <li>L'exposant 0,7 &lt; 1 traduit des rendements décroissants du travail dans chaque secteur. Le capital sert davantage à l'industrie (exposant 0,4) qu'à l'agriculture (0,2).</li>
+    </ul></div>
+    <p>La courbe est bombée vers l'extérieur car les rendements sont décroissants : les premiers travailleurs envoyés aux champs sont très productifs, les suivants le sont de moins en moins. Le coût d'une tonne de nourriture supplémentaire augmente donc à mesure qu'on se spécialise : c'est la pente de la frontière au point choisi, le coût d'opportunité marginal. Le coût moyen, lui, rapporte toutes les machines sacrifiées depuis le point de départ à toutes les tonnes gagnées ; il augmente moins vite que le coût marginal.</p>
+    <div class="fblock">coût marginal = − pente de la frontière = − ΔB / ΔA pour une tonne de plus
+coût moyen depuis « tout en machines » = (Bmax − B) / A</div>
+    <p>Il faut distinguer deux mouvements. Changer la répartition du travail (le dernier curseur) déplace le point <i>le long</i> de la frontière. Changer les facteurs ou la technique déplace <i>la frontière elle-même</i>, et pas forcément de la même façon pour les deux biens : plus de travail repousse les deux extrémités ; plus de capital profite surtout aux machines dans ce modèle ; un progrès technique agricole ne repousse que l'extrémité « nourriture ». Les besoins, eux, se déplacent aussi.</p>
     <p>Ton cours ajoute qu'un <b>service</b> ne se stocke pas, alors qu'un bien si : on ne met pas une coupe de cheveux en réserve.</p>
     <div class="def"><b>Service</b>Production immatérielle consommée au moment où elle est produite (transport, soin, enseignement). Elle ne peut pas être stockée.</div>
+    <div class="nuance"><b>Nuance</b>La frontière est moins nette dans les faits : un logiciel ou un film se stockent et se copient, et un bien périssable se stocke très mal. Retiens la définition du cours pour l'examen, mais sache qu'elle décrit un cas typique.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Si un jour une technologie rendait l'énergie quasi gratuite, la rareté disparaîtrait-elle ? Qu'est-ce qui deviendrait rare à la place ?</p>
@@ -341,6 +377,21 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
     <div class="readout"><span>Utilité totale de l'eau : <b data-o="te"></b></span><span>des diamants : <b data-o="td"></b></span><span>Utilité marginale de l'eau : <b data-o="me"></b></span><span>du diamant : <b data-o="md"></b></span></div>
     <div class="readout" data-o="verdict"></div>
   </div>
+  <div class="wg" data-w="march">
+    <h4>🔬 De l'utilité marginale au prix : offre et demande</h4>
+    <p class="hint">Courbe bleue : la demande, c'est-à-dire l'utilité marginale de chaque unité, donc ce qu'on est prêt à payer pour elle. Courbe orange : l'offre, qui dépend du coût de production et de la quantité disponible. Le prix d'équilibre est à leur croisement. La surface bleue est l'utilité totale des unités échangées, le rectangle hachuré la dépense (prix × quantité).</p>
+<div class="pred" data-pred="march" data-ok="no"><p class="pq"><small>Avant de toucher aux curseurs · formation des prix</small>L'eau apporte une utilité totale bien plus grande que les diamants. Son prix de marché est-il forcément plus élevé ?</p><div class="opts"><button class="btn" type="button" data-pv="yes">oui, forcément</button><button class="btn" type="button" data-pv="no">non, pas forcément</button><button class="btn" type="button" data-pv="tot">il dépend seulement de l'utilité totale</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Non, pas forcément.</b> Le prix se fixe là où l'offre rencontre la demande. En ville, l'offre d'eau est si abondante que la dernière unité échangée a une utilité marginale très faible : le prix est bas, alors que l'utilité totale (la surface bleue) est énorme. Une utilité marginale élevée ou une utilité totale élevée ne suffit pas : il faut regarder les deux courbes. Compare les préréglages « eau en ville », « diamants » et « eau dans le désert ».</p></template></div>
+    <div class="presets"><button class="btn" type="button" data-pre="ville">Eau en ville</button><button class="btn" type="button" data-pre="desert">Eau dans le désert</button><button class="btn" type="button" data-pre="diam">Diamants</button><button class="btn" type="button" data-pre="cartel">Diamants, ventes limitées par un cartel</button></div>
+    <canvas class="cv" data-c="cv" style="height:280px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Bien</label><select data-k="good"><option value="eau">eau (le besoin s'épuise lentement)</option><option value="diam">diamants (le désir s'épuise vite)</option></select></div>
+      <div class="ctl"><label>Intensité du besoin <span data-o="a"></span></label><input type="range" data-k="a" min="20" max="100" step="5" value="100"></div>
+      <div class="ctl"><label>Quantité disponible <span data-o="qa"></span></label><input type="range" data-k="qa" min="1" max="40" step="1" value="35"></div>
+      <div class="ctl"><label>Coût de production d'une unité <span data-o="c0"></span></label><input type="range" data-k="c0" min="0" max="40" step="1" value="1"></div>
+    </div>
+    <div class="readout"><span>Prix d'équilibre : <b data-o="p"></b></span><span>Quantité échangée : <b data-o="q"></b></span><span>Utilité totale : <b data-o="ut"></b></span><span>Dépense (prix × quantité) : <b data-o="dep"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
     <p>Le premier verre d'eau après un footing, tu donnerais n'importe quoi pour l'avoir. Le cinquième, tu le refuses. L'eau n'a pas changé, c'est ton besoin du verre suivant qui a fondu. Le prix se règle sur ce dernier verre, pas sur le premier.</p>
   </div></details>
@@ -351,11 +402,19 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
     <div class="def"><b>Utilité marginale</b>Satisfaction supplémentaire apportée par la dernière unité consommée. Elle décroît à mesure qu'on consomme.</div>
     <div class="fblock">utilité totale = somme des utilités marginales de chaque unité
 modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
-    <p>L'eau a une utilité totale énorme mais une utilité marginale faible parce qu'elle est abondante. Le diamant a une utilité totale faible mais une utilité marginale élevée parce qu'il est rare. Le prix suit l'utilité marginale, donc la rareté. Dans le désert, l'ordre s'inverse. L'exemple du baril de pétrole de ton cours fonctionne de la même façon : son prix varie bien plus vite que sa « valeur » pour l'économie.</p>
+    <p>L'eau a une utilité totale énorme mais une utilité marginale faible parce qu'elle est abondante. Le diamant a une utilité totale faible mais une utilité marginale élevée parce qu'il est rare. Dans le modèle néoclassique, l'utilité marginale explique la <b>demande</b> : ce qu'on est prêt à payer pour une unité de plus.</p>
+    <div class="def"><b>Prix d'équilibre</b>Prix pour lequel la quantité demandée est égale à la quantité offerte. Il résulte de la rencontre de l'offre (coûts, quantité disponible) et de la demande (utilité marginale, disposition à payer).</div>
+    <p>Le prix de marché ne « suit » donc pas l'utilité marginale à lui seul : il se fixe là où l'offre rencontre la demande, et à l'équilibre il est égal à l'utilité marginale de la dernière unité achetée. L'eau est bon marché parce que l'offre est si abondante que la dernière unité échangée a peu de valeur pour l'acheteur. Dans le désert, l'offre se réduit et l'ordre s'inverse. Le second outil de ce bloc montre ce passage de l'utilité marginale au prix d'équilibre. L'exemple du baril de pétrole de ton cours fonctionne de la même façon : son prix varie bien plus vite que sa « valeur » pour l'économie.</p>
+    <div class="hyp"><b>Hypothèses du raisonnement</b><ul>
+      <li>Marché concurrentiel : beaucoup d'acheteurs et de vendeurs, aucun ne fixe seul le prix.</li>
+      <li>Utilité marginale décroissante, et des consommateurs qui achètent tant qu'elle dépasse le prix.</li>
+      <li>Ici, l'outil suppose une offre donnée (quantité disponible) et un coût de production simple.</li>
+    </ul></div>
+    <div class="nuance"><b>Nuance</b>La rareté seule ne fait pas un prix élevé : un objet unique que personne ne désire ne vaut rien. Il faut à la fois une offre limitée et une demande forte. À l'inverse, un monopole peut maintenir un prix élevé sans rareté physique : le marché du diamant a longtemps été contrôlé par De Beers, qui limitait les quantités mises en vente.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Un tableau de maître ne coûte presque rien à produire en peinture et en toile. Que dirait un classique de sa valeur, et que dirait un néoclassique de son prix ?</p>
-      <details><summary>Éléments de réponse</summary><div class="ans">Un classique chercherait la valeur dans le travail incorporé, ce qui explique mal un prix de plusieurs millions. Le néoclassique répond que l'œuvre est unique (rareté absolue) et que quelques acheteurs lui accordent une utilité marginale immense : le prix reflète cette demande, pas le coût.</div></details></div>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un classique chercherait la valeur dans le travail incorporé, ce qui explique mal un prix de plusieurs millions. Le néoclassique répond que l'œuvre est unique (offre fixée à une unité) et que quelques acheteurs lui accordent une utilité marginale immense : le prix naît de cette demande face à une offre qui ne peut pas augmenter, pas du coût de production.</div></details></div>
     <div class="q"><p>Pourquoi dit-on que le prix est une information sur la rareté ? Que se passe-t-il si un État bloque un prix en dessous de ce niveau ?</p>
       <details><summary>Éléments de réponse</summary><div class="ans">Un prix qui monte signale que le bien est désiré et peu disponible : il incite à économiser le bien et à en produire plus. Si le prix est bloqué trop bas, ce signal disparaît : la demande dépasse l'offre, on voit apparaître des files d'attente, du rationnement ou un marché noir.</div></details></div>
   </div></details>
@@ -378,6 +437,7 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
   <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
     <p>Les <b>biens économiques</b> sont rares et utiles, contrairement aux biens libres comme l'air.</p>
     <div class="def"><b>Bien économique</b>Bien utile, disponible en quantité limitée, et qui nécessite donc un travail de production : il a un prix.</div>
+    <div class="nuance"><b>Nuance</b>« Il a un prix » décrit le cas marchand. Certains biens économiques sont fournis gratuitement à l'usager (éclairage public, école publique) : ils ont un coût de production, payé par l'impôt, mais pas de prix de vente. Ce sont des productions non marchandes, que le PIB compte à leur coût.</div>
     <div class="def"><b>Bien de consommation finale</b>Bien acheté par un ménage pour son usage. Non durable s'il est détruit à la première utilisation (aliment, essence), durable s'il s'use progressivement (voiture, lave-linge).</div>
     <div class="def"><b>Bien de production</b>Bien qui sert à fabriquer d'autres biens pendant plusieurs cycles de production sans y être incorporé (machine, bâtiment, camion). Il constitue le capital technique.</div>
     <div class="def"><b>Consommation intermédiaire</b>Bien ou service incorporé dans un autre bien par transformation (farine dans le pain) ou détruit dans la production (énergie).</div>
@@ -451,6 +511,14 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="def"><b>Équilibre général</b>Équilibre à double niveau, de chaque individu et de chaque marché en même temps (Walras).</div>
     <p><b>Keynes</b> (après 1929) raisonne en macro-économie : un déséquilibre peut durer (chômage durable), et l'État doit alors se substituer aux entreprises défaillantes pour investir et embaucher. <b>Marx</b>, cité dans tes notes, pense que les crises sont inhérentes au capitalisme et prône l'appropriation collective des moyens de production.</p>
     <p><b>Années 70</b> : l'opposition libéraux/keynésiens est dépassée et la recherche se diversifie : modèles mathématiques des marchés financiers (Merton et Scholes, Nobel 1997), bien-être et capabilités (Sen, 1998), psychologie du risque (Kahneman et Smith, 2002).</p>
+    <p>L'axe de l'outil aide à mémoriser, mais il résume chaque école à une seule question : la place de l'État. Pour une dissertation, compare plutôt leurs hypothèses, leur diagnostic et leurs limites.</p>
+    <div class="ttwrap"><table class="sch"><thead><tr><th>École</th><th>Hypothèses</th><th>Diagnostic</th><th>Limites</th></tr></thead><tbody>
+      <tr><td><b>Classiques</b><br>Smith, Ricardo, Say</td><td>Valeur fondée sur le travail ; individus guidés par leur intérêt ; prix et salaires flexibles ; l'offre crée sa propre demande (loi de Say).</td><td>Les déséquilibres sont passagers ; le marché revient seul à l'équilibre ; l'État doit garantir les règles (propriété, contrats, défense).</td><td>N'explique pas un chômage de masse durable ; la théorie de la valeur-travail explique mal les prix des biens rares.</td></tr>
+      <tr><td><b>Néoclassiques</b><br>Walras, Jevons, Menger</td><td>Agents rationnels (homo œconomicus) ; raisonnement à la marge ; concurrence parfaite ; information complète.</td><td>Le chômage et les crises viennent de rigidités ou d'entraves aux prix ; il faut laisser les marchés s'ajuster.</td><td>Hypothèses rarement réunies en pratique (information, rationalité, concurrence) ; le modèle dit peu de choses sur les crises de demande.</td></tr>
+      <tr><td><b>Keynes</b></td><td>Raisonnement macro ; la demande effective (consommation + investissement) détermine la production ; salaires et prix rigides à court terme ; anticipations incertaines.</td><td>Un équilibre de sous-emploi peut durer ; l'État doit soutenir la demande (dépense, investissement public) pour relancer l'activité.</td><td>Le multiplicateur réel est plus faible (impôts, importations) ; relance mal adaptée aux chocs d'offre et à l'inflation (stagflation des années 70) ; question de la dette.</td></tr>
+      <tr><td><b>Marx</b></td><td>Valeur-travail ; la plus-value vient du travail non payé ; société divisée entre capital et travail.</td><td>Les crises sont inhérentes au capitalisme (suraccumulation, baisse tendancielle du taux de profit) ; il faut l'appropriation collective des moyens de production.</td><td>Les économies planifiées du XXe siècle ont connu de graves problèmes d'information et d'incitations ; prédictions d'effondrement du capitalisme non réalisées.</td></tr>
+    </tbody></table></div>
+    <div class="nuance"><b>Nuance</b>Chaque école recouvre des courants variés, et un même économiste peut conclure différemment selon le problème étudié : Keynes défendait le marché en temps normal et la relance en dépression. Les réponses du tableau de l'outil sont des positions typiques, pas des doctrines figées.</div>
     <div class="trap"><b>Erreur page 1 : « néoclassique (capitalisme) »</b>Le néoclassicisme est une école de pensée, pas un système économique. Le capitalisme existait déjà au temps des classiques, qui le décrivent. Ce qui change en 1870, c'est la théorie : valeur fondée sur l'utilité marginale au lieu du travail, et équilibre général.</div>
     <div class="trap"><b>Coquilles du polycopié, page 6</b>« Scholl » est Myron Scholes, « D Kanman » est Daniel Kahneman, « S Amarty a » est Amartya Sen. À l'écrit, ces noms mal orthographiés coûtent des points.</div>
   </div></details>
@@ -484,6 +552,22 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="readout"><span>Multiplicateur k : <b data-o="k"></b></span><span>PIB avant crise : <b data-o="y0"></b></span><span>PIB final sans État : <b data-o="ya"></b></span><span>avec État : <b data-o="yb"></b></span><span>Relance qui compense exactement : <b data-o="need"></b></span></div>
     <div class="svgbox wide" data-o="loop"></div>
   </div>
+  <div class="wg" data-w="mult">
+    <h4>🔬 Le multiplicateur, tour par tour</h4>
+    <p class="hint">L'État dépense ΔG. Cette dépense devient le revenu de quelqu'un, qui en redépense une part, et ainsi de suite. Chaque barre est l'ajout au PIB d'un tour ; la ligne est la somme cumulée, qui converge vers ΔG × k. Avance un tour à la fois.</p>
+<div class="pred" data-pred="mult" data-ok="up"><p class="pq"><small>Avant de toucher aux curseurs · multiplicateur keynésien</small>Dans le modèle keynésien élémentaire, si la propension marginale à consommer augmente, que devient le multiplicateur ?</p><div class="opts"><button class="btn" type="button" data-pv="up">il augmente</button><button class="btn" type="button" data-pv="down">il diminue</button><button class="btn" type="button" data-pv="same">il reste identique</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Il augmente.</b> À chaque tour, une part c du revenu est redépensée : plus c est grand, plus chaque tour est gros et plus la somme ΔG × (1 + c + c² + …) = ΔG / (1 − c) est élevée. Avec c = 0,8 on obtient 5 ; avec c = 0,9, 10. Coche ensuite « impôts et importations » : ces fuites réduisent la part redépensée dans le pays, donc le multiplicateur.</p></template></div>
+    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
+    <div class="stepbar"><button class="btn primary" type="button" data-act="next">Tour suivant</button><button class="btn" type="button" data-act="all">Tout dérouler</button><button class="btn" type="button" data-act="reset">Recommencer</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Dépense publique ΔG <span data-o="dg"></span></label><input type="range" data-k="dg" min="10" max="200" step="10" value="100"></div>
+      <div class="ctl"><label>Propension marginale à consommer c <span data-o="c"></span></label><input type="range" data-k="c" min="0.5" max="0.95" step="0.01" value="0.8"></div>
+      <label class="chk" style="grid-column:1/-1"><input type="checkbox" data-k="fuite"> Impôts et importations (économie ouverte)</label>
+      <div class="ctl"><label>Taux d'impôt t <span data-o="t"></span></label><input type="range" data-k="t" min="0" max="0.4" step="0.05" value="0.3"></div>
+      <div class="ctl"><label>Propension à importer m <span data-o="m"></span></label><input type="range" data-k="m" min="0" max="0.3" step="0.05" value="0.2"></div>
+    </div>
+    <div class="readout"><span>Tours affichés : <b data-o="n"></b></span><span>Somme des effets : <b data-o="sum"></b></span><span>Limite théorique ΔG × k : <b data-o="lim"></b></span><span>k : <b data-o="k"></b></span></div>
+    <div class="rounds" data-o="list"></div>
+  </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
     <p>Un village où tout le monde vit des achats des autres : le boulanger achète chez le cordonnier, qui achète chez le menuisier, qui achète chez le boulanger. Si le boulanger a peur et cesse d'acheter, le cordonnier gagne moins et achète moins au menuisier, et ainsi de suite : la peur se propage. Si le maire commande une nouvelle école au menuisier, l'argent se remet à circuler et chacun recommence à dépenser.</p>
   </div></details>
@@ -494,8 +578,17 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="def"><b>Multiplicateur keynésien</b>Rapport entre la hausse finale du PIB et la dépense initiale qui l'a provoquée. Chaque euro dépensé devient le revenu de quelqu'un, qui en redépense une part c, et ainsi de suite.</div>
     <div class="fblock">ΔY = ΔG × (1 + c + c² + c³ + …) = ΔG / (1 − c)
 k = 1 / (1 − c)
-c = 0,8  →  k = 5 : 1 Md de grands travaux crée 5 Md de PIB à terme</div>
-    <p>La même logique joue à l'envers : une baisse de 8 Md de l'investissement fait perdre 40 Md de PIB. C'est ce que montre la courbe rouge. Plus les ménages consomment (c proche de 1), plus le multiplicateur est fort, dans les deux sens. Le modèle est volontairement simplifié : il ignore les importations, les impôts et les réactions des prix, qui réduisent le multiplicateur réel.</p>
+c = 0,8  →  k = 5 : dans ce modèle, 1 Md de grands travaux ajoute 5 Md au PIB à terme</div>
+    <div class="hyp"><b>Hypothèses de k = 1 / (1 − c)</b><ul>
+      <li>Économie fermée : pas d'importations, tout ce qui est dépensé est produit dans le pays.</li>
+      <li>Pas d'impôt proportionnel au revenu ; propension marginale à consommer c constante.</li>
+      <li>Prix fixes et capacités de production disponibles (chômage, machines à l'arrêt) : la demande supplémentaire se transforme en production, pas en inflation.</li>
+    </ul></div>
+    <p>La même logique joue à l'envers : une baisse de 8 Md de l'investissement fait perdre 40 Md de PIB. C'est ce que montre la courbe rouge. Plus les ménages consomment (c proche de 1), plus le multiplicateur est fort, dans les deux sens. Le second outil ci-dessus déroule la chaîne tour par tour.</p>
+    <div class="fblock">avec un taux d'impôt t et une propension à importer m :
+k = 1 / (1 − c × (1 − t) + m)
+c = 0,8, t = 0,3, m = 0,25  →  k ≈ 1,4</div>
+    <div class="nuance"><b>Nuance</b>k est un multiplicateur théorique, dans ce cadre. Il ne garantit pas que chaque euro de dépense publique produise toujours le même effet sur le PIB observé : les fuites (impôts, importations, épargne de précaution), la réaction des taux d'intérêt et des prix, et les anticipations des ménages font varier l'effet réel. Les estimations empiriques pour les pays développés se situent souvent autour de 0,5 à 1,5, plus haut en récession profonde qu'en période normale.</div>
     <p>Tes notes relient ensuite la crise à l'arrivée d'Hitler : les déséquilibres individuels conduisent à des déséquilibres économiques, puis à des conflits.</p>
     <div class="trap"><b>Raccourci page 1 : « les actions valent 0 » et « récession au bout de 3 mois »</b>Les actions n'ont pas valu zéro : le Dow Jones a perdu environ 89 % entre son sommet de septembre 1929 et juillet 1932, en trois ans de baisse. Et l'activité américaine ralentissait déjà depuis l'été 1929, avant le krach. Le krach a transformé un ralentissement en dépression, il ne l'a pas créé de toutes pièces.</div>
     <div class="trap"><b>Raccourci page 2 : Keynes et le New Deal</b>Le New Deal de Roosevelt date de 1933, la Théorie générale de Keynes de 1936. Le New Deal n'est donc pas une application de la théorie de Keynes, même s'il va dans le même sens. De même, entre Versailles (1919) et Hitler (1933), le maillon décisif est la crise de 1929 : les capitaux américains se retirent d'Allemagne, qui compte environ 6 millions de chômeurs en 1932.</div>
@@ -642,10 +735,25 @@ Notes : P0 = 100 × 1 € = 100 €
     <h4>🔬 Entre cinq taux de croissance, regarde le niveau du PIB</h4>
     <p class="hint">Les barres sont les taux annuels (échelle de gauche), la ligne le niveau du PIB, base 100 (échelle de droite). Tant qu'une barre est au-dessus de zéro, la ligne monte, même si la barre rétrécit.</p>
     <div class="presets"><button class="btn" type="button" data-pre="acc">1,8 → 3 % : augmente</button><button class="btn" type="button" data-pre="ral">1,8 → 1,2 % : augmente moins vite</button><button class="btn" type="button" data-pre="rec">1,8 → −0,3 % : diminue</button><button class="btn" type="button" data-pre="g30">Trente Glorieuses</button></div>
+    <div class="controls" style="margin-bottom:8px"><div class="ctl"><label>Fréquence des données</label><select data-k="freq"><option value="an">taux annuels</option><option value="tr">taux trimestriels</option></select></div></div>
     <div class="yrs"><div><label>Année 1 (%)</label><input type="number" step="0.1" data-k="y1" value="1.8"></div><div><label>Année 2 (%)</label><input type="number" step="0.1" data-k="y2" value="1.2"></div><div><label>Année 3 (%)</label><input type="number" step="0.1" data-k="y3" value="0.8"></div><div><label>Année 4 (%)</label><input type="number" step="0.1" data-k="y4" value="0.5"></div><div><label>Année 5 (%)</label><input type="number" step="0.1" data-k="y5" value="0.3"></div></div>
     <canvas class="cv" data-c="cv" style="height:260px"></canvas>
-    <div class="readout"><span>PIB final : <b data-o="fin"></b></span><span>Taux moyen annuel : <b data-o="moy"></b></span></div>
+    <div class="readout"><span>PIB final : <b data-o="fin"></b></span><span><span data-o="moyl">Taux moyen annuel</span> : <b data-o="moy"></b></span></div>
     <div class="readout" data-o="verdict"></div>
+  </div>
+  <div class="wg" data-w="comp">
+    <h4>🔬 Quelques dixièmes de point, plusieurs décennies</h4>
+    <p class="hint">Deux économies partent du même PIB (base 100) avec des taux différents. Les écarts se composent d'année en année. Coche « PIB nominal » pour ajouter l'inflation : la valeur monte plus vite, mais la production réelle (en volume) ne change pas.</p>
+<div class="pred" data-pred="comp" data-ok="b"><p class="pq"><small>Avant de toucher aux curseurs · croissance composée</small>Deux pays partent du même PIB. L'un croît de 1 % par an, l'autre de 1,5 %. Au bout de 50 ans, de combien le second dépasse-t-il le premier ?</p><div class="opts"><button class="btn" type="button" data-pv="a">moins de 5 %</button><button class="btn" type="button" data-pv="b">environ 25 à 30 %</button><button class="btn" type="button" data-pv="c">plus de 60 %</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Environ 28 %.</b> 1,01^50 ≈ 1,64 et 1,015^50 ≈ 2,11 : 2,11 / 1,64 ≈ 1,28. Un demi-point d'écart chaque année ne semble rien, mais il se compose : (1,015 / 1,01)^50 ≈ 1,005^50. C'est pourquoi les économistes s'intéressent autant à quelques dixièmes de croissance.</p></template></div>
+    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Taux du pays A <span data-o="g1"></span></label><input type="range" data-k="g1" min="-1" max="6" step="0.1" value="1"></div>
+      <div class="ctl"><label>Taux du pays B <span data-o="g2"></span></label><input type="range" data-k="g2" min="-1" max="6" step="0.1" value="1.5"></div>
+      <div class="ctl"><label>Durée <span data-o="n"></span></label><input type="range" data-k="n" min="5" max="80" step="5" value="50"></div>
+      <div class="ctl"><label>Inflation <span data-o="pi"></span></label><input type="range" data-k="pi" min="0" max="6" step="0.5" value="2"></div>
+      <label class="chk" style="grid-column:1/-1"><input type="checkbox" data-k="nom"> Afficher aussi le PIB nominal (en valeur)</label>
+    </div>
+    <div class="readout"><span>PIB final A : <b data-o="ya"></b></span><span>B : <b data-o="yb"></b></span><span>Écart B / A : <b data-o="gap"></b></span><span>Doublement A : <b data-o="da"></b></span><span>B : <b data-o="db"></b></span></div>
   </div>
   <div class="wg" data-w="share">
     <h4>🔬 Part ou montant : l'agriculture de 1949 à aujourd'hui</h4>
@@ -667,14 +775,15 @@ Notes : P0 = 100 × 1 € = 100 €
     <canvas class="cv" data-c="cv" style="height:220px"></canvas>
   </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
-    <p>Une voiture qui passe de 130 à 90 km/h ralentit, mais elle avance toujours. Le taux de croissance, c'est la vitesse ; le PIB, c'est la distance parcourue. Seule une vitesse négative fait reculer la voiture : c'est la récession.</p>
+    <p>Une voiture qui passe de 130 à 90 km/h ralentit, mais elle avance toujours. Le taux de croissance, c'est la vitesse ; le PIB, c'est la distance parcourue. Seule une vitesse négative fait reculer la voiture : c'est la récession, que l'on mesure sur l'année ou, en conjoncture, sur deux trimestres de suite.</p>
   </div></details>
   <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
     <div class="def"><b>Croissance économique</b>Augmentation durable de la production d'un pays, mesurée par le taux de variation du PIB en volume.</div>
     <div class="fblock">taux de croissance = (PIB N+1 − PIB N) / PIB N × 100
 PIB après n années à taux constant g : PIB × (1 + g)^n
 temps de doublement ≈ 70 / g (en %) : 5 % → 14 ans ; 1 % → 70 ans</div>
-    <div class="def"><b>Récession</b>Baisse du PIB en volume, c'est-à-dire un taux de croissance négatif. En conjoncture, on parle de récession après deux trimestres consécutifs de recul.</div>
+    <div class="def"><b>Récession</b>Baisse du PIB en volume. Deux niveaux à ne pas mélanger : sur une année, on parle de récession quand le PIB annuel recule (taux de croissance annuel négatif) ; en analyse conjoncturelle, la convention retenue est deux trimestres consécutifs de baisse du PIB.</div>
+    <div class="nuance"><b>Nuance</b>Les deux définitions ne coïncident pas toujours. Une année peut afficher un PIB annuel en baisse sans deux trimestres négatifs d'affilée, et inversement deux trimestres de recul en fin d'année peuvent laisser la moyenne annuelle positive. La règle des deux trimestres est une convention de commentateurs, pas une définition officielle : aux États-Unis, le comité du NBER date les récessions à partir de plusieurs indicateurs (emploi, revenus, production).</div>
     <div class="def"><b>Tertiarisation</b>Augmentation de la part des services dans la valeur ajoutée et l'emploi : en France, ils passent d'environ 50 % à 80 % de la VA depuis 1950, selon ton graphique page 7.</div>
     <p><b>Méthode du commentaire de graphique</b>, selon ton cours :</p>
     <div class="fblock">1) Définir les concepts utilisés, le cadre et le contexte (source, unité, période)
@@ -798,8 +907,26 @@ function initWidgets(){
     widgets.push(W);
   });
 }
+function initPreds(){
+  S.pred=S.pred||{};
+  document.querySelectorAll(".pred[data-pred]").forEach(function(box){
+    const id=box.dataset.pred, ok=box.dataset.ok, wg=box.closest(".wg"), res=box.querySelector(".pres"), ta=box.querySelector("textarea"), exp=box.querySelector("template.pexp").innerHTML;
+    function show(){
+      const st=S.pred[id]; box.querySelectorAll("[data-pv]").forEach(function(b){ b.setAttribute("aria-pressed",st&&st.v===b.dataset.pv?"true":"false"); });
+      if(!st){ wg.classList.add("locked"); res.hidden=true; return; }
+      wg.classList.remove("locked"); ta.value=st.j||"";
+      const lab=box.querySelector('[data-pv="'+st.v+'"]').textContent;
+      res.hidden=false; res.innerHTML="Ta prédiction : <b>"+lab+"</b>. Manipule maintenant l'outil pour la tester, puis explique ce que tu observes.<details><summary>Voir la réponse</summary>"+(st.v===ok?'<p class="verdict-ok">Ton intuition était juste.</p>':'<p class="verdict-no">Ton intuition ne correspond pas au modèle : regarde pourquoi.</p>')+exp+"</details>";
+      const r=document.createElement("button"); r.type="button"; r.className="redo"; r.textContent="refaire la prédiction"; r.addEventListener("click",function(){ delete S.pred[id]; save(); ta.value=""; show(); }); res.appendChild(r);
+      draw(widgets.find(function(W){ return W.root===wg; })||{root:wg,type:null});
+    }
+    box.querySelectorAll("[data-pv]").forEach(function(b){ b.addEventListener("click",function(){ S.pred[id]={v:b.dataset.pv,j:ta.value}; save(); show(); }); });
+    ta.addEventListener("input",function(){ if(S.pred[id]){ S.pred[id].j=ta.value; save(); } });
+    show();
+  });
+}
 function visible(W){ return W.root.offsetParent!==null; }
-function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
+function draw(W){ if(W.type&&IMPL[W.type]&&visible(W)) IMPL[W.type].draw(W); }
 function drawAll(){ widgets.forEach(draw); drawHero(); }
 function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
 
@@ -824,36 +951,42 @@ $("heroG").addEventListener("input",drawHero);
 
 /* ---------- 1. frontière des possibilités de production ---------- */
 IMPL.fpp={
-  presets:{base:{L:60,K:50,tech:1,x:50},pop:{L:90,K:50,tech:1,x:50},tech:{L:60,K:50,tech:1.6,x:50},tout:{L:60,K:50,tech:1,x:95}},
+  presets:{base:{L:60,K:50,tech:1,tg:"both",x:50},pop:{L:90,K:50,tech:1,tg:"both",x:50},cap:{L:60,K:100,tech:1,tg:"both",x:50},tech:{L:60,K:50,tech:1.6,tg:"A",x:50},tout:{L:60,K:50,tech:1,tg:"both",x:95}},
   draw:function(W){
-    const L=W.v("L"),K=W.v("K"),t=W.v("tech"),x=W.v("x")/100;
+    const L=W.v("L"),K=W.v("K"),t=W.v("tech"),tg=W.v("tg"),x=W.v("x")/100;
     W.o.L.textContent=L; W.o.K.textContent=K; W.o.tech.textContent="× "+fr(t,1); W.o.x.textContent=fr(x*100,0)+" %";
-    const f=function(L,K,t){ return t*Math.pow(K/50,0.3); };
-    const A=function(L,K,t,x){ return f(L,K,t)*20*Math.pow(L*x/10,0.7); };
-    const B=function(L,K,t,x){ return f(L,K,t)*10*Math.pow(L*(1-x)/10,0.7); };
+    const tA=tg==="B"?1:t, tB=tg==="A"?1:t;
+    const A=function(L,K,tA,x){ return 20*tA*Math.pow(K/50,0.2)*Math.pow(L*x/10,0.7); };
+    const B=function(L,K,tB,x){ return 10*tB*Math.pow(K/50,0.4)*Math.pow(L*(1-x)/10,0.7); };
     const g=chart(W.c.cv,[0,180],[0,90],{xt:[0,30,60,90,120,150,180],yt:[0,15,30,45,60,75,90],xl:"nourriture (tonnes)",yl:"machines (unités)"});
-    const xs=lin(0,1,120), c=g.ctx;
-    // courbe de référence
+    const xs=lin(0,1,120), c=g.ctx, cl=function(v,m){ return Math.min(m,v); };
     c.save(); c.strokeStyle=css("--off"); c.lineWidth=1.5; c.setLineDash([5,4]); c.beginPath();
-    xs.forEach(function(u,i){ const px=g.X(A(60,50,1,u)), py=g.Y(B(60,50,1,u)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
-    // zone atteignable
+    xs.forEach(function(u,i){ const px=g.X(cl(A(60,50,1,u),180)), py=g.Y(cl(B(60,50,1,u),90)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
     c.save(); c.fillStyle=css("--pos"); c.globalAlpha=0.12; c.beginPath(); c.moveTo(g.X(0),g.Y(0));
-    xs.forEach(function(u){ c.lineTo(g.X(Math.min(180,A(L,K,t,u))),g.Y(Math.min(90,B(L,K,t,u)))); }); c.closePath(); c.fill(); c.restore();
+    xs.forEach(function(u){ c.lineTo(g.X(cl(A(L,K,tA,u),180)),g.Y(cl(B(L,K,tB,u),90))); }); c.closePath(); c.fill(); c.restore();
     c.save(); c.strokeStyle=css("--pos"); c.lineWidth=2.5; c.beginPath();
-    xs.forEach(function(u,i){ const px=g.X(Math.min(180,A(L,K,t,u))), py=g.Y(Math.min(90,B(L,K,t,u))); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
-    // besoins
+    xs.forEach(function(u,i){ const px=g.X(cl(A(L,K,tA,u),180)), py=g.Y(cl(B(L,K,tB,u),90)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
     const nA=150,nB=75;
     c.fillStyle=css("--neg"); c.beginPath(); c.arc(g.X(nA),g.Y(nB),6,0,7); c.fill();
     c.font="12px "+css("--ui"); c.textAlign="right"; c.fillText("besoins",g.X(nA)-10,g.Y(nB)+4);
-    // point choisi
-    const a=A(L,K,t,x), b=B(L,K,t,x);
-    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(Math.min(a,180)),g.Y(Math.min(b,90)),6,0,7); c.fill();
-    c.textAlign="left"; c.fillText("ton choix",g.X(Math.min(a,180))+9,g.Y(Math.min(b,90))-8);
-    const oc= x<=0.001?0: x>=0.999?Infinity: 0.5*Math.pow(x/(1-x),0.3);
+    const a=A(L,K,tA,x), b=B(L,K,tB,x), Bmax=B(L,K,tB,0);
+    // coût marginal = −dB/dA = (B/(1−x)) / (A/x)
+    const oc= x<=0.001?0: x>=0.999?Infinity: (b*x)/(a*(1-x));
+    const om= a>0.01?(Bmax-b)/a:0;
+    if(isFinite(oc)&&x>0.001){ // tangente au point choisi
+      c.save(); c.strokeStyle=css("--ink"); c.globalAlpha=0.6; c.setLineDash([4,3]); c.lineWidth=1.4; c.beginPath();
+      const d=28; c.moveTo(g.X(cl(a-d,180)),g.Y(cl(b+oc*d,90))); c.lineTo(g.X(cl(a+d,180)),g.Y(Math.max(0,cl(b-oc*d,90)))); c.stroke(); c.restore();
+    }
+    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(cl(a,180)),g.Y(cl(b,90)),6,0,7); c.fill();
+    c.textAlign="left"; c.fillText("ton choix",g.X(cl(a,180))+9,g.Y(cl(b,90))-8);
     W.o.a.textContent=fr(a,1)+" t"; W.o.b.textContent=fr(b,1);
     W.o.oc.textContent=isFinite(oc)?fr(oc,2)+" machine"+(oc>=2?"s":""):"toutes";
-    const ok=a>=nA&&b>=nB;
-    W.o.verdict.innerHTML=ok?'<span class="verdict-ok">Les besoins seraient couverts… jusqu’à ce qu’ils grandissent encore.</span>':'<span class="verdict-no">Les besoins restent hors d’atteinte : il faut choisir. C’est la rareté.</span>';
+    W.o.om.textContent=x<=0.001?"—":fr(om,2)+" machine"+(om>=2?"s":"");
+    const ok=a>=nA&&b>=nB, Ar=A(L,K,tA,1)/A(60,50,1,1), Br=B(L,K,tB,0)/B(60,50,1,0);
+    let mv;
+    if(Math.abs(Ar-1)<0.005&&Math.abs(Br-1)<0.005) mv="La frontière n’a pas bougé : en changeant la répartition, tu te déplaces <i>le long</i> de la frontière.";
+    else mv="La frontière s’est déplacée : nourriture maximale "+pc((Ar-1)*100,0)+", machines maximales "+pc((Br-1)*100,0)+(Math.abs(Ar-Br)>0.02?" : le déplacement n’est pas le même pour les deux biens.":".");
+    W.o.verdict.innerHTML=mv+" "+(ok?'<span class="verdict-ok">Les besoins seraient couverts… jusqu’à ce qu’ils grandissent encore.</span>':'<span class="verdict-no">Les besoins restent hors d’atteinte : il faut choisir. C’est la rareté.</span>');
   }
 };
 
@@ -880,7 +1013,39 @@ IMPL.util={
     panel(mid+6,w-8,qd,ud,css("--cb"),"Diamants : utilité de chaque pierre",10);
     const Te=100*(1-Math.pow(0.8,qe))/0.2, Td=40*(1-Math.pow(0.9,qd))/0.1, me=ue(qe), md=ud(qd);
     W.o.te.textContent=fr(Te,0); W.o.td.textContent=fr(Td,0); W.o.me.textContent=fr(me,me<1?2:1); W.o.md.textContent=fr(md,1);
-    W.o.verdict.innerHTML= md>me?"Le dernier diamant est plus désiré que le dernier litre d’eau : le diamant est plus cher, alors que l’eau apporte "+(Te>Td?"bien plus":"autant")+" d’utilité totale.":"Ici l’eau est rare : son dernier litre vaut plus que le dernier diamant. Le prix suit la rareté, pas l’utilité totale.";
+    W.o.verdict.innerHTML= md>me?"Le dernier diamant est plus désiré que le dernier litre d’eau, alors que l’eau apporte "+(Te>Td?"bien plus":"autant")+" d’utilité totale. On est prêt à payer plus cher un diamant de plus : c’est la demande. Le prix lui-même se fixe sur le marché, avec l’offre (outil suivant).":"Ici l’eau est rare : son dernier litre est plus désiré que le dernier diamant. La disposition à payer suit l’utilité marginale, pas l’utilité totale.";
+  }
+};
+
+/* ---------- 2 bis. marché : offre et demande ---------- */
+IMPL.march={
+  presets:{ville:{good:"eau",a:100,qa:35,c0:1},desert:{good:"eau",a:100,qa:2,c0:1},diam:{good:"diam",a:70,qa:2,c0:20},cartel:{good:"diam",a:70,qa:1,c0:20}},
+  draw:function(W){
+    const good=W.v("good"), a=W.v("a"), qa=W.v("qa"), c0=W.v("c0"), b=good==="eau"?0.12:0.35;
+    W.o.a.textContent=fr(a,0); W.o.qa.textContent=qa+(good==="eau"?" unités d'eau":" pierres"); W.o.c0.textContent=fr(c0,0);
+    const D=function(q){ return a*Math.exp(-b*q); }, Sp=function(q){ return c0+100*Math.pow(q/qa,10); };
+    const XM=qa>=12?40:qa>=5?20:10;
+    let lo=0, hi=XM, q=0, p;
+    if(D(0)<=Sp(0)){ q=0; p=NaN; } else { for(let k=0;k<60;k++){ const m=(lo+hi)/2; if(D(m)>Sp(m)) lo=m; else hi=m; } q=(lo+hi)/2; p=D(q); }
+    const g=chart(W.c.cv,[0,XM],[0,100],{xt:lin(0,XM,XM===40?4:5),yt:[0,25,50,75,100],xl:"quantité",yl:"prix, utilité marginale"});
+    const c=g.ctx, xs=lin(0,XM,200);
+    if(q>0){
+      c.save(); c.fillStyle=css("--odd"); c.globalAlpha=0.15; c.beginPath(); c.moveTo(g.X(0),g.Y(0));
+      lin(0,q,80).forEach(function(u){ c.lineTo(g.X(u),g.Y(D(u))); }); c.lineTo(g.X(q),g.Y(0)); c.closePath(); c.fill(); c.restore();
+      c.save(); c.strokeStyle=css("--ink"); c.globalAlpha=0.55; c.lineWidth=1; c.setLineDash([3,3]); c.strokeRect(g.X(0),g.Y(p),g.X(q)-g.X(0),g.Y(0)-g.Y(p));
+      c.beginPath(); for(let u=0;u<q;u+=Math.max(0.5,q/12)){ c.moveTo(g.X(u),g.Y(0)); c.lineTo(g.X(Math.min(q,u+Math.max(0.5,q/12))),g.Y(p)); } c.stroke(); c.restore();
+    }
+    curve(g,xs,D,css("--odd"),2.5);
+    curve(g,xs,function(u){ const v=Sp(u); return v>100?NaN:v; },css("--even"),2.5);
+    if(q>0){ c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(q),g.Y(p),6,0,7); c.fill(); c.textAlign="left"; c.font="12px "+css("--ui"); c.fillText("équilibre",g.X(q)+9,g.Y(p)-8); }
+    c.font="11px "+css("--ui"); c.fillStyle=css("--odd"); c.textAlign="left"; const xd=q<XM*0.4?XM*0.7:XM*0.2; c.fillText("demande",g.X(xd)+4,g.Y(D(xd))-8); c.fillStyle=css("--even"); const ys=Math.min(95,Math.max(Sp(0)+8,12)); c.fillText("offre",g.X(Math.min(XM*0.9,qa))+6,g.Y(ys));
+    const ut=a/b*(1-Math.exp(-b*q));
+    W.o.p.textContent=q>0?fr(p,1):"pas d'échange"; W.o.q.textContent=fr(q,1); W.o.ut.textContent=fr(ut,0); W.o.dep.textContent=q>0?fr(p*q,0):"0";
+    let v;
+    if(!(q>0)) v='<span class="verdict-no">Le coût dépasse ce que quiconque est prêt à payer pour la première unité : rien n’est échangé.</span>';
+    else if(p-c0>0.3*p) v="La quantité disponible limite les échanges : le prix se fixe sur l’utilité marginale de la dernière unité disponible. "+(p<10?"L’offre est abondante, ce dernier achat compte peu : prix bas, même si l’utilité totale est grande.":"L’offre est rare face au besoin : la dernière unité est très désirée, le prix est élevé.");
+    else v="Le coût de production limite les échanges : on achète tant que l’utilité marginale dépasse ce coût, et le prix s’établit juste au-dessus.";
+    W.o.verdict.innerHTML=v+" Utilité totale "+fr(ut,0)+" pour une dépense de "+fr(p*q||0,0)+" : la valeur d’usage et le prix sont deux grandeurs différentes.";
   }
 };
 
@@ -1002,6 +1167,29 @@ IMPL.crise={
     W.o.need.textContent=fr(I0*choc,0)+" Md";
     W.o.loop.classList.toggle("on",dg>0);
     const brk=W.o.loop.querySelector("[data-brk]"), nb=W.o.loop.querySelector("[data-nobrk]"); if(brk){ brk.style.display=dg>0?"":"none"; nb.style.display=dg>0?"none":""; }
+  }
+};
+IMPL.mult={
+  init:function(W){ W.n=1;
+    W.root.querySelectorAll("[data-act]").forEach(function(b){ b.addEventListener("click",function(){ const a=b.dataset.act; W.n=a==="next"?Math.min(40,W.n+1):a==="all"?40:1; draw(W); }); });
+  },
+  draw:function(W){
+    const dg=W.v("dg"), c=W.v("c"), on=W.v("fuite"), t=on?W.v("t"):0, m=on?W.v("m"):0;
+    W.o.dg.textContent=fr(dg,0); W.o.c.textContent=fr(c,2); W.o.t.textContent=on?fr(t,2):"—"; W.o.m.textContent=on?fr(m,2):"—";
+    W.k.t.disabled=!on; W.k.m.disabled=!on;
+    const q=Math.max(0,c*(1-t)-m), k=1/(1-q), lim=dg*k, n=W.n;
+    const r=[], cum=[]; let s=0; for(let i=0;i<n;i++){ const v=dg*Math.pow(q,i); r.push(v); s=Math.min(lim,s+v); cum.push(s); }
+    const N=Math.max(12,Math.min(40,n)), ymax=Math.ceil(lim*1.1/50)*50||50;
+    const g=chart(W.c.cv,[-0.5,N-0.5],[0,ymax],{xt:lin(0,N,Math.min(N,10)).map(Math.round).filter(function(v){ return v<N; }),yt:lin(0,ymax,5),xl:"tour",yl:"ajout au PIB"});
+    const cx=g.ctx, bw=(g.X(1)-g.X(0))*0.7;
+    r.forEach(function(v,i){ cx.fillStyle=i?css("--cb"):css("--pos"); cx.fillRect(g.X(i)-bw/2,g.Y(v),bw,g.Y(0)-g.Y(v)); });
+    cx.save(); cx.strokeStyle=css("--ink"); cx.globalAlpha=0.5; cx.setLineDash([5,4]); cx.beginPath(); cx.moveTo(g.X(-0.5),g.Y(lim)); cx.lineTo(g.X(N-0.5),g.Y(lim)); cx.stroke(); cx.restore();
+    cx.fillStyle=css("--muted"); cx.textAlign="right"; cx.font="11px "+css("--ui"); cx.fillText("limite ΔG × k = "+fr(lim,1),g.X(N-0.5)-4,g.Y(lim)-5);
+    cx.save(); cx.strokeStyle=css("--ink"); cx.lineWidth=2.2; cx.beginPath(); cum.forEach(function(v,i){ if(i) cx.lineTo(g.X(i),g.Y(v)); else cx.moveTo(g.X(i),g.Y(v)); }); cx.stroke();
+    cum.forEach(function(v,i){ cx.fillStyle=css("--ink"); cx.beginPath(); cx.arc(g.X(i),g.Y(v),3,0,7); cx.fill(); }); cx.restore();
+    W.o.n.textContent=n; W.o.sum.textContent=fr(s,1)+" ("+fr(s/lim*100,0)+" % de la limite)"; W.o.lim.textContent=fr(lim,1); W.o.k.textContent=fr(k,2)+(on?"  [1 / (1 − c(1 − t) + m)]":"  [1 / (1 − c)]");
+    const qs=on?"c(1 − t) − m = "+fr(q,2):"c = "+fr(c,2);
+    W.o.list.innerHTML=r.slice(0,12).map(function(v,i){ return i===0?"Tour 0 : dépense publique ΔY₀ = ΔG = "+fr(v,1):"Tour "+i+" : consommation induite = "+fr(q,2)+(i>1?"^"+i:"")+" × "+fr(dg,0)+" = "+fr(v,1)+"   (cumul "+fr(cum[i],1)+")"; }).join("<br>")+(n>12?"<br>… "+(n-12)+" tours de plus, cumul "+fr(s,1):"")+"<br><span style='color:var(--muted)'>Part redépensée dans le pays à chaque tour : "+qs+"</span>";
   }
 };
 function loopSVG(){
@@ -1132,14 +1320,39 @@ IMPL.growth={
     r.forEach(function(g,i){ const x=X(i+1); c.fillStyle=g<0?css("--neg"):css("--pos"); c.fillRect(x-bw*0.3,Math.min(Yg(0),Yg(g)),bw*0.6,Math.abs(Yg(g)-Yg(0)));
       c.fillStyle=css("--ink"); c.textAlign="center"; c.fillText(nar?fr(g,1):pc(g,1),x,g<0?Yg(g)+13:Yg(g)-4);
       const prev=i?r[i-1]:null; let t=g<0?"recul":prev===null?"":g>prev?"accélère":g<prev?"ralentit":"stable";
-      c.fillStyle=g<0?css("--neg"):css("--muted"); c.fillText(nar?({recul:"↓",accélère:"↗",ralentit:"↘",stable:"→"}[t]||""):t,x,h-pb+28); c.fillStyle=css("--muted"); c.fillText((nar?"":"an ")+(i+1),x,h-pb+14); lbl.push(t); });
+      c.fillStyle=g<0?css("--neg"):css("--muted"); c.fillText(nar?({recul:"↓",accélère:"↗",ralentit:"↘",stable:"→"}[t]||""):t,x,h-pb+28); c.fillStyle=css("--muted"); c.fillText((nar?"":(W.v("freq")==="tr"?"T":"an "))+(i+1),x,h-pb+14); lbl.push(t); });
     c.fillStyle=css("--muted"); c.textAlign="center"; c.fillText(nar?"0":"départ",X(0),h-pb+14);
     c.save(); c.strokeStyle=css("--ink"); c.lineWidth=2.4; c.beginPath(); lvl.forEach(function(l,i){ if(i) c.lineTo(X(i),Yl(l)); else c.moveTo(X(i),Yl(l)); }); c.stroke();
     lvl.forEach(function(l,i){ c.fillStyle=css("--ink"); c.beginPath(); c.arc(X(i),Yl(l),3.5,0,7); c.fill(); }); c.restore();
     const moy=(Math.pow(lvl[5]/100,1/5)-1)*100;
-    W.o.fin.textContent=fr(lvl[5],1); W.o.moy.textContent=pc(moy,2);
+    const tr=W.v("freq")==="tr"; W.o.moyl.textContent=tr?"Taux moyen":"Taux moyen annuel";
+    W.o.fin.textContent=fr(lvl[5],1); W.o.moy.textContent=tr?pc(moy,2)+" par trimestre (≈ "+pc((Math.pow(1+moy/100,4)-1)*100,1)+" en rythme annuel)":pc(moy,2);
     const neg=r.filter(function(g){return g<0;}).length, ral=lbl.filter(function(t){return t==="ralentit";}).length;
-    W.o.verdict.innerHTML=neg?'<span class="verdict-no">'+neg+' année'+(neg>1?"s":"")+' de recul : le niveau du PIB baisse vraiment.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque période.";
+    let two=false; for(let i=1;i<r.length;i++) if(r[i]<0&&r[i-1]<0) two=true;
+    if(tr) W.o.verdict.innerHTML=two?'<span class="verdict-no">Deux trimestres consécutifs de baisse : récession au sens de la convention conjoncturelle.</span>':neg?'<span class="verdict-no">'+neg+' trimestre'+(neg>1?"s":"")+' de recul, mais pas deux de suite : le PIB baisse, sans récession au sens conjoncturel.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque trimestre.";
+    else W.o.verdict.innerHTML=neg?'<span class="verdict-no">'+neg+' année'+(neg>1?"s":"")+' de recul : le PIB annuel baisse vraiment, c’est une récession sur l’année.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque période.";
+  }
+};
+
+/* ---------- comparaison de taux ---------- */
+IMPL.comp={
+  draw:function(W){
+    const g1=W.v("g1"), g2=W.v("g2"), n=W.v("n"), pi=W.v("pi"), nom=W.v("nom");
+    W.o.g1.textContent=pc(g1,1); W.o.g2.textContent=pc(g2,1); W.o.n.textContent=n+" ans"; W.o.pi.textContent=fr(pi,1)+" %";
+    const v=function(g,t){ return 100*Math.pow(1+g/100,t); }, vn=function(g,t){ return 100*Math.pow((1+g/100)*(1+pi/100),t); };
+    const top=Math.max(v(g1,n),v(g2,n),nom?Math.max(vn(g1,n),vn(g2,n)):0,110), ymax=top>1000?Math.ceil(top/500)*500:Math.ceil(top/50)*50;
+    const lo=Math.min(100,v(g1,n),v(g2,n)), ymin=lo<100?Math.floor(lo/10)*10:0;
+    const g=chart(W.c.cv,[0,n],[ymin,ymax],{xt:lin(0,n,n<=20?n/5:n<=40?n/5:n/10).map(Math.round),yt:lin(ymin,ymax,5).map(Math.round),xl:"années",yl:"PIB, base 100"});
+    const xs=lin(0,n,160);
+    curve(g,xs,function(t){ return v(g1,t); },css("--cb"),2.5);
+    curve(g,xs,function(t){ return v(g2,t); },css("--pos"),2.5);
+    if(nom){ curve(g,xs,function(t){ return vn(g1,t); },css("--cb"),1.5,[5,4]); curve(g,xs,function(t){ return vn(g2,t); },css("--pos"),1.5,[5,4]); }
+    const c=g.ctx; c.font="12px "+css("--ui"); c.textAlign="right";
+    c.fillStyle=css("--cb"); c.fillText("A",g.X(n)-4,g.Y(v(g1,n))+(v(g1,n)>v(g2,n)?-6:14)); c.fillStyle=css("--pos"); c.fillText("B",g.X(n)-4,g.Y(v(g2,n))+(v(g2,n)>=v(g1,n)?-6:14));
+    if(nom){ c.fillStyle=css("--muted"); c.textAlign="left"; c.fillText("pointillés : en valeur (nominal)",g.X(0)+6,g.Y(ymax)+14); }
+    const ya=v(g1,n), yb=v(g2,n), dbl=function(g){ return g>0?fr(Math.log(2)/Math.log(1+g/100),0)+" ans (règle de 70 : "+fr(70/g,0)+")":"jamais"; };
+    W.o.ya.textContent=fr(ya,0)+(nom?" (valeur "+fr(vn(g1,n),0)+")":""); W.o.yb.textContent=fr(yb,0)+(nom?" (valeur "+fr(vn(g2,n),0)+")":"");
+    W.o.gap.textContent=pc((yb/ya-1)*100,0); W.o.da.textContent=dbl(g1); W.o.db.textContent=dbl(g2);
   }
 };
 
@@ -1191,12 +1404,12 @@ const FORM = [
   ["besoins illimités  ×  facteurs de production limités  →  rareté","Le point de départ de toute l'économie."],
   ["facteurs : ressources naturelles, travail, capital technique","Tous en quantité limitée."],
   ["coût d'opportunité de A = quantité de B sacrifiée / quantité de A gagnée","Ce à quoi on renonce."],
-  ["prix ≠ valeur ;  prix ≈ utilité marginale (néoclassiques)","Paradoxe de l'eau et du diamant."]]},
+  ["prix ≠ valeur ;  prix d'équilibre : quantité offerte = quantité demandée","L'utilité marginale explique la demande (néoclassiques) ; à l'équilibre, prix = utilité marginale de la dernière unité. Paradoxe de l'eau et du diamant."]]},
  {g:"Biens", r:[
   ["consommation finale : non durable (détruit à la 1re utilisation) ou durable","Achetée par les ménages ; supporte la TVA."],
   ["bien de production : sert à produire, sans être incorporé","Capital technique (machines)."],
   ["consommation intermédiaire : incorporée (transformation) ou détruite","Farine, énergie. C'est l'usage qui classe, pas l'objet."],
-  ["service : ne se stocke pas","Produit et consommé en même temps."]]},
+  ["service : ne se stocke pas","Produit et consommé en même temps (cas typique ; logiciels et contenus numériques font exception)."]]},
  {g:"Écoles de pensée", r:[
   ["Classiques (Smith 1776) : individualisme, liberté économique, équilibre permanent","État gendarme."],
   ["Néoclassiques (1870) : utilité marginale, homo œconomicus, équilibre général","État minimal."],
@@ -1217,7 +1430,7 @@ const FORM = [
   ["(1 + g valeur) = (1 + g volume) × (1 + g prix)","On multiplie ; additionner n'est qu'une approximation pour de petits taux."],
   ["g = (PIB N+1 − PIB N) / PIB N","Taux de croissance."],
   ["PIB × (1 + g)^n ;  doublement ≈ 70 / g(%)","Croissance composée."],
-  ["récession : g < 0 (conjoncture : 2 trimestres de baisse)","Taux qui baisse mais reste positif = ralentissement, pas récession."],
+  ["récession annuelle : g annuel < 0 ;  conjoncture : 2 trimestres consécutifs de baisse","Deux niveaux temporels différents. Taux qui baisse mais reste positif = ralentissement, pas récession."],
   ["commentaire : 1) définir  2) tendance  3) analyse","Méthode du cours."]]}
 ];
 (function(){
@@ -1235,7 +1448,7 @@ const CARDS = [
  ["r3","Rareté","Pourquoi les besoins sont-ils illimités ?","Progrès technique, publicité qui transforme les désirs en besoins, imitation."],
  ["r4","Rareté","Qu'est-ce que le coût d'opportunité ?","Ce à quoi on renonce pour obtenir quelque chose : la meilleure alternative sacrifiée."],
  ["r5","Rareté","Étymologie du mot économie ?","Oikonomia : oikos, la maison, et nomos, la règle."],
- ["v1","Valeur","Pourquoi l'eau est-elle bon marché et le diamant cher ?","Le prix suit l'utilité marginale : l'eau abondante a une faible utilité marginale, le diamant rare une forte."],
+ ["v1","Valeur","Pourquoi l'eau est-elle bon marché et le diamant cher ?","Le prix se fixe à la rencontre de l'offre et de la demande. L'eau est si abondante que la dernière unité échangée a une faible utilité marginale ; l'offre de diamants est limitée face à une forte demande, leur utilité marginale reste élevée."],
  ["v2","Valeur","Différence entre bien et service ?","Un bien se stocke, un service non : il est consommé au moment où il est produit."],
  ["b1","Biens","Qu'est-ce qu'une consommation intermédiaire ?","Un bien ou service incorporé dans un autre (transformation) ou détruit dans la production."],
  ["b2","Biens","Bien durable ou non durable ?","Non durable : détruit à la première utilisation. Durable : s'use progressivement."],
@@ -1260,7 +1473,7 @@ const CARDS = [
  ["c3","Comptabilité","Pourquoi ne pas additionner les chiffres d'affaires ?","On compterait plusieurs fois les produits intermédiaires : double comptage."],
  ["c4","Comptabilité","Volume ou valeur ?","Valeur : aux prix courants. Volume : aux prix de l'année précédente, seules les quantités changent."],
  ["c5","Comptabilité","Lien entre croissance en valeur, volume et prix ?","(1 + valeur) = (1 + volume) × (1 + prix)."],
- ["g1","Croissance","Définition d'une récession ?","Un taux de croissance du PIB négatif (en conjoncture : deux trimestres consécutifs)."],
+ ["g1","Croissance","Définition d'une récession ?","Sur l'année : un PIB annuel en volume qui recule. En conjoncture : deux trimestres consécutifs de baisse du PIB (convention)."],
  ["g2","Croissance","La croissance passe de 1,8 % à 1,2 % : le PIB baisse-t-il ?","Non, il augmente moins vite."],
  ["g3","Croissance","Temps de doublement du PIB à 2 % par an ?","Environ 35 ans (70 / 2)."],
  ["g4","Croissance","Méthode du commentaire de graphique ?","1) définir les concepts et le contexte, 2) dégager la tendance, 3) analyser."]
@@ -1357,8 +1570,16 @@ $("exJson").addEventListener("click",function(){
 });
 $("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
 
+/* ---------- export / import de la progression ---------- */
+$("progOut").addEventListener("click",function(){
+  const d=new Date(), name="economie-progression-"+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+".json";
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify({page:"economie",version:1,date:d.toISOString(),state:S},null,2)],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
+});
+$("progIn").addEventListener("change",function(){ const f=this.files[0]; if(!f) return; f.text().then(function(t){ let o; try{ o=JSON.parse(t); }catch(e){ alert("Fichier illisible."); return; } const st=o&&o.page==="economie"&&o.state; if(!st){ alert("Ce fichier n'est pas une progression de cette fiche."); return; } if(!confirm("Remplacer ta progression actuelle par celle du fichier ?")) return; try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} location.reload(); }); });
+
 /* ---------- démarrage ---------- */
 initWidgets();
+initPreds();
 renderEx();
 showTab(S.tab||"concepts");
 let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
