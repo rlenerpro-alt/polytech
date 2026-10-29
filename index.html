@@ -539,15 +539,22 @@ function weekPlan(){
   slots.forEach(function(x){ x.stUsed=x.mins-x.left; });
   // heures déjà comptées par devoir (validées ou planifiées, passées comprises)
   const used={}; S.plan.forEach(function(p){ if(p.removed) return; const id=sesEval(p,PE); if(id) used[id]=(used[id]||0)+p.mins; });
-  const chunks=[];
+  const chunks=[], lo0=S.planFrozen===t?addDays(t,1):t; // la journée figée ne reçoit plus de nouvelles séances
+  // Les créneaux sont répartis à partir du budget total du devoir, puis chaque séance déjà posée (validée ou fixée)
+  // retire les créneaux les plus proches de son jour : valider une séance ne redistribue donc pas le reste.
+  const mine={}; S.plan.forEach(function(p){ if(p.removed) return; const id=sesEval(p,PE); if(id) (mine[id]=mine[id]||[]).push(p); });
   PE.forEach(function(e){
-    const R=Math.max(0,budgetOf(e)-(used[e.id]||0)); if(R<30) return;
+    if(Math.max(0,budgetOf(e)-(used[e.id]||0))<30) return;
     const end=addDays(e.date,-1); if(end<t) return;
     const w1s=addDays(e.date,-7)<t?t:addDays(e.date,-7);
     const W1=days.filter(function(k){ return k>=w1s&&k<=end; }), W0=days.filter(function(k){ return k<w1s; });
-    const n=Math.round(R/30), n0=W0.length?Math.round(n*0.5):0, n1=n-n0;
-    for(let i=0;i<n1;i++) chunks.push({e:e,pass:0,pref:W1[Math.floor((i+0.5)*W1.length/n1)]||W1[W1.length-1],lo:t,hi:end,win:W1});
-    for(let i=0;i<n0;i++) chunks.push({e:e,pass:1,pref:W0[Math.floor((i+0.5)*W0.length/n0)],lo:t,hi:end,win:W0});
+    const n=Math.round(budgetOf(e)/30), n0=W0.length?Math.round(n*0.5):0, n1=n-n0, C=[];
+    for(let i=0;i<n1;i++) C.push({e:e,pass:0,pref:W1[Math.floor((i+0.5)*W1.length/n1)]||W1[W1.length-1],lo:lo0,hi:end,win:W1});
+    for(let i=0;i<n0;i++) C.push({e:e,pass:1,pref:W0[Math.floor((i+0.5)*W0.length/n0)],lo:lo0,hi:end,win:W0});
+    (mine[e.id]||[]).slice().sort(function(a,b){ return a.k<b.k?-1:1; }).forEach(function(p){
+      for(let m=Math.round(p.mins/30);m>0&&C.length;m--){ let bi=0, bd=1e9; C.forEach(function(c,ci){ const d=Math.abs(diffDays(p.k,c.pref)); if(d<bd){ bd=d; bi=ci; } }); C.splice(bi,1); }
+    });
+    C.forEach(function(c){ chunks.push(c); });
   });
   chunks.sort(function(a,b){ return a.pass-b.pass||(a.e.date<b.e.date?-1:a.e.date>b.e.date?1:0); });
   const place={};
