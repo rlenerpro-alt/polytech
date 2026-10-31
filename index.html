@@ -608,7 +608,7 @@ function openSes(x,isNew){
 function sesRow(x,showDay){
   const past=x.k<today(), e=x.ev&&S.evals.find(function(q){ return q.id===x.ev; });
   const sub=[showDay?esc(shortDay(x.k)):"",e?esc(e.title||TYPES[e.type]):"",esc(x.label)].filter(Boolean).join(" · ")+(past&&!x.done?' · <span class="late">non validé</span>':'');
-  return '<div class="hw'+(x.done?" done":"")+'"><input type="checkbox" data-sesdone="'+esc(x.id)+'"'+(x.done?" checked":"")+' aria-label="Heures validées"><span class="dot" style="color:'+matColor(x.mat)+'"></span><div class="b" data-ses="'+esc(x.id)+'" style="cursor:pointer"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:nowrap"><span class="n">'+esc(matName(x.mat))+'</span><span class="small muted" style="white-space:nowrap">'+dur(x.mins)+'</span></div><div class="l">'+sub+'</div></div></div>';
+  return '<div class="hw'+(x.done?" done":"")+'"><input type="checkbox" data-sesdone="'+esc(x.id)+'"'+(x.done?" checked":"")+' aria-label="Heures validées"><span class="dot" style="color:'+matColor(x.mat)+'"></span><div class="b" data-ses="'+esc(x.id)+'" style="cursor:pointer"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:nowrap"><span class="n">'+esc(matName(x.mat))+'</span><span class="small muted" style="white-space:nowrap">'+dur(x.mins)+'</span></div><div class="l">'+sub+'</div></div><button class="btn sm" type="button" data-ses="'+esc(x.id)+'" style="flex:none">Modifier</button></div>';
 }
 function renderPlanView(){
   const t=today(), W=weekPlan();
