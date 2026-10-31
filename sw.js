@@ -1,5 +1,5 @@
 // Service worker : l'appli s'ouvre même hors ligne.
-const VERSION = "phot3a-v9";
+const VERSION = "phot3a-v10";
 const CORE = ["./", "index.html", "supabase.js", "manifest.webmanifest", "icon-192.png", "icon-512.png",
   "optique-ondulatoire.html", "optique-geometrique.html", "optique-matricielle.html",
   "systemes-numeriques.html", "series-de-fourier.html", "economie.html"];
