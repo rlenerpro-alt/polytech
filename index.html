@@ -564,6 +564,8 @@ function weekPlan(){
     if(tryDay(c.pref,c)) return;
     const i0=days.indexOf(c.pref); let ok=false;
     for(let d=1;d<days.length&&!ok;d++){ ok=tryDay(days[i0+d],c)||tryDay(days[i0-d],c); }
+    // journée déjà figée : on n'y ajoute du travail que s'il n'y a aucune autre place avant l'échéance
+    if(!ok&&c.lo>t&&c.hi>=t) ok=tryDay(t,Object.assign({},c,{lo:t}));
     if(!ok) miss[c.e.id]=(miss[c.e.id]||0)+30;
   });
   const auto=Object.keys(place).map(function(key){ const p=place[key], sl=p.sl; return {k:p.k,mins:p.mins,mat:p.e.mat,ev:p.e.id,label:sl.label,slotA:sl.a,auto:true}; });
