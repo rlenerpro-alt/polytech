@@ -253,7 +253,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 /* ================= spécialités (une entrée par maquette) ================= */
 // mods : [code, nom, coef dans le module, a des TP, uniquement TP] ; ade : numéros de ressource ADE ; map : nom ADE normalisé -> code matière
 const SPECS={
- phot3a:{short:"PHOT 3A",groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
+ phot3a:{short:"PHOT 3A",groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrB":960,"APP3 GrC":914},name:"PHOT 3A — Photonique et systèmes optroniques (apprentissage)",ade:{spe:1305,tc:1380},
   mods:[
  {c:"f1o1",nm:450,n:"Électronique I",coef:19,ects:7,col:"--m1",m:[["f1o1-1","Électronique analogique 1",7,1,0],["f1o1-2","Systèmes numériques",3,0,0],["f1o1-3","Informatique et algorithmique",5,0,0],["f1o1-4","Langage orienté objet",4,0,0]]},
  {c:"f1o2",nm:610,n:"Optique",coef:18,ects:7,col:"--m2",m:[["f1o2-1","Optique géométrique",5,0,0],["f1o2-2","Optique ondulatoire",8,0,0],["f1o2-3","Optique instrumentale",5,1,1]]},
@@ -272,7 +272,7 @@ const SPECS={
  "f1c3-1":[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]],
  "f1c2-1":[["Économie : gérer la rareté","economie.html","economie.html"]]
 }},
- elec3a:{short:"ELEC 3A",name:"ELEC 3A — Électronique et informatique pour l'embarqué",ade:{spe:941,tc:1380},alias:[["fonctions de l'electronique","c1e1-1"],["composants de l'electronique","c1e1-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},
+ elec3a:{short:"ELEC 3A",name:"ELEC 3A — Électronique et informatique pour l'embarqué",ade:{spe:941,tc:1380},alias:[["fonctions de l'electronique","c1e1-1"],["composants de l'electronique","c1e1-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrB":960,"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
@@ -287,7 +287,7 @@ const SPECS={
    {c:"c2e3",nm:650,hue:45,n:"Projet",coef:4,ects:2,sem:2,m:[["c2e3-1", "Projet", 4, 0, 0]]},
    {c:"c2c8",nm:675,hue:22,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
    {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
- info3a:{short:"INFO 3A",name:"INFO 3A — Informatique et ingénierie mathématique",ade:{spe:1067,tc:1380},alias:[["uml","c1i2-2"],["bases de donnees","c1i3-1"],["base du developpement logiciel","c1i2-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrC":914},
+ info3a:{short:"INFO 3A",name:"INFO 3A — Informatique et ingénierie mathématique",ade:{spe:1067,tc:1380},alias:[["uml","c1i2-2"],["bases de donnees","c1i3-1"],["base du developpement logiciel","c1i2-1"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1"],groupRes:{"APP3 GrB":960,"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:423,hue:249,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
@@ -303,7 +303,7 @@ const SPECS={
    {c:"c2i3",nm:654,hue:41,n:"Interaction et programmation",coef:6,ects:4,sem:2,m:[["c2i3-1", "Interaction humain-machine", 4, 0, 0], ["c2i3-2", "Projet d'application", 2, 0, 0]]},
    {c:"c2c8",nm:677,hue:21,n:"Initiative I",coef:2,ects:1,sem:2,m:[["c2c8-1", "Option", 2, 0, 0]]},
    {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]},
- mate3a:{short:"MATE 3A",name:"MATE 3A — Matériaux : mécanique et énergie",ade:{spe:933,tc:1380},alias:[["conception assistee par ordinateur","c1m3-2"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1","APP3 MATE Gr1","APP3 MATE Gr2"],groupRes:{"APP3 GrC":914},
+ mate3a:{short:"MATE 3A",name:"MATE 3A — Matériaux : mécanique et énergie",ade:{spe:933,tc:1380},alias:[["conception assistee par ordinateur","c1m3-2"]],groups:["APP3 GrA","APP3 GrB","APP3 GrC","APP3 GrD","FC1","APP3 MATE Gr1","APP3 MATE Gr2"],groupRes:{"APP3 GrB":960,"APP3 GrC":914},
   mods:[
    {c:"c1c1",nm:400,hue:270,n:"Langue et communication I",coef:8,ects:4,sem:1,m:[["c1c1-1", "Anglais", 4, 0, 0], ["c1c1-2", "Communication interpersonnelle", 3, 0, 0], ["c1c1-3", "Certification en langue française", 1, 0, 0]]},
    {c:"c1c2",nm:425,hue:248,n:"Sciences de base I",coef:14,ects:9,sem:1,m:[["c1c2-1", "Analyse", 7, 0, 0], ["c1c2-2", "Economie générale", 4, 0, 0], ["c1c2-3", "Remise à niveau et outils pour les sciences exactes", 3, 0, 0]]},
