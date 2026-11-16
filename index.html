@@ -350,7 +350,7 @@ const TYPES={DS:"DS / examen",TP:"TP noté",DM:"Devoir"};
 
 /* ================= état ================= */
 const LKEY="polytech-hub-v1";
-const DEF={v:1,spec:"phot3a",workDays:{},evals:[],matRes:{},groups:[],plan:[],planFrozen:null,settings:{hours:6,dayBase:60,weekend:240,freeDay:480,minGap:60,gaps:false,floor:30,marge:2,pred:{aise:14,moyen:10,pas:6},horizon:42},ui:{tab:"home",week:0,month:0,pview:"week",day:null,treeMode:"known",dvf:"todo",dsub:"dev"}};
+const DEF={v:1,spec:"phot3a",workDays:{},freeDays:{},evals:[],matRes:{},groups:[],plan:[],planFrozen:null,settings:{hours:6,dayBase:60,weekend:240,freeDay:480,minGap:60,gaps:false,floor:30,marge:2,pred:{aise:14,moyen:10,pas:6},horizon:42},ui:{tab:"home",week:0,month:0,pview:"week",day:null,treeMode:"known",dvf:"todo",dsub:"dev"}};
 let S=JSON.parse(JSON.stringify(DEF)), ADE={spe:{ev:[],at:null},tc:{ev:[],at:null},grp:{ev:[],at:null}}, EVALL=[];
 function normAde(o){ if(!o) return {ev:[],at:null}; if(o.events) return {ev:o.events,at:o.importedAt||null}; return {ev:o.ev||[],at:o.at||null,auto:o.auto,res:o.res}; }
 try{ const r=localStorage.getItem(LKEY); if(r){ const o=JSON.parse(r); if(o.S) S=merge(S,o.S); if(o.ADE){ if(o.ADE.events) ADE.spe=normAde(o.ADE); else { ADE.spe=normAde(o.ADE.spe); ADE.tc=normAde(o.ADE.tc); if(o.ADE.grp) ADE.grp=normAde(o.ADE.grp); } } } }catch(e){}
@@ -370,7 +370,7 @@ function payload(){ const d=JSON.parse(JSON.stringify(S)); delete d.ui; return d
    on garde pour chaque élément la version la plus récente (appareil ou compte), on applique les suppressions
    (S.del) et on renvoie le résultat : deux appareils ne s'écrasent plus. */
 function itemKey(o){ const c=Object.assign({},o); delete c.u; return JSON.stringify(c); }
-function restOf(x){ const c=JSON.parse(JSON.stringify(x||{})); ["ui","evals","plan","del","dl","ru","planFrozen"].forEach(function(k){ delete c[k]; }); return canon(c); }
+function restOf(x){ const c=JSON.parse(JSON.stringify(x||{})); ["ui","evals","plan","del","dl","ru","planFrozen","workDays"].forEach(function(k){ delete c[k]; }); return canon(c); }
 function canon(v){ if(Array.isArray(v)) return "["+v.map(canon).join(",")+"]"; if(v&&typeof v==="object") return "{"+Object.keys(v).sort().filter(function(k){ return v[k]!==undefined; }).map(function(k){ return JSON.stringify(k)+":"+canon(v[k]); }).join(",")+"}"; return JSON.stringify(v); }
 function derived(o){ return o.frozen&&!o.done&&!o.locked&&!o.u; } // séance figée automatiquement, jamais touchée
 function snap(x){ const b={i:{},r:restOf(x)}; (x.evals||[]).concat(x.plan||[]).forEach(function(o){ b.i[o.id]=itemKey(o); }); return b; }
@@ -529,7 +529,7 @@ function slotsFor(k){
   const st=S.settings, t=today(), nowM=k===t?minsParis(Date.now()):-1, out=[];
   if(weekday(k)>=5){ if(nowM<20*60) out.push({k:k,mins:st.weekend,label:"week-end"}); return out; }
   const cs=coursesOn(k).map(function(x){ return [minsParis(x.s),minsParis(x.e)]; }).sort(function(a,b){ return a[0]-b[0]; });
-  if(!cs.length&&!(S.workDays||{})[k]){ const m=nowM>0?Math.max(0,Math.min(st.freeDay,22*60-nowM)):st.freeDay; if(m>=30) out.push({k:k,mins:Math.floor(m/30)*30,label:"journée"}); return out; }
+  if(!cs.length&&(S.freeDays||{})[k]){ const m=nowM>0?Math.max(0,Math.min(st.freeDay,22*60-nowM)):st.freeDay; if(m>=30) out.push({k:k,mins:Math.floor(m/30)*30,label:"journée"}); return out; }
   if(st.gaps&&cs.length){
     let cur=null; const free=[];
     cs.forEach(function(c){ if(cur!=null&&c[0]>cur) free.push([Math.max(cur,DAY_A),Math.min(c[0],DAY_B)]); cur=cur==null?c[1]:Math.max(cur,c[1]); });
@@ -540,7 +540,7 @@ function slotsFor(k){
   return out;
 }
 function slotFor(slots,k,label){ return slots.find(function(x){ return x.k===k&&x.label===label; })||slots.find(function(x){ return x.k===k&&x.a==null; })||slots.find(function(x){ return x.k===k; }); }
-function sesLabel(k,a,mins){ return a!=null?hm(a)+"–"+hm(a+mins):(weekday(k)>=5?"week-end":(!coursesOn(k).length&&!(S.workDays||{})[k]?"journée":"soirée")); }
+function sesLabel(k,a,mins){ return a!=null?hm(a)+"–"+hm(a+mins):(weekday(k)>=5?"week-end":((S.freeDays||{})[k]?"journée":"soirée")); }
 const BUDGET={aise:240,moyen:360,pas:480}, DM_BUDGET=120;
 function budgetDefault(e){ return e.type==="DM"?DM_BUDGET:BUDGET[e.ressenti||"moyen"]; }
 function budgetOf(e){ return e.hours!=null&&e.hours!==""&&isFinite(+e.hours)?Math.round(+e.hours*60):budgetDefault(e); }
@@ -646,8 +646,8 @@ function renderPlanView(){
   if(late.length) h+='<h2 class="late">À valider</h2><div class="card">'+late.map(function(x){ return sesRow(x,true); }).join("")+'</div>';
   W.days.forEach(function(k){
     const L=W.sessions.filter(function(x){ return x.k===k; }), free=W.slots.filter(function(x){ return x.k===k; }).reduce(function(s,x){ return s+(x.free||0); },0);
-    const noC=weekday(k)<5&&!coursesOn(k).length, wk=!!(S.workDays||{})[k];
-    h+='<div class="row" style="justify-content:space-between;margin:14px 0 6px"><b style="text-transform:capitalize">'+esc(k===t?"aujourd'hui":longDay(k))+(noC?' <span class="small muted" style="text-transform:none;font-weight:400">· '+(wk?"en entreprise":"sans cours")+'</span>':'')+'</b><div class="row">'+(noC?'<button class="btn sm" data-work="'+k+'" title="Marquer ce jour en entreprise ou libre">'+(wk?"Jour libre":"🏢 Entreprise")+'</button>':'')+'<button class="btn sm" data-addses="'+k+'">＋ Révision</button></div></div><div class="card" style="padding:4px 14px">'+(L.length?L.map(function(x){ return sesRow(x,false); }).join(""):'<div class="empty">Rien de prévu.</div>')+(free>=30?'<div class="small muted" style="padding:6px 0">'+dur(free)+' encore libres</div>':'')+'</div>';
+    const noC=weekday(k)<5&&!coursesOn(k).length, fr_=!!(S.freeDays||{})[k];
+    h+='<div class="row" style="justify-content:space-between;margin:14px 0 6px"><b style="text-transform:capitalize">'+esc(k===t?"aujourd'hui":longDay(k))+(noC?' <span class="small muted" style="text-transform:none;font-weight:400">· '+(fr_?"jour libre":"🏢 en entreprise")+'</span>':'')+'</b><div class="row">'+(noC?'<button class="btn sm" data-work="'+k+'" title="'+(fr_?"Remettre ce jour en entreprise":"Marquer ce jour comme libre (congé, férié)")+'">'+(fr_?"🏢 Entreprise":"Jour libre")+'</button>':'')+'<button class="btn sm" data-addses="'+k+'">＋ Révision</button></div></div><div class="card" style="padding:4px 14px">'+(L.length?L.map(function(x){ return sesRow(x,false); }).join(""):'<div class="empty">Rien de prévu.</div>')+(free>=30?'<div class="small muted" style="padding:6px 0">'+dur(free)+' encore libres</div>':'')+'</div>';
   });
   const byM={}; S.plan.forEach(function(p){ if(p.done&&!p.removed) byM[p.mat]=(byM[p.mat]||0)+p.mins; });
   const keys=Object.keys(byM).sort(function(a,b){ return byM[b]-byM[a]; });
@@ -840,7 +840,7 @@ function hwHTML(e){
 function devInfo(){
   const W=weekPlan(), st=S.settings, planned7=W.sessions.filter(function(x){ return x.k<=W.days[6]; }).reduce(function(a,x){ return a+x.mins; },0);
   return '<div class="card prose-i"><h3>Plan de révision</h3><p>Chaque devoir reçoit un nombre d\'heures de travail : 4 h pour un DS « à l\'aise », 6 h « moyen », 8 h « pas à l\'aise », 2 h pour un devoir. Tu peux le changer dans la fiche du devoir.</p><p>La moitié de ces heures est placée dans la semaine qui précède le devoir, l\'autre moitié répartie les semaines d\'avant selon ton temps libre. Rien n\'est placé le jour même ni après.</p><p>Chaque barre se remplit quand tu coches « heures validées » ; le hachuré montre ce qui est planifié mais pas encore fait. Une séance modifiée ou validée n\'est plus déplacée par le recalcul.</p>'+
-   '<h3>Temps disponible</h3><p>Jour de cours : '+dur(st.dayBase)+' le soir. Jour de semaine sans cours : '+dur(st.freeDay)+'. Week-end : '+dur(st.weekend)+' par jour.'+(st.gaps?' Les trous d\'au moins '+dur(st.minGap)+' entre deux cours sont comptés.':' Les trous entre les cours ne sont pas comptés.')+' Un jour en entreprise se marque avec le bouton 🏢 dans le plan. Réglages : onglet Notes.</p>'+
+   '<h3>Temps disponible</h3><p>Jour de cours : '+dur(st.dayBase)+' le soir. Jour de semaine sans cours dans ADE : tu es en entreprise, donc '+dur(st.dayBase)+' le soir aussi. Jour libre (congé, férié) : '+dur(st.freeDay)+'. Week-end : '+dur(st.weekend)+' par jour.'+(st.gaps?' Les trous d\'au moins '+dur(st.minGap)+' entre deux cours sont comptés.':' Les trous entre les cours ne sont pas comptés.')+' Un jour libre se marque avec le bouton « Jour libre » dans le plan. Réglages : onglet Notes.</p>'+
    '<p>Ces 7 jours : <b>'+dur(W.T)+'</b> disponibles, <b>'+dur(planned7)+'</b> planifiées.</p></div>';
 }
 function renderDev(){
@@ -886,7 +886,7 @@ function renderNotes(){
   h+='<h2>Coller depuis Oasis</h2><div class="card"><p class="small muted">Copie la page de tes notes dans Oasis et colle-la ici. L\'appli cherche les noms de matières et les notes sur 20, puis te propose de les enregistrer. Version d\'essai : envoie-moi un exemple de collage pour que j\'affine la lecture.</p><textarea id="oasisIn" placeholder="Colle ici le contenu de la page Oasis"></textarea><div class="row" style="margin-top:8px"><button class="btn" id="oasisGo">Analyser</button></div><div id="oasisOut"></div></div>';
   h+='<h2>Réglages</h2><div class="card"><div class="grid2">'+
     '<label class="f">Révision un jour de cours, le soir (min)<input type="number" min="0" max="600" step="15" data-set="dayBase" value="'+S.settings.dayBase+'"></label>'+
-    '<label class="f">Révision un jour de semaine sans cours (min)<input type="number" min="0" max="600" step="15" data-set="freeDay" value="'+S.settings.freeDay+'"></label>'+
+    '<label class="f">Révision un jour libre (congé, férié) (min)<input type="number" min="0" max="600" step="15" data-set="freeDay" value="'+S.settings.freeDay+'"></label>'+
     '<label class="f">Révision un jour de week-end (min)<input type="number" min="0" max="900" step="15" data-set="weekend" value="'+S.settings.weekend+'"></label>'+
     '<label class="f">Trou minimum à compter (min)<input type="number" min="15" max="240" step="15" data-set="minGap" value="'+S.settings.minGap+'"></label>'+
     '<label class="chk f" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" data-setb="gaps"'+(S.settings.gaps?" checked":"")+'> Compter aussi les trous entre les cours</label>'+
@@ -1005,7 +1005,7 @@ document.addEventListener("click",function(ev){
   const se=ev.target.closest("[data-ses]"); if(se){ const x=findSes(se.dataset.ses); if(x) openSes(x,false); return; }
   const gd=ev.target.closest("[data-goday]"); if(gd){ const k=gd.dataset.goday, t=today(); S.ui.pview="week"; S.ui.week=Math.round(diffDays(addDays(t,-weekday(t)),addDays(k,-weekday(k)))/7); S.ui.day=k; renderPlan(); showTab("plan"); return; }
   const gt=ev.target.closest("[data-gotab]"); if(gt){ showTab(gt.dataset.gotab); return; }
-  const wkb=ev.target.closest("[data-work]"); if(wkb){ const k=wkb.dataset.work; S.workDays=S.workDays||{}; if(S.workDays[k]) delete S.workDays[k]; else S.workDays[k]=true; save(); renderAll(); return; }
+  const wkb=ev.target.closest("[data-work]"); if(wkb){ const k=wkb.dataset.work; S.freeDays=S.freeDays||{}; if(S.freeDays[k]) delete S.freeDays[k]; else S.freeDays[k]=true; save(); renderAll(); return; }
   const as=ev.target.closest("[data-addses]"); if(as){ openSes({mat:"f1o2-2",k:as.dataset.addses,a:null,mins:60,done:false},true); return; }
   const nsb=ev.target.closest("[data-nsub]"); if(nsb){ S.ui.nsub=nsb.dataset.nsub; persistLocal(); renderNotes(); return; }
   const ds=ev.target.closest("[data-dsub]"); if(ds){ S.ui.dsub=ds.dataset.dsub; persistLocal(); renderDev(); return; }
