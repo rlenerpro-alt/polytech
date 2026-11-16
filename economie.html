@@ -78,29 +78,6 @@ details.fold > .body{padding:0 0 16px}
 .def b{display:block;margin-bottom:2px}
 .trap{border:1px solid var(--even);border-left:4px solid var(--even);border-radius:6px;padding:10px 14px;margin:10px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
 .trap b{display:block;margin-bottom:2px;color:var(--even)}
-.hyp{border:1px dashed var(--line);border-left:4px solid var(--odd);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg)}
-.hyp b{display:block;margin-bottom:2px;color:var(--odd)}
-.hyp ul{margin:4px 0 0;padding-left:20px}
-.nuance{border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:6px;padding:10px 14px;margin:6px 0 14px;font-family:var(--ui);font-size:.93rem;background:var(--bg);color:var(--ink)}
-.nuance b{display:block;margin-bottom:2px;color:var(--muted)}
-.legend3{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.85rem;color:var(--muted);margin:6px 0 14px;font-family:var(--ui)}
-.legend3 span{display:inline-flex;align-items:center;gap:6px}
-.legend3 i{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}
-table.sch{border-collapse:collapse;width:100%;font-size:.88rem;font-family:var(--ui)}
-table.sch th,table.sch td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
-table.sch th{background:var(--soft);font-weight:600}
-.pred{border:1px solid var(--line);border-left:4px solid var(--odd);border-radius:8px;padding:12px 14px;margin:0 0 14px;background:var(--surface)}
-.pred .pq{font-weight:600;margin:0 0 8px}
-.pred .pq small{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-bottom:2px}
-.pred .opts{display:flex;flex-wrap:wrap;gap:8px}
-.pred .opts .btn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.pred textarea{width:100%;box-sizing:border-box;margin-top:8px;min-height:44px;font:inherit;font-size:.9rem;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
-.pred .pres{margin-top:8px;font-size:.92rem}
-.pred .pres details{margin-top:6px}
-.pred .redo{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;padding:0;margin-left:8px}
-.wg.locked .presets,.wg.locked .controls,.wg.locked canvas,.wg.locked .readout,.wg.locked .stepbar,.wg.locked .yrs,.wg.locked .rounds{opacity:.3;pointer-events:none;filter:grayscale(1)}
-.stepbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
-.rounds{font-family:var(--mono);font-size:.85rem;margin:10px 0 0;padding:8px 12px;background:var(--soft);border-radius:6px;max-height:190px;overflow:auto;line-height:1.6}
 .q{background:var(--bg);border-radius:8px;padding:12px 16px;margin:10px 0}
 .q > p{margin:0 0 6px;font-family:var(--text)}
 .q details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
@@ -272,13 +249,52 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
 .svgbox.wide svg{min-width:560px}
 .yrs{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px}
 .yrs label{font-size:.8rem;color:var(--muted);display:block}
+.zg{position:relative;height:30px;background:var(--soft);border-radius:6px;margin:30px 0 8px}
+.zg .zfill{position:absolute;left:0;top:0;bottom:0;background:var(--odd);border-radius:6px;opacity:.8}
+.zg .ln{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.55}
+.zg .mk{position:absolute;top:-22px;transform:translateX(-50%);font-size:.8rem;color:var(--muted);font-family:var(--mono)}
 .yrs input{width:100%;font-family:var(--mono);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+/* chronologie, chapitres, annexes */
+.chrono{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:18px}
+.chrono button,.aitem{display:block;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;font:inherit;color:inherit}
+.chrono button:hover,button.aitem:hover{border-color:var(--ink)}
+.chrono .k,.aitem .k{display:block;font-size:.8rem;color:var(--muted)}
+.chrono b,.aitem b{display:block;font-size:1rem;font-weight:600;margin:2px 0}
+.chrono button.ann{border-color:var(--even)}
+.chrono button.ann .k{color:var(--even)}
+.chap{margin:34px 0 16px;padding-top:12px;border-top:2px solid var(--ink)}
+.chap:first-of-type{margin-top:8px}
+.chap .k{font-size:.82rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.chap h3{margin:4px 0 4px;font-size:1.45rem;letter-spacing:-0.01em;font-weight:600}
+.chap p{margin:0;color:var(--muted)}
+.aidx{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px}
+.aitem.on{border:2px solid var(--even)}
+.aitem.ph{border-style:dashed;cursor:default;background:transparent;color:var(--muted)}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px}
+.acard h3{margin:0 0 12px;font-size:1.3rem;letter-spacing:-0.01em;font-weight:600;display:flex;gap:12px;align-items:baseline}
+.acard h3 .n{color:var(--muted);font-weight:500;font-size:1rem}
+.acard .ttwrap{margin:12px 0 14px}
+.srcl{margin:4px 0 12px;padding-left:20px}
+.srcl li{margin:3px 0}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:6px}
+.plan div{background:var(--bg);border-radius:8px;padding:8px 12px;font-size:.92rem}
+.plan .k{display:block;font-size:.78rem;color:var(--muted)}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flow div{background:var(--ink);color:var(--surface);border-radius:8px;padding:10px 14px;font-weight:600;font-size:.95rem}
+.flow div.hot{background:var(--even)}
+.flow i{font-style:normal;color:var(--muted);font-size:1.2rem}
+@media (max-width:560px){.acard{padding:18px 14px}}
 </style>
 </head>
 <body>
 <header class="hero wrap">
   <h1>Économie : gérer la rareté</h1>
-  <p class="sub">Besoins illimités, ressources limitées : tout le cours part de là. Les écoles de pensée, les acteurs, la valeur ajoutée, le PIB et la croissance se manipulent ici avec des curseurs et des tableaux qui se recalculent.</p>
+  <p class="sub">Besoins illimités, ressources limitées : tout le cours part de là. Les écoles de pensée, les acteurs, la valeur ajoutée, le PIB, puis les ménages, l'entreprise, l'investissement et l'État se manipulent ici avec des curseurs et des tableaux qui se recalculent. Les dossiers d'annexes étudiés en cours ont leur propre onglet.</p>
+  <div class="chrono" aria-label="Chronologie du cours">
+    <button type="button" data-goto="concepts#chap1"><span class="k">Chapitre 1 · blocs 1 à 10</span><b>Les fondements</b><span class="k">Rareté, pensée économique, acteurs, PIB et croissance</span></button>
+    <button type="button" data-goto="concepts#chap2"><span class="k">Chapitre 2 · blocs 11 à 17</span><b>Les acteurs en détail</b><span class="k">Ménages, entreprise, investissement, demande, État</span></button>
+    <button type="button" class="ann" data-goto="annexes#annexe-7"><span class="k">Annexe 7 · oral du 16 novembre 2026</span><b>La concurrence</b><span class="k">Ententes, sanctions et limites</span></button>
+  </div>
   <div class="stage">
     <div style="font-weight:600;font-size:.95rem">Un petit taux, de grands écarts : choisis un taux de croissance annuel du PIB</div>
     <div class="hero-row"><label for="heroG">Taux</label><input type="range" id="heroG" min="-2" max="8" step="0.1" value="1.5"><span class="v" id="heroGv"></span></div>
@@ -292,16 +308,17 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
     <button role="tab" aria-selected="false" data-tab="formules">Formules</button>
     <button role="tab" aria-selected="false" data-tab="cartes">Cartes mémoire</button>
     <button role="tab" aria-selected="false" data-tab="exos">Exercices</button>
+    <button role="tab" aria-selected="false" data-tab="annexes">Annexes</button>
   </div>
 </nav>
 <main>
 
 <section class="panel active" id="concepts"><div class="wrap">
   <h2>Concepts</h2>
-  <p class="lead">Dix blocs dans l'ordre de ton cours : la rareté et ses conséquences, les grandes écoles de pensée, puis les acteurs, la valeur ajoutée, le PIB et la croissance. L'outil interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées.</p>
-  <div class="legend3" aria-label="Légende des encadrés"><span><i style="border-left:4px solid var(--ink)"></i>Définition : à savoir pour l'examen</span><span><i style="border-left:4px solid var(--odd)"></i>Hypothèses du modèle : ce qui doit être vrai pour raisonner ainsi</span><span><i style="border-left:4px solid var(--muted)"></i>Nuance : limites et cas particuliers</span></div>
-  <div class="progress-line"><span id="seenCount">0 / 10 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
-  <div class="row" style="gap:8px;margin:-4px 0 14px;font-size:.88rem"><span class="small" style="color:var(--muted)">Ta progression est gardée dans ce navigateur seulement.</span><button class="btn" type="button" id="progOut">Exporter ma progression</button><label class="btn" style="cursor:pointer">Importer<input type="file" id="progIn" accept="application/json,.json" hidden></label></div>
+  <p class="lead">Dix-sept blocs dans l'ordre de ton cours : la rareté et ses conséquences, les grandes écoles de pensée, les acteurs, la valeur ajoutée, le PIB et la croissance ; puis, à partir du bloc 11, les ménages, l'entreprise, l'investissement, le PIB par la demande et l'État. L'outil interactif est toujours visible sous le 🎯 Pourquoi ; l'analogie, la version ingénieur et les questions restent repliées.</p>
+  <div class="progress-line"><span id="seenCount">0 / 17 concepts revus</span><div class="bar"><i id="seenBar"></i></div></div>
+
+<div class="chap" id="chap1"><span class="k">Chapitre 1</span><h3>Les fondements : rareté, pensée économique, PIB et croissance</h3><p>Blocs 1 à 10 : pourquoi l'économie existe, comment les écoles de pensée y répondent, et comment on mesure la richesse produite.</p></div>
 
 <!-- 1 RARETE -->
 <article class="concept" data-id="c1">
@@ -309,18 +326,16 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
   <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Si tout était abondant, il n'y aurait rien à gérer et pas d'économie. Toute la discipline naît d'une tension : nos besoins ne cessent de grandir, alors que la terre, le travail et les machines sont en quantité finie. Produire une chose, c'est donc renoncer à une autre. Ton cours le dit sans détour : quand la rareté n'est pas gérée, elle engendre des conflits.</p></div>
   <div class="wg" data-w="fpp">
     <h4>🔬 Une économie qui ne produit que deux choses</h4>
-    <p class="hint">La courbe verte est la frontière de ce que l'économie peut produire avec ses facteurs. Le point rouge représente les besoins. Le dernier curseur déplace ton choix le long de la frontière ; les autres déplacent la frontière elle-même. La droite pointillée au point choisi a pour pente le coût d'opportunité marginal. La courbe grise est la situation de départ.</p>
-<div class="pred" data-pred="fpp" data-ok="up"><p class="pq"><small>Avant de toucher aux curseurs · coût d'opportunité</small>Tu envoies de plus en plus de travail vers la nourriture. Le nombre de machines sacrifiées pour une tonne de nourriture de plus…</p><div class="opts"><button class="btn" type="button" data-pv="up">augmente</button><button class="btn" type="button" data-pv="down">diminue</button><button class="btn" type="button" data-pv="same">reste le même</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Il augmente.</b> Chaque secteur a des rendements décroissants : les derniers travailleurs envoyés aux champs y produisent peu, alors qu'ils produisaient beaucoup à l'usine. On sacrifie donc de plus en plus de machines par tonne gagnée. C'est ce qui rend la frontière bombée. Vérifie-le en lisant le coût marginal quand tu pousses le dernier curseur vers 100 %.</p></template></div>
-    <div class="presets"><button class="btn" type="button" data-pre="base">Départ</button><button class="btn" type="button" data-pre="pop">Population en hausse</button><button class="btn" type="button" data-pre="cap">Plus de capital</button><button class="btn" type="button" data-pre="tech">Progrès technique agricole</button><button class="btn" type="button" data-pre="tout">Tout pour la nourriture</button></div>
+    <p class="hint">La courbe verte est la frontière de ce que l'économie peut produire avec ses facteurs. Le point rouge représente les besoins. Répartis le travail entre nourriture et machines, puis augmente la population, le capital technique ou le progrès technique. La courbe pointillée grise est la situation de départ.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="base">Départ</button><button class="btn" type="button" data-pre="pop">Population en hausse</button><button class="btn" type="button" data-pre="tech">Progrès technique</button><button class="btn" type="button" data-pre="tout">Tout pour la nourriture</button></div>
     <canvas class="cv" data-c="cv" style="height:300px"></canvas>
     <div class="controls">
       <div class="ctl"><label>Travail disponible <span data-o="L"></span></label><input type="range" data-k="L" min="20" max="100" step="1" value="60"></div>
       <div class="ctl"><label>Capital technique <span data-o="K"></span></label><input type="range" data-k="K" min="10" max="100" step="1" value="50"></div>
       <div class="ctl"><label>Progrès technique <span data-o="tech"></span></label><input type="range" data-k="tech" min="1" max="2" step="0.1" value="1"></div>
-      <div class="ctl"><label>Le progrès technique touche</label><select data-k="tg"><option value="both">les deux secteurs</option><option value="A">l'agriculture seulement</option><option value="B">l'industrie seulement</option></select></div>
       <div class="ctl"><label>Part du travail vers la nourriture <span data-o="x"></span></label><input type="range" data-k="x" min="0" max="100" step="1" value="50"></div>
     </div>
-    <div class="readout"><span>Nourriture : <b data-o="a"></b></span><span>Machines : <b data-o="b"></b></span><span>Coût marginal d'une tonne de plus : <b data-o="oc"></b></span><span>Coût moyen depuis « tout en machines » : <b data-o="om"></b></span></div>
+    <div class="readout"><span>Nourriture : <b data-o="a"></b></span><span>Machines : <b data-o="b"></b></span><span>Coût d'une tonne de plus : <b data-o="oc"></b></span></div>
     <div class="readout" data-o="verdict"></div>
   </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
@@ -337,18 +352,9 @@ input.txt{font-family:var(--mono);font-size:.95rem;background:var(--surface);col
     <p>Se déplacer le long de la frontière a un <b>coût d'opportunité</b>.</p>
     <div class="def"><b>Coût d'opportunité</b>Ce à quoi on renonce pour obtenir quelque chose : la quantité de l'autre bien qu'il faut sacrifier.</div>
     <div class="fblock">coût d'opportunité de A = quantité de B perdue / quantité de A gagnée</div>
-    <div class="hyp"><b>Hypothèses du modèle de l'outil</b><ul>
-      <li>Deux biens seulement ; tout le travail est employé (plein emploi) ; la technique et le capital sont donnés à un instant.</li>
-      <li>Fonctions de production : nourriture A = 20 × tA × (K/50)^0,2 × (L × x / 10)^0,7 et machines B = 10 × tB × (K/50)^0,4 × (L × (1 − x) / 10)^0,7, avec x la part du travail vers la nourriture.</li>
-      <li>L'exposant 0,7 &lt; 1 traduit des rendements décroissants du travail dans chaque secteur. Le capital sert davantage à l'industrie (exposant 0,4) qu'à l'agriculture (0,2).</li>
-    </ul></div>
-    <p>La courbe est bombée vers l'extérieur car les rendements sont décroissants : les premiers travailleurs envoyés aux champs sont très productifs, les suivants le sont de moins en moins. Le coût d'une tonne de nourriture supplémentaire augmente donc à mesure qu'on se spécialise : c'est la pente de la frontière au point choisi, le coût d'opportunité marginal. Le coût moyen, lui, rapporte toutes les machines sacrifiées depuis le point de départ à toutes les tonnes gagnées ; il augmente moins vite que le coût marginal.</p>
-    <div class="fblock">coût marginal = − pente de la frontière = − ΔB / ΔA pour une tonne de plus
-coût moyen depuis « tout en machines » = (Bmax − B) / A</div>
-    <p>Il faut distinguer deux mouvements. Changer la répartition du travail (le dernier curseur) déplace le point <i>le long</i> de la frontière. Changer les facteurs ou la technique déplace <i>la frontière elle-même</i>, et pas forcément de la même façon pour les deux biens : plus de travail repousse les deux extrémités ; plus de capital profite surtout aux machines dans ce modèle ; un progrès technique agricole ne repousse que l'extrémité « nourriture ». Les besoins, eux, se déplacent aussi.</p>
+    <p>La courbe est bombée vers l'extérieur car les rendements sont décroissants : les premiers travailleurs envoyés aux champs sont très productifs, les suivants le sont de moins en moins. Le coût d'une tonne de nourriture supplémentaire augmente donc à mesure qu'on se spécialise. Plus de travail, plus de capital ou du progrès technique repoussent la frontière, mais les besoins, eux, se déplacent aussi.</p>
     <p>Ton cours ajoute qu'un <b>service</b> ne se stocke pas, alors qu'un bien si : on ne met pas une coupe de cheveux en réserve.</p>
     <div class="def"><b>Service</b>Production immatérielle consommée au moment où elle est produite (transport, soin, enseignement). Elle ne peut pas être stockée.</div>
-    <div class="nuance"><b>Nuance</b>La frontière est moins nette dans les faits : un logiciel ou un film se stockent et se copient, et un bien périssable se stocke très mal. Retiens la définition du cours pour l'examen, mais sache qu'elle décrit un cas typique.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Si un jour une technologie rendait l'énergie quasi gratuite, la rareté disparaîtrait-elle ? Qu'est-ce qui deviendrait rare à la place ?</p>
@@ -377,21 +383,6 @@ coût moyen depuis « tout en machines » = (Bmax − B) / A</div>
     <div class="readout"><span>Utilité totale de l'eau : <b data-o="te"></b></span><span>des diamants : <b data-o="td"></b></span><span>Utilité marginale de l'eau : <b data-o="me"></b></span><span>du diamant : <b data-o="md"></b></span></div>
     <div class="readout" data-o="verdict"></div>
   </div>
-  <div class="wg" data-w="march">
-    <h4>🔬 De l'utilité marginale au prix : offre et demande</h4>
-    <p class="hint">Courbe bleue : la demande, c'est-à-dire l'utilité marginale de chaque unité, donc ce qu'on est prêt à payer pour elle. Courbe orange : l'offre, qui dépend du coût de production et de la quantité disponible. Le prix d'équilibre est à leur croisement. La surface bleue est l'utilité totale des unités échangées, le rectangle hachuré la dépense (prix × quantité).</p>
-<div class="pred" data-pred="march" data-ok="no"><p class="pq"><small>Avant de toucher aux curseurs · formation des prix</small>L'eau apporte une utilité totale bien plus grande que les diamants. Son prix de marché est-il forcément plus élevé ?</p><div class="opts"><button class="btn" type="button" data-pv="yes">oui, forcément</button><button class="btn" type="button" data-pv="no">non, pas forcément</button><button class="btn" type="button" data-pv="tot">il dépend seulement de l'utilité totale</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Non, pas forcément.</b> Le prix se fixe là où l'offre rencontre la demande. En ville, l'offre d'eau est si abondante que la dernière unité échangée a une utilité marginale très faible : le prix est bas, alors que l'utilité totale (la surface bleue) est énorme. Une utilité marginale élevée ou une utilité totale élevée ne suffit pas : il faut regarder les deux courbes. Compare les préréglages « eau en ville », « diamants » et « eau dans le désert ».</p></template></div>
-    <div class="presets"><button class="btn" type="button" data-pre="ville">Eau en ville</button><button class="btn" type="button" data-pre="desert">Eau dans le désert</button><button class="btn" type="button" data-pre="diam">Diamants</button><button class="btn" type="button" data-pre="cartel">Diamants, ventes limitées par un cartel</button></div>
-    <canvas class="cv" data-c="cv" style="height:280px"></canvas>
-    <div class="controls">
-      <div class="ctl"><label>Bien</label><select data-k="good"><option value="eau">eau (le besoin s'épuise lentement)</option><option value="diam">diamants (le désir s'épuise vite)</option></select></div>
-      <div class="ctl"><label>Intensité du besoin <span data-o="a"></span></label><input type="range" data-k="a" min="20" max="100" step="5" value="100"></div>
-      <div class="ctl"><label>Quantité disponible <span data-o="qa"></span></label><input type="range" data-k="qa" min="1" max="40" step="1" value="35"></div>
-      <div class="ctl"><label>Coût de production d'une unité <span data-o="c0"></span></label><input type="range" data-k="c0" min="0" max="40" step="1" value="1"></div>
-    </div>
-    <div class="readout"><span>Prix d'équilibre : <b data-o="p"></b></span><span>Quantité échangée : <b data-o="q"></b></span><span>Utilité totale : <b data-o="ut"></b></span><span>Dépense (prix × quantité) : <b data-o="dep"></b></span></div>
-    <div class="readout" data-o="verdict"></div>
-  </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
     <p>Le premier verre d'eau après un footing, tu donnerais n'importe quoi pour l'avoir. Le cinquième, tu le refuses. L'eau n'a pas changé, c'est ton besoin du verre suivant qui a fondu. Le prix se règle sur ce dernier verre, pas sur le premier.</p>
   </div></details>
@@ -402,19 +393,11 @@ coût moyen depuis « tout en machines » = (Bmax − B) / A</div>
     <div class="def"><b>Utilité marginale</b>Satisfaction supplémentaire apportée par la dernière unité consommée. Elle décroît à mesure qu'on consomme.</div>
     <div class="fblock">utilité totale = somme des utilités marginales de chaque unité
 modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
-    <p>L'eau a une utilité totale énorme mais une utilité marginale faible parce qu'elle est abondante. Le diamant a une utilité totale faible mais une utilité marginale élevée parce qu'il est rare. Dans le modèle néoclassique, l'utilité marginale explique la <b>demande</b> : ce qu'on est prêt à payer pour une unité de plus.</p>
-    <div class="def"><b>Prix d'équilibre</b>Prix pour lequel la quantité demandée est égale à la quantité offerte. Il résulte de la rencontre de l'offre (coûts, quantité disponible) et de la demande (utilité marginale, disposition à payer).</div>
-    <p>Le prix de marché ne « suit » donc pas l'utilité marginale à lui seul : il se fixe là où l'offre rencontre la demande, et à l'équilibre il est égal à l'utilité marginale de la dernière unité achetée. L'eau est bon marché parce que l'offre est si abondante que la dernière unité échangée a peu de valeur pour l'acheteur. Dans le désert, l'offre se réduit et l'ordre s'inverse. Le second outil de ce bloc montre ce passage de l'utilité marginale au prix d'équilibre. L'exemple du baril de pétrole de ton cours fonctionne de la même façon : son prix varie bien plus vite que sa « valeur » pour l'économie.</p>
-    <div class="hyp"><b>Hypothèses du raisonnement</b><ul>
-      <li>Marché concurrentiel : beaucoup d'acheteurs et de vendeurs, aucun ne fixe seul le prix.</li>
-      <li>Utilité marginale décroissante, et des consommateurs qui achètent tant qu'elle dépasse le prix.</li>
-      <li>Ici, l'outil suppose une offre donnée (quantité disponible) et un coût de production simple.</li>
-    </ul></div>
-    <div class="nuance"><b>Nuance</b>La rareté seule ne fait pas un prix élevé : un objet unique que personne ne désire ne vaut rien. Il faut à la fois une offre limitée et une demande forte. À l'inverse, un monopole peut maintenir un prix élevé sans rareté physique : le marché du diamant a longtemps été contrôlé par De Beers, qui limitait les quantités mises en vente.</div>
+    <p>L'eau a une utilité totale énorme mais une utilité marginale faible parce qu'elle est abondante. Le diamant a une utilité totale faible mais une utilité marginale élevée parce qu'il est rare. Le prix suit l'utilité marginale, donc la rareté. Dans le désert, l'ordre s'inverse. L'exemple du baril de pétrole de ton cours fonctionne de la même façon : son prix varie bien plus vite que sa « valeur » pour l'économie.</p>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Un tableau de maître ne coûte presque rien à produire en peinture et en toile. Que dirait un classique de sa valeur, et que dirait un néoclassique de son prix ?</p>
-      <details><summary>Éléments de réponse</summary><div class="ans">Un classique chercherait la valeur dans le travail incorporé, ce qui explique mal un prix de plusieurs millions. Le néoclassique répond que l'œuvre est unique (offre fixée à une unité) et que quelques acheteurs lui accordent une utilité marginale immense : le prix naît de cette demande face à une offre qui ne peut pas augmenter, pas du coût de production.</div></details></div>
+      <details><summary>Éléments de réponse</summary><div class="ans">Un classique chercherait la valeur dans le travail incorporé, ce qui explique mal un prix de plusieurs millions. Le néoclassique répond que l'œuvre est unique (rareté absolue) et que quelques acheteurs lui accordent une utilité marginale immense : le prix reflète cette demande, pas le coût.</div></details></div>
     <div class="q"><p>Pourquoi dit-on que le prix est une information sur la rareté ? Que se passe-t-il si un État bloque un prix en dessous de ce niveau ?</p>
       <details><summary>Éléments de réponse</summary><div class="ans">Un prix qui monte signale que le bien est désiré et peu disponible : il incite à économiser le bien et à en produire plus. Si le prix est bloqué trop bas, ce signal disparaît : la demande dépasse l'offre, on voit apparaître des files d'attente, du rationnement ou un marché noir.</div></details></div>
   </div></details>
@@ -437,12 +420,10 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
   <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
     <p>Les <b>biens économiques</b> sont rares et utiles, contrairement aux biens libres comme l'air.</p>
     <div class="def"><b>Bien économique</b>Bien utile, disponible en quantité limitée, et qui nécessite donc un travail de production : il a un prix.</div>
-    <div class="nuance"><b>Nuance</b>« Il a un prix » décrit le cas marchand. Certains biens économiques sont fournis gratuitement à l'usager (éclairage public, école publique) : ils ont un coût de production, payé par l'impôt, mais pas de prix de vente. Ce sont des productions non marchandes, que le PIB compte à leur coût.</div>
     <div class="def"><b>Bien de consommation finale</b>Bien acheté par un ménage pour son usage. Non durable s'il est détruit à la première utilisation (aliment, essence), durable s'il s'use progressivement (voiture, lave-linge).</div>
     <div class="def"><b>Bien de production</b>Bien qui sert à fabriquer d'autres biens pendant plusieurs cycles de production sans y être incorporé (machine, bâtiment, camion). Il constitue le capital technique.</div>
     <div class="def"><b>Consommation intermédiaire</b>Bien ou service incorporé dans un autre bien par transformation (farine dans le pain) ou détruit dans la production (énergie).</div>
     <p>Tes notes associent la TVA à la consommation finale et le « hors taxes » aux deux autres catégories. C'est juste dans le résultat : les entreprises paient la TVA sur leurs achats mais la récupèrent, et c'est le consommateur final qui la supporte réellement.</p>
-    <div class="trap"><b>Précision sur ta note « pneus Michelin »</b>Un pneu vendu à Renault pour une voiture neuve est une consommation intermédiaire. Le même pneu acheté par un particulier au garage est un bien de consommation finale. C'est l'usage qui classe le bien, pas sa nature.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Un ordinateur portable acheté par un étudiant et le même ordinateur acheté par un bureau d'études : est-ce le même bien pour l'économiste ? Pourquoi est-ce important pour mesurer la production d'un pays ?</p>
@@ -474,7 +455,6 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="def"><b>Paradoxe de l'épargne</b>Si un ménage épargne plus, il s'enrichit. Si tous les ménages le font en même temps, la consommation chute, les entreprises vendent moins, les revenus baissent, et l'épargne totale peut finalement diminuer.</div>
     <p>Ton cours insiste aussi sur une distinction : le <b>modèle libéral</b> en économie n'est pas le <b>libéralisme politique</b>. Le premier dit que le marché régule l'économie ; le second concerne les libertés individuelles face au pouvoir. Un pays peut avoir une économie de marché sans être une démocratie, et inversement.</p>
     <p>Les noms notés en marge de ta page 1 sont deux économistes français actuels qui illustrent le débat sur la place de l'État : Agnès Verdier-Molinié (Fondation iFRAP, d'orientation libérale, critique de la dépense publique) et Gaël Giraud (CNRS, critique de la finance dérégulée, travaux sur la transition écologique).</p>
-    <div class="trap"><b>Nuance page 1 : « naît avec le premier livre en 1776 »</b>La Richesse des nations d'Adam Smith est bien le texte fondateur de l'économie classique, mais ce n'est pas le premier livre d'économie : Cantillon (vers 1730) et les physiocrates de Quesnay (Tableau économique, 1758) l'ont précédé.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Pourquoi ce qui est rationnel pour chaque individu peut-il être désastreux pour l'ensemble ? Trouve un exemple hors de l'économie.</p>
@@ -511,16 +491,6 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="def"><b>Équilibre général</b>Équilibre à double niveau, de chaque individu et de chaque marché en même temps (Walras).</div>
     <p><b>Keynes</b> (après 1929) raisonne en macro-économie : un déséquilibre peut durer (chômage durable), et l'État doit alors se substituer aux entreprises défaillantes pour investir et embaucher. <b>Marx</b>, cité dans tes notes, pense que les crises sont inhérentes au capitalisme et prône l'appropriation collective des moyens de production.</p>
     <p><b>Années 70</b> : l'opposition libéraux/keynésiens est dépassée et la recherche se diversifie : modèles mathématiques des marchés financiers (Merton et Scholes, Nobel 1997), bien-être et capabilités (Sen, 1998), psychologie du risque (Kahneman et Smith, 2002).</p>
-    <p>L'axe de l'outil aide à mémoriser, mais il résume chaque école à une seule question : la place de l'État. Pour une dissertation, compare plutôt leurs hypothèses, leur diagnostic et leurs limites.</p>
-    <div class="ttwrap"><table class="sch"><thead><tr><th>École</th><th>Hypothèses</th><th>Diagnostic</th><th>Limites</th></tr></thead><tbody>
-      <tr><td><b>Classiques</b><br>Smith, Ricardo, Say</td><td>Valeur fondée sur le travail ; individus guidés par leur intérêt ; prix et salaires flexibles ; l'offre crée sa propre demande (loi de Say).</td><td>Les déséquilibres sont passagers ; le marché revient seul à l'équilibre ; l'État doit garantir les règles (propriété, contrats, défense).</td><td>N'explique pas un chômage de masse durable ; la théorie de la valeur-travail explique mal les prix des biens rares.</td></tr>
-      <tr><td><b>Néoclassiques</b><br>Walras, Jevons, Menger</td><td>Agents rationnels (homo œconomicus) ; raisonnement à la marge ; concurrence parfaite ; information complète.</td><td>Le chômage et les crises viennent de rigidités ou d'entraves aux prix ; il faut laisser les marchés s'ajuster.</td><td>Hypothèses rarement réunies en pratique (information, rationalité, concurrence) ; le modèle dit peu de choses sur les crises de demande.</td></tr>
-      <tr><td><b>Keynes</b></td><td>Raisonnement macro ; la demande effective (consommation + investissement) détermine la production ; salaires et prix rigides à court terme ; anticipations incertaines.</td><td>Un équilibre de sous-emploi peut durer ; l'État doit soutenir la demande (dépense, investissement public) pour relancer l'activité.</td><td>Le multiplicateur réel est plus faible (impôts, importations) ; relance mal adaptée aux chocs d'offre et à l'inflation (stagflation des années 70) ; question de la dette.</td></tr>
-      <tr><td><b>Marx</b></td><td>Valeur-travail ; la plus-value vient du travail non payé ; société divisée entre capital et travail.</td><td>Les crises sont inhérentes au capitalisme (suraccumulation, baisse tendancielle du taux de profit) ; il faut l'appropriation collective des moyens de production.</td><td>Les économies planifiées du XXe siècle ont connu de graves problèmes d'information et d'incitations ; prédictions d'effondrement du capitalisme non réalisées.</td></tr>
-    </tbody></table></div>
-    <div class="nuance"><b>Nuance</b>Chaque école recouvre des courants variés, et un même économiste peut conclure différemment selon le problème étudié : Keynes défendait le marché en temps normal et la relance en dépression. Les réponses du tableau de l'outil sont des positions typiques, pas des doctrines figées.</div>
-    <div class="trap"><b>Erreur page 1 : « néoclassique (capitalisme) »</b>Le néoclassicisme est une école de pensée, pas un système économique. Le capitalisme existait déjà au temps des classiques, qui le décrivent. Ce qui change en 1870, c'est la théorie : valeur fondée sur l'utilité marginale au lieu du travail, et équilibre général.</div>
-    <div class="trap"><b>Coquilles du polycopié, page 6</b>« Scholl » est Myron Scholes, « D Kanman » est Daniel Kahneman, « S Amarty a » est Amartya Sen. À l'écrit, ces noms mal orthographiés coûtent des points.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>L'homo œconomicus n'existe pas, tout le monde le sait. Pourquoi les économistes l'ont-ils quand même utilisé pendant un siècle, et qu'ont apporté Kahneman et Smith ?</p>
@@ -534,8 +504,7 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
 </article>
 
 <!-- 6 1929 -->
-<article class="concept focus" data-id="c6">
-  <span class="focus-tag">Deux raccourcis à corriger dans les notes, pages 1 et 2</span>
+<article class="concept" data-id="c6">
   <h3><span class="n">6</span>1929 : le cercle vicieux et la réponse de Keynes</h3>
   <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>La crise de 1929 est le cas d'école qui a fait basculer la pensée économique. Elle montre qu'un choc peut s'auto-entretenir : moins de revenus, moins de consommation, moins de production, donc encore moins de revenus. Keynes explique comment l'État peut casser ce cercle et pourquoi un euro dépensé par l'État peut créer plus d'un euro de PIB.</p></div>
   <div class="wg" data-w="crise">
@@ -552,22 +521,6 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="readout"><span>Multiplicateur k : <b data-o="k"></b></span><span>PIB avant crise : <b data-o="y0"></b></span><span>PIB final sans État : <b data-o="ya"></b></span><span>avec État : <b data-o="yb"></b></span><span>Relance qui compense exactement : <b data-o="need"></b></span></div>
     <div class="svgbox wide" data-o="loop"></div>
   </div>
-  <div class="wg" data-w="mult">
-    <h4>🔬 Le multiplicateur, tour par tour</h4>
-    <p class="hint">L'État dépense ΔG. Cette dépense devient le revenu de quelqu'un, qui en redépense une part, et ainsi de suite. Chaque barre est l'ajout au PIB d'un tour ; la ligne est la somme cumulée, qui converge vers ΔG × k. Avance un tour à la fois.</p>
-<div class="pred" data-pred="mult" data-ok="up"><p class="pq"><small>Avant de toucher aux curseurs · multiplicateur keynésien</small>Dans le modèle keynésien élémentaire, si la propension marginale à consommer augmente, que devient le multiplicateur ?</p><div class="opts"><button class="btn" type="button" data-pv="up">il augmente</button><button class="btn" type="button" data-pv="down">il diminue</button><button class="btn" type="button" data-pv="same">il reste identique</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Il augmente.</b> À chaque tour, une part c du revenu est redépensée : plus c est grand, plus chaque tour est gros et plus la somme ΔG × (1 + c + c² + …) = ΔG / (1 − c) est élevée. Avec c = 0,8 on obtient 5 ; avec c = 0,9, 10. Coche ensuite « impôts et importations » : ces fuites réduisent la part redépensée dans le pays, donc le multiplicateur.</p></template></div>
-    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
-    <div class="stepbar"><button class="btn primary" type="button" data-act="next">Tour suivant</button><button class="btn" type="button" data-act="all">Tout dérouler</button><button class="btn" type="button" data-act="reset">Recommencer</button></div>
-    <div class="controls">
-      <div class="ctl"><label>Dépense publique ΔG <span data-o="dg"></span></label><input type="range" data-k="dg" min="10" max="200" step="10" value="100"></div>
-      <div class="ctl"><label>Propension marginale à consommer c <span data-o="c"></span></label><input type="range" data-k="c" min="0.5" max="0.95" step="0.01" value="0.8"></div>
-      <label class="chk" style="grid-column:1/-1"><input type="checkbox" data-k="fuite"> Impôts et importations (économie ouverte)</label>
-      <div class="ctl"><label>Taux d'impôt t <span data-o="t"></span></label><input type="range" data-k="t" min="0" max="0.4" step="0.05" value="0.3"></div>
-      <div class="ctl"><label>Propension à importer m <span data-o="m"></span></label><input type="range" data-k="m" min="0" max="0.3" step="0.05" value="0.2"></div>
-    </div>
-    <div class="readout"><span>Tours affichés : <b data-o="n"></b></span><span>Somme des effets : <b data-o="sum"></b></span><span>Limite théorique ΔG × k : <b data-o="lim"></b></span><span>k : <b data-o="k"></b></span></div>
-    <div class="rounds" data-o="list"></div>
-  </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
     <p>Un village où tout le monde vit des achats des autres : le boulanger achète chez le cordonnier, qui achète chez le menuisier, qui achète chez le boulanger. Si le boulanger a peur et cesse d'acheter, le cordonnier gagne moins et achète moins au menuisier, et ainsi de suite : la peur se propage. Si le maire commande une nouvelle école au menuisier, l'argent se remet à circuler et chacun recommence à dépenser.</p>
   </div></details>
@@ -578,20 +531,9 @@ modèle de l'outil :  Um(n) = U1 × r^(n − 1), avec r &lt; 1</div>
     <div class="def"><b>Multiplicateur keynésien</b>Rapport entre la hausse finale du PIB et la dépense initiale qui l'a provoquée. Chaque euro dépensé devient le revenu de quelqu'un, qui en redépense une part c, et ainsi de suite.</div>
     <div class="fblock">ΔY = ΔG × (1 + c + c² + c³ + …) = ΔG / (1 − c)
 k = 1 / (1 − c)
-c = 0,8  →  k = 5 : dans ce modèle, 1 Md de grands travaux ajoute 5 Md au PIB à terme</div>
-    <div class="hyp"><b>Hypothèses de k = 1 / (1 − c)</b><ul>
-      <li>Économie fermée : pas d'importations, tout ce qui est dépensé est produit dans le pays.</li>
-      <li>Pas d'impôt proportionnel au revenu ; propension marginale à consommer c constante.</li>
-      <li>Prix fixes et capacités de production disponibles (chômage, machines à l'arrêt) : la demande supplémentaire se transforme en production, pas en inflation.</li>
-    </ul></div>
-    <p>La même logique joue à l'envers : une baisse de 8 Md de l'investissement fait perdre 40 Md de PIB. C'est ce que montre la courbe rouge. Plus les ménages consomment (c proche de 1), plus le multiplicateur est fort, dans les deux sens. Le second outil ci-dessus déroule la chaîne tour par tour.</p>
-    <div class="fblock">avec un taux d'impôt t et une propension à importer m :
-k = 1 / (1 − c × (1 − t) + m)
-c = 0,8, t = 0,3, m = 0,25  →  k ≈ 1,4</div>
-    <div class="nuance"><b>Nuance</b>k est un multiplicateur théorique, dans ce cadre. Il ne garantit pas que chaque euro de dépense publique produise toujours le même effet sur le PIB observé : les fuites (impôts, importations, épargne de précaution), la réaction des taux d'intérêt et des prix, et les anticipations des ménages font varier l'effet réel. Les estimations empiriques pour les pays développés se situent souvent autour de 0,5 à 1,5, plus haut en récession profonde qu'en période normale.</div>
+c = 0,8  →  k = 5 : 1 Md de grands travaux crée 5 Md de PIB à terme</div>
+    <p>La même logique joue à l'envers : une baisse de 8 Md de l'investissement fait perdre 40 Md de PIB. C'est ce que montre la courbe rouge. Plus les ménages consomment (c proche de 1), plus le multiplicateur est fort, dans les deux sens. Le modèle est volontairement simplifié : il ignore les importations, les impôts et les réactions des prix, qui réduisent le multiplicateur réel.</p>
     <p>Tes notes relient ensuite la crise à l'arrivée d'Hitler : les déséquilibres individuels conduisent à des déséquilibres économiques, puis à des conflits.</p>
-    <div class="trap"><b>Raccourci page 1 : « les actions valent 0 » et « récession au bout de 3 mois »</b>Les actions n'ont pas valu zéro : le Dow Jones a perdu environ 89 % entre son sommet de septembre 1929 et juillet 1932, en trois ans de baisse. Et l'activité américaine ralentissait déjà depuis l'été 1929, avant le krach. Le krach a transformé un ralentissement en dépression, il ne l'a pas créé de toutes pièces.</div>
-    <div class="trap"><b>Raccourci page 2 : Keynes et le New Deal</b>Le New Deal de Roosevelt date de 1933, la Théorie générale de Keynes de 1936. Le New Deal n'est donc pas une application de la théorie de Keynes, même s'il va dans le même sens. De même, entre Versailles (1919) et Hitler (1933), le maillon décisif est la crise de 1929 : les capitaux américains se retirent d'Allemagne, qui compte environ 6 millions de chômeurs en 1932.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Dans l'outil, une relance qui arrive à l'année 2 ou à l'année 10 mène au même PIB final. Pourquoi le moment de l'intervention compte-t-il pourtant énormément pour la population ?</p>
@@ -605,8 +547,7 @@ c = 0,8, t = 0,3, m = 0,25  →  k ≈ 1,4</div>
 </article>
 
 <!-- 7 ACTEURS -->
-<article class="concept focus" data-id="c7">
-  <span class="focus-tag">Une erreur dans les notes, page 2</span>
+<article class="concept" data-id="c7">
   <h3><span class="n">7</span>Les acteurs de la vie économique et le circuit</h3>
   <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une économie n'est pas une liste d'acteurs isolés : c'est un circuit où ce que l'un dépense est le revenu d'un autre. Savoir qui fait quoi et ce qui circule entre eux, c'est la clé pour comprendre le PIB et les politiques économiques.</p></div>
   <div class="wg" data-w="circuit">
@@ -630,7 +571,6 @@ ISBLSM : associations, syndicats, partis, Églises
 Reste du monde : agents non résidents</div>
     <div class="def"><b>ISBLSM</b>Institutions sans but lucratif au service des ménages : associations, partis politiques, syndicats, Églises.</div>
     <div class="def"><b>Production non marchande</b>Services fournis gratuitement ou à un prix très inférieur à leur coût (école publique, hôpital, police). Comme ils n'ont pas de prix de marché, on les évalue à leur coût de production.</div>
-    <div class="trap"><b>Erreur page 2 : « les entreprises créent de la richesse, les autres acteurs non »</b>En comptabilité nationale, tous les secteurs résidents qui produisent créent de la valeur ajoutée : les administrations (production non marchande comptée à son coût), les banques et assurances, les ISBLSM, et les ménages via les entrepreneurs individuels et les loyers. Ton propre graphique de la page 7 le montre : les « services principalement non marchands » représentent environ un cinquième de la valeur ajoutée. Ce qui est vrai : les entreprises sont le principal producteur de valeur ajoutée marchande.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Un enseignant du public et un professeur de cours particuliers font le même travail. Pourquoi la comptabilité nationale les traite-t-elle différemment, et que penses-tu de cette différence ?</p>
@@ -642,8 +582,7 @@ Reste du monde : agents non résidents</div>
 </article>
 
 <!-- 8 VA PIB -->
-<article class="concept focus" data-id="c8">
-  <span class="focus-tag">Une formule à corriger, pages 2 et 3</span>
+<article class="concept" data-id="c8">
   <h3><span class="n">8</span>Valeur ajoutée et PIB</h3>
   <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>On évalue la santé d'un pays par son PIB. Mais additionner les ventes de toutes les entreprises compterait plusieurs fois la même chose : le fil, puis le tissu qui contient le fil, puis la trousse qui contient le tissu. La valeur ajoutée résout ce problème : chaque entreprise ne compte que ce qu'elle a réellement ajouté.</p></div>
   <div class="wg" data-w="va">
@@ -674,8 +613,6 @@ PIB = somme des VA des producteurs résidents (+ impôts sur les produits − su
 Ton exemple : trousse vendue 10 €, tissu 3 €, fermeture éclair 1 €  →  VA = 10 − 4 = 6 €</div>
     <div class="def"><b>PIB (produit intérieur brut)</b>Valeur de toutes les richesses produites sur le territoire d'un pays pendant une période, en général un an. C'est un flux, pas un stock : il mesure ce qui est produit dans l'année, pas ce qui est possédé.</div>
     <div class="def"><b>Double comptage</b>Erreur qui consiste à additionner les chiffres d'affaires : la valeur des produits intermédiaires serait comptée à chaque étape où ils sont revendus.</div>
-    <div class="trap"><b>Formule page 2 : « VA = Σ prix de vente − coût matière première »</b>Tu l'as toi-même annotée « à revoir » : ce qu'on retire, ce sont toutes les consommations intermédiaires, pas seulement les matières premières. L'électricité, les emballages, la sous-traitance ou la publicité achetées à d'autres entreprises se retirent aussi. Le Σ est de trop pour une entreprise : il apparaît quand on additionne les VA de toutes les entreprises pour obtenir le PIB.</div>
-    <div class="trap"><b>Formule page 3 : « PIB = Σ VA »</b>C'est l'idée, mais la définition exacte de l'Insee ajoute les impôts sur les produits (TVA surtout) et retire les subventions sur les produits, car les VA sont mesurées hors de ces taxes. Et ta note page 7 « la VA n'est plus que le chiffre d'affaires » s'écrit plutôt : la VA est inférieure au chiffre d'affaires, puisqu'on en retire les consommations intermédiaires.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Une entreprise qui externalise son nettoyage et sa comptabilité voit sa valeur ajoutée baisser alors qu'elle produit autant. Le PIB du pays baisse-t-il ? Pourquoi ?</p>
@@ -735,25 +672,10 @@ Notes : P0 = 100 × 1 € = 100 €
     <h4>🔬 Entre cinq taux de croissance, regarde le niveau du PIB</h4>
     <p class="hint">Les barres sont les taux annuels (échelle de gauche), la ligne le niveau du PIB, base 100 (échelle de droite). Tant qu'une barre est au-dessus de zéro, la ligne monte, même si la barre rétrécit.</p>
     <div class="presets"><button class="btn" type="button" data-pre="acc">1,8 → 3 % : augmente</button><button class="btn" type="button" data-pre="ral">1,8 → 1,2 % : augmente moins vite</button><button class="btn" type="button" data-pre="rec">1,8 → −0,3 % : diminue</button><button class="btn" type="button" data-pre="g30">Trente Glorieuses</button></div>
-    <div class="controls" style="margin-bottom:8px"><div class="ctl"><label>Fréquence des données</label><select data-k="freq"><option value="an">taux annuels</option><option value="tr">taux trimestriels</option></select></div></div>
     <div class="yrs"><div><label>Année 1 (%)</label><input type="number" step="0.1" data-k="y1" value="1.8"></div><div><label>Année 2 (%)</label><input type="number" step="0.1" data-k="y2" value="1.2"></div><div><label>Année 3 (%)</label><input type="number" step="0.1" data-k="y3" value="0.8"></div><div><label>Année 4 (%)</label><input type="number" step="0.1" data-k="y4" value="0.5"></div><div><label>Année 5 (%)</label><input type="number" step="0.1" data-k="y5" value="0.3"></div></div>
     <canvas class="cv" data-c="cv" style="height:260px"></canvas>
-    <div class="readout"><span>PIB final : <b data-o="fin"></b></span><span><span data-o="moyl">Taux moyen annuel</span> : <b data-o="moy"></b></span></div>
+    <div class="readout"><span>PIB final : <b data-o="fin"></b></span><span>Taux moyen annuel : <b data-o="moy"></b></span></div>
     <div class="readout" data-o="verdict"></div>
-  </div>
-  <div class="wg" data-w="comp">
-    <h4>🔬 Quelques dixièmes de point, plusieurs décennies</h4>
-    <p class="hint">Deux économies partent du même PIB (base 100) avec des taux différents. Les écarts se composent d'année en année. Coche « PIB nominal » pour ajouter l'inflation : la valeur monte plus vite, mais la production réelle (en volume) ne change pas.</p>
-<div class="pred" data-pred="comp" data-ok="b"><p class="pq"><small>Avant de toucher aux curseurs · croissance composée</small>Deux pays partent du même PIB. L'un croît de 1 % par an, l'autre de 1,5 %. Au bout de 50 ans, de combien le second dépasse-t-il le premier ?</p><div class="opts"><button class="btn" type="button" data-pv="a">moins de 5 %</button><button class="btn" type="button" data-pv="b">environ 25 à 30 %</button><button class="btn" type="button" data-pv="c">plus de 60 %</button></div><textarea placeholder="Ta justification en une phrase (facultatif)"></textarea><div class="pres" hidden></div><template class="pexp"><p><b>Environ 28 %.</b> 1,01^50 ≈ 1,64 et 1,015^50 ≈ 2,11 : 2,11 / 1,64 ≈ 1,28. Un demi-point d'écart chaque année ne semble rien, mais il se compose : (1,015 / 1,01)^50 ≈ 1,005^50. C'est pourquoi les économistes s'intéressent autant à quelques dixièmes de croissance.</p></template></div>
-    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
-    <div class="controls">
-      <div class="ctl"><label>Taux du pays A <span data-o="g1"></span></label><input type="range" data-k="g1" min="-1" max="6" step="0.1" value="1"></div>
-      <div class="ctl"><label>Taux du pays B <span data-o="g2"></span></label><input type="range" data-k="g2" min="-1" max="6" step="0.1" value="1.5"></div>
-      <div class="ctl"><label>Durée <span data-o="n"></span></label><input type="range" data-k="n" min="5" max="80" step="5" value="50"></div>
-      <div class="ctl"><label>Inflation <span data-o="pi"></span></label><input type="range" data-k="pi" min="0" max="6" step="0.5" value="2"></div>
-      <label class="chk" style="grid-column:1/-1"><input type="checkbox" data-k="nom"> Afficher aussi le PIB nominal (en valeur)</label>
-    </div>
-    <div class="readout"><span>PIB final A : <b data-o="ya"></b></span><span>B : <b data-o="yb"></b></span><span>Écart B / A : <b data-o="gap"></b></span><span>Doublement A : <b data-o="da"></b></span><span>B : <b data-o="db"></b></span></div>
   </div>
   <div class="wg" data-w="share">
     <h4>🔬 Part ou montant : l'agriculture de 1949 à aujourd'hui</h4>
@@ -775,22 +697,20 @@ Notes : P0 = 100 × 1 € = 100 €
     <canvas class="cv" data-c="cv" style="height:220px"></canvas>
   </div>
   <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
-    <p>Une voiture qui passe de 130 à 90 km/h ralentit, mais elle avance toujours. Le taux de croissance, c'est la vitesse ; le PIB, c'est la distance parcourue. Seule une vitesse négative fait reculer la voiture : c'est la récession, que l'on mesure sur l'année ou, en conjoncture, sur deux trimestres de suite.</p>
+    <p>Une voiture qui passe de 130 à 90 km/h ralentit, mais elle avance toujours. Le taux de croissance, c'est la vitesse ; le PIB, c'est la distance parcourue. Seule une vitesse négative fait reculer la voiture : c'est la récession.</p>
   </div></details>
   <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
     <div class="def"><b>Croissance économique</b>Augmentation durable de la production d'un pays, mesurée par le taux de variation du PIB en volume.</div>
     <div class="fblock">taux de croissance = (PIB N+1 − PIB N) / PIB N × 100
 PIB après n années à taux constant g : PIB × (1 + g)^n
 temps de doublement ≈ 70 / g (en %) : 5 % → 14 ans ; 1 % → 70 ans</div>
-    <div class="def"><b>Récession</b>Baisse du PIB en volume. Deux niveaux à ne pas mélanger : sur une année, on parle de récession quand le PIB annuel recule (taux de croissance annuel négatif) ; en analyse conjoncturelle, la convention retenue est deux trimestres consécutifs de baisse du PIB.</div>
-    <div class="nuance"><b>Nuance</b>Les deux définitions ne coïncident pas toujours. Une année peut afficher un PIB annuel en baisse sans deux trimestres négatifs d'affilée, et inversement deux trimestres de recul en fin d'année peuvent laisser la moyenne annuelle positive. La règle des deux trimestres est une convention de commentateurs, pas une définition officielle : aux États-Unis, le comité du NBER date les récessions à partir de plusieurs indicateurs (emploi, revenus, production).</div>
+    <div class="def"><b>Récession</b>Baisse du PIB en volume, c'est-à-dire un taux de croissance négatif. En conjoncture, on parle de récession après deux trimestres consécutifs de recul.</div>
     <div class="def"><b>Tertiarisation</b>Augmentation de la part des services dans la valeur ajoutée et l'emploi : en France, ils passent d'environ 50 % à 80 % de la VA depuis 1950, selon ton graphique page 7.</div>
     <p><b>Méthode du commentaire de graphique</b>, selon ton cours :</p>
     <div class="fblock">1) Définir les concepts utilisés, le cadre et le contexte (source, unité, période)
 2) Dégager la tendance : le phénomène qu'on constate, avec des chiffres
 3) Analyser : expliquer ce qu'on en tire, les causes et les limites</div>
     <p>Appliquée au graphique de la page 7, cela donne : (1) PIB en volume, croissance annuelle en %, Insee, 1950–2025 ; (2) la France crée toujours de la richesse, mais de moins en moins vite (de 5 à 6 % par an dans les années 1950–60 à environ 1 % aujourd'hui), avec des années de recul en 1975, 1993, 2009 et 2020 ; (3) la France continue de s'enrichir mais à un rythme ralenti : fin du rattrapage d'après-guerre, chocs pétroliers, tertiarisation où les gains de productivité sont plus faibles.</p>
-    <div class="trap"><b>Piège de lecture</b>Sur le graphique de la page 7 de répartition de la VA, les parts sont en pourcentage du total. Une part qui baisse ne veut pas dire une activité qui baisse : l'agriculture produit plus qu'en 1949, mais l'économie a crû bien plus vite qu'elle.</div>
   </div></details>
   <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
     <div class="q"><p>Un journal titre « la croissance chute de moitié » quand elle passe de 2 % à 1 %. Les Français sont-ils plus pauvres ? Comment reformulerais-tu ce titre ?</p>
@@ -799,6 +719,343 @@ temps de doublement ≈ 70 / g (en %) : 5 % → 14 ans ; 1 % → 70 ans</div>
       <details><summary>Éléments de réponse</summary><div class="ans">Parce que la croissance est exponentielle : les écarts se composent. Une personne des Trente Glorieuses voyait le niveau de vie doubler en une quinzaine d'années ; aujourd'hui, ce doublement prend une vie entière. Le partage des richesses devient plus conflictuel quand le gâteau grossit lentement, ce qui rejoint le lien entre rareté et conflits du début du cours.</div></details></div>
     <div class="q"><p>Pourquoi la part de l'agriculture dans la valeur ajoutée a-t-elle chuté alors que la France n'a jamais autant produit de nourriture ?</p>
       <details><summary>Éléments de réponse</summary><div class="ans">Les gains de productivité agricoles ont été énormes (machines, engrais) : on produit plus avec beaucoup moins de travail, et les prix agricoles ont baissé relativement aux autres. Pendant ce temps, la demande de services a explosé avec le niveau de vie. La part baisse parce que le reste croît plus vite, pas parce que l'agriculture s'effondre.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<div class="chap" id="chap2"><span class="k">Chapitre 2</span><h3>Les acteurs en détail : ménages, entreprise, investissement et État</h3><p>Blocs 11 à 17 : ce que gagnent et achètent les ménages, comment l'entreprise produit et investit, comment se forme la demande, et le rôle budgétaire de l'État.</p></div>
+
+<!-- 11 MENAGES / POUVOIR D'ACHAT -->
+<article class="concept" data-id="c11">
+  <h3><span class="n">11</span>Les ménages : revenus, IPC et pouvoir d'achat</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Les ménages représentent plus de la moitié de la demande qui fait le PIB. Or ce qu'ils peuvent acheter ne dépend pas de leur revenu seul, mais du rapport entre leur revenu et les prix. Une hausse de salaire de 3 % est une perte si les prix montent de 5 %. Encore faut-il savoir mesurer « les prix » : c'est le rôle de l'indice des prix à la consommation, une moyenne pondérée.</p></div>
+  <div class="wg" data-w="pa">
+    <h4>🔬 Fais varier les prix de chaque poste du panier, puis ton revenu</h4>
+    <p class="hint">La barre montre le poids de chaque poste dans l'IPC, sur 10 000 points (pondérations Insee 2026 : l'alimentation pèse 1 485 points, comme dans tes notes). L'IPC est la moyenne des hausses de prix pondérée par ces poids. Change le profil pour voir qu'un ménage qui roule beaucoup ne vit pas la même inflation que la moyenne.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="calme">Année calme</button><button class="btn" type="button" data-pre="energie">Choc énergétique</button><button class="btn" type="button" data-pre="rouleur">Même choc, gros rouleur</button><button class="btn" type="button" data-pre="gel">Salaire gelé</button></div>
+    <div class="controls">
+      <div class="ctl" style="grid-column:1/-1"><label>Profil du ménage</label><select data-k="prof"><option value="moy">Ménage moyen (pondérations Insee)</option><option value="roul">Gros rouleur (poids de l'énergie doublé)</option></select></div>
+      <div class="ctl"><label>Hausse du revenu <span data-o="r"></span></label><input type="range" data-k="r" min="-5" max="10" step="0.1" value="2"></div>
+      <div class="ctl"><label>Prix de l'alimentation <span data-o="al"></span></label><input type="range" data-k="al" min="-10" max="30" step="0.5" value="1"></div>
+      <div class="ctl"><label>Prix de l'énergie <span data-o="en"></span></label><input type="range" data-k="en" min="-10" max="30" step="0.5" value="0"></div>
+      <div class="ctl"><label>Produits manufacturés <span data-o="ma"></span></label><input type="range" data-k="ma" min="-10" max="30" step="0.5" value="0"></div>
+      <div class="ctl"><label>Services <span data-o="se"></span></label><input type="range" data-k="se" min="-10" max="30" step="0.5" value="2"></div>
+      <div class="ctl"><label>Tabac <span data-o="ta"></span></label><input type="range" data-k="ta" min="-10" max="30" step="0.5" value="3"></div>
+    </div>
+    <div class="vbar" data-o="bar"></div>
+    <div class="legend" data-o="leg"></div>
+    <div class="readout"><span>Hausse de l'IPC : <b data-o="ipc"></b></span><span>Pouvoir d'achat (exact) : <b data-o="pa"></b></span><span>Approximation des notes : <b data-o="apx"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Ton revenu est un seau d'eau, et chaque chose que tu achètes est un verre à remplir. Si le seau grossit de 3 % mais que chaque verre grossit de 5 %, tu remplis moins de verres qu'avant, alors que tu as plus d'eau. Le pouvoir d'achat, c'est le nombre de verres, pas la quantité d'eau.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Les ménages tirent d'abord leurs ressources de la production : ce sont les <b>revenus primaires</b>.</p>
+    <div class="def"><b>Revenus primaires</b>Revenus tirés de la participation à la production : revenus du travail (salaires pour les salariés, honoraires et bénéfices pour les indépendants) et revenus du patrimoine (loyers, dividendes, intérêts, rentes).</div>
+    <p>L'État et la Sécurité sociale y ajoutent des <b>revenus de transfert</b>.</p>
+    <div class="def"><b>Revenus de transfert</b>Revenus versés sans contrepartie productive immédiate, au titre de la protection sociale : APL, RSA, prime d'activité, et revenus de remplacement comme les retraites et les allocations chômage, financés par les cotisations.</div>
+    <p>Pour mesurer les prix, l'Insee calcule l'<b>indice des prix à la consommation</b>.</p>
+    <div class="def"><b>Indice des prix à la consommation (IPC)</b>Indice qui suit le prix d'un panier fixe de biens et services représentatif de la consommation des ménages, à qualité constante. Chaque poste y pèse selon sa part dans les dépenses ; les poids sont revus chaque année.</div>
+    <div class="fblock">Pondérations 2026, sur 10 000 points :
+alimentation 1 485 · énergie 764 · produits manufacturés 2 388
+services 5 195 · tabac 168
+hausse de l'IPC = Σ (poids du poste × hausse de son prix) / 10 000</div>
+    <div class="def"><b>Pouvoir d'achat</b>Quantité de biens et services qu'un revenu permet d'acheter. Il augmente quand le revenu augmente plus vite que les prix.</div>
+    <div class="fblock">PA = R / IPC
+(1 + variation du PA) = (1 + variation de R) / (1 + variation des prix)
+pour de petits taux : variation du PA ≈ variation de R − variation des prix</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Deux ménages ont le même salaire et l'Insee annonce 3 % d'inflation. L'un des deux se sent nettement appauvri. Comment est-ce possible sans que l'Insee se soit trompé ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">L'IPC est une moyenne sur le panier moyen. Un ménage dont le budget est très différent (beaucoup d'énergie, de loyer, d'alimentation) subit sa propre inflation, qui peut être bien plus forte. Le profil « gros rouleur » de l'outil le montre : l'indice est juste pour la moyenne et faux pour presque chaque ménage pris isolément.</div></details></div>
+    <div class="q"><p>Pourquoi l'Insee révise-t-il les pondérations chaque année au lieu de garder le même panier ? Qu'arriverait-il à un indice qui utiliserait encore le panier de 1990 ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les habitudes changent : de nouveaux produits apparaissent (smartphones, abonnements numériques) et les ménages se détournent de ce qui devient cher. Un panier figé surpondérerait des produits devenus marginaux et ignorerait ceux qui pèsent aujourd'hui : il mesurerait les prix d'une consommation qui n'existe plus.</div></details></div>
+    <div class="q"><p>Les retraites et le RSA sont des revenus pour les ménages. Pourquoi ne les compte-t-on pas dans le PIB ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Ce sont des transferts : de l'argent prélevé sur des revenus déjà créés et reversé à d'autres ménages. Aucune production nouvelle n'a lieu. Les ajouter au PIB compterait deux fois la même richesse, une fois quand elle est produite et une fois quand elle est redistribuée.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 12 FONCTION DE PRODUCTION -->
+<article class="concept" data-id="c12">
+  <h3><span class="n">12</span>L'entreprise : profit et fonction de production</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une entreprise cherche à maximiser son profit, mais ce qu'elle peut produire dépend des facteurs dont elle dispose. Tant que ses machines ne changent pas, chaque salarié en plus rapporte un peu moins que le précédent. Ce seul fait explique pourquoi une entreprise licencie, pourquoi elle cesse d'embaucher, et pourquoi elle finit par investir.</p></div>
+  <div class="wg" data-w="prod">
+    <h4>🔬 Ajoute des salariés, puis des machines</h4>
+    <p class="hint">La courbe est la production Y en fonction du nombre de salariés L, à capital fixé. La pente au point (trait orange) est la productivité marginale ; la droite pointillée depuis l'origine a pour pente la productivité moyenne. Courbe grise : 10 machines. Change la forme pour comparer une courbe avec et sans asymptote.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="seul">Seul</button><button class="btn" type="button" data-pre="trois">Trois salariés</button><button class="btn" type="button" data-pre="foule">Trop de monde</button><button class="btn" type="button" data-pre="invest">Investissement</button></div>
+    <canvas class="cv" data-c="cv" style="height:280px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Salariés L <span data-o="L"></span></label><input type="range" data-k="L" min="1" max="20" step="1" value="3"></div>
+      <div class="ctl"><label>Capital K (machines) <span data-o="K"></span></label><input type="range" data-k="K" min="5" max="30" step="1" value="10"></div>
+      <div class="ctl"><label>Forme de la fonction</label><select data-k="forme"><option value="pw">Puissance : croît sans fin</option><option value="sat">Saturation : asymptote</option></select></div>
+    </div>
+    <div class="readout"><span>Production Y : <b data-o="y"></b></span><span>Productivité moyenne Y / L : <b data-o="pm"></b></span><span>Production du dernier salarié : <b data-o="last"></b></span><span>Productivité marginale : <b data-o="der"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une cuisine avec un seul four. Le premier cuisinier produit beaucoup de plats. Le deuxième aide, mais ils se partagent le four. Au cinquième, ils se marchent dessus et attendent leur tour. Pour produire vraiment plus, il ne faut pas un cuisinier de plus, il faut un deuxième four : c'est l'investissement.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Le chiffre d'affaires de l'entreprise (défini au concept 8) est le prix multiplié par la quantité vendue. Ce qu'elle cherche à maximiser, c'est le <b>profit</b>.</p>
+    <div class="def"><b>Profit</b>Différence entre le chiffre d'affaires et le coût total de la production : ce qui reste à l'entreprise une fois tous les facteurs payés.</div>
+    <div class="fblock">π = p × Y − CT(Y)
+p : prix, Y : quantité produite, CT(Y) : coût total, qui dépend de Y
+l'entreprise cherche max π</div>
+    <p>La quantité Y dépend des facteurs selon la <b>fonction de production</b>.</p>
+    <div class="def"><b>Fonction de production</b>Relation entre les quantités de facteurs utilisées et la quantité maximale produite : Y = f(K, L, R), avec K le capital, L le travail et R les ressources naturelles. Une barre sur une lettre, comme dans tes notes, signifie que ce facteur est fixé : c'est le court terme.</div>
+    <div class="def"><b>Productivité moyenne du travail</b>Production par salarié : Y / L.</div>
+    <div class="def"><b>Productivité marginale du travail</b>Production supplémentaire apportée par le dernier salarié embauché ; en continu, c'est la dérivée de la fonction de production par rapport à L.</div>
+    <div class="def"><b>Rendements marginaux décroissants</b>Situation où, un facteur restant fixe, chaque unité supplémentaire de l'autre facteur augmente la production de moins en moins. La courbe Y(L) est alors concave : elle croît à taux décroissant.</div>
+    <div class="fblock">productivité moyenne = Y / L
+productivité marginale = dY / dL ≈ Y(L) − Y(L − 1)
+rendements décroissants : dY / dL > 0 mais diminue quand L augmente
+règle d'embauche : embaucher tant que p × productivité marginale ≥ salaire</div>
+    <p>La raison des rendements décroissants est le facteur fixe : avec le même nombre de machines, chaque nouveau salarié dispose d'une part plus petite du capital. La dernière ligne explique ta phrase de la page 2 : on licencie quand ce qu'un salarié rapporte, p fois sa productivité marginale, devient inférieur à ce qu'il coûte.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Le dixième salarié a une productivité marginale positive mais faible. L'entreprise doit-elle le licencier ? De quoi dépend la réponse ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Pas forcément : il augmente la production. La décision compare ce qu'il rapporte, le prix multiplié par sa productivité marginale, à ce qu'il coûte, son salaire chargé. Si le prix de vente monte, le même salarié devient rentable ; si le salaire monte, il cesse de l'être.</div></details></div>
+    <div class="q"><p>Pourquoi les rendements décroissants n'existent-ils que si au moins un facteur reste fixe ? Que peut-il se passer si l'on double à la fois les machines et les salariés ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le phénomène vient du partage du facteur fixe. Si tout double, chaque salarié garde autant de capital : la production peut doubler, plus que doubler ou moins que doubler. Ce ne sont plus des rendements marginaux mais des rendements d'échelle, qui mènent au concept suivant.</div></details></div>
+    <div class="q"><p>Un salarié embauché peut-il faire baisser la productivité moyenne tout en faisant monter la production ? Que dirait un journal qui ne regarde que la productivité ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Oui, dès que sa productivité marginale est inférieure à la moyenne : la moyenne baisse, la production monte. Un journal pourrait titrer sur une « baisse de productivité » alors que l'entreprise produit plus et emploie plus. C'est la même logique que la moyenne de tes notes : une note sous ta moyenne la fait baisser.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 13 COUT MOYEN -->
+<article class="concept" data-id="c13">
+  <h3><span class="n">13</span>Coût moyen, économies d'échelle et taille optimale</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Produire plus fait d'abord baisser le coût de chaque unité, parce que les coûts fixes se répartissent sur plus de produits. Puis, passé un seuil, le coût unitaire remonte : il faut stocker, coordonner, attendre. Le point bas de cette courbe en U donne la taille optimale de l'entreprise, et la confrontation avec le prix de vente dit combien produire.</p></div>
+  <div class="wg" data-w="cout">
+    <h4>🔬 Choisis une quantité, puis change le prix de vente</h4>
+    <p class="hint">Coût total : CT = coûts fixes + 4 × Q + Q². Courbe bleue : coût moyen. Droite orange : coût marginal. Trait horizontal vert : prix de vente. La zone verte est la phase d'économies d'échelle, la zone rouge celle des déséconomies.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="notes">Prix = coût moyen minimal</button><button class="btn" type="button" data-pre="haut">Prix élevé</button><button class="btn" type="button" data-pre="bas">Prix trop bas</button><button class="btn" type="button" data-pre="fixes">Gros coûts fixes</button></div>
+    <canvas class="cv" data-c="cv" style="height:290px"></canvas>
+    <div class="controls">
+      <div class="ctl"><label>Quantité produite Q <span data-o="Q"></span></label><input type="range" data-k="Q" min="1" max="60" step="1" value="20"></div>
+      <div class="ctl"><label>Prix de vente p <span data-o="p"></span></label><input type="range" data-k="p" min="10" max="120" step="1" value="60"></div>
+      <div class="ctl"><label>Coûts fixes <span data-o="CF"></span></label><input type="range" data-k="CF" min="100" max="1000" step="50" value="400"></div>
+    </div>
+    <div class="readout"><span>Coût moyen : <b data-o="cm"></b></span><span>Coût marginal : <b data-o="cmg"></b></span><span>Profit à cette quantité : <b data-o="pi"></b></span></div>
+    <div class="readout"><span>Taille optimale (coût moyen minimal) : <b data-o="qs"></b></span><span>Quantité qui maximise le profit : <b data-o="qp"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une imprimerie. Graver la plaque coûte cher : imprimer 10 flyers revient très cher l'unité, 1 000 flyers beaucoup moins, car la plaque est « amortie ». Mais pour un million de flyers, il faut louer un entrepôt, payer des équipes de nuit, gérer les retards : chaque flyer recommence à coûter plus cher.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Coût total</b>Somme des coûts fixes, indépendants de la quantité (loyer, machines), et des coûts variables, qui augmentent avec la quantité (matières, énergie).</div>
+    <div class="def"><b>Coût moyen</b>Coût total divisé par la quantité produite : ce que coûte en moyenne une unité.</div>
+    <div class="def"><b>Coût marginal</b>Coût de la dernière unité produite : de combien le coût total augmente quand on produit une unité de plus.</div>
+    <div class="def"><b>Économies d'échelle</b>Baisse du coût moyen quand la quantité produite augmente, grâce à la répartition des coûts fixes et à la spécialisation.</div>
+    <div class="def"><b>Déséconomies d'échelle</b>Hausse du coût moyen au-delà d'une certaine taille : stockage, manque de place, coordination plus lourde, délais plus longs.</div>
+    <div class="def"><b>Taille optimale</b>Quantité qui minimise le coût moyen. En ce point, le coût marginal est égal au coût moyen.</div>
+    <div class="fblock">CM = CT / Q
+modèle de l'outil : CT = CF + c × Q + d × Q²
+CM = CF / Q + c + d × Q          Cm = c + 2 × d × Q
+taille optimale : dCM/dQ = 0  →  Q* = racine(CF / d)
+profit maximal : Cm = p  →  Q = (p − c) / (2 × d), si p ≥ CM minimal</div>
+    <p>Le coût marginal coupe le coût moyen en son minimum : tant que la dernière unité coûte moins que la moyenne, elle fait baisser la moyenne, et inversement.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Pourquoi le coût marginal coupe-t-il toujours le coût moyen exactement à son minimum ? Explique-le sans calcul.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">C'est une propriété de toute moyenne : si la dernière valeur ajoutée est sous la moyenne, la moyenne baisse ; si elle est au-dessus, la moyenne monte. Le minimum de la moyenne est donc atteint quand la dernière valeur lui est égale, c'est-à-dire quand Cm = CM.</div></details></div>
+    <div class="q"><p>Si les coûts fixes d'un secteur sont énormes (centrales nucléaires, lignes à grande vitesse, usines de puces), que devient la taille optimale ? Qu'est-ce que cela implique pour le nombre d'entreprises dans ce secteur ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Q* = racine(CF / d) augmente avec les coûts fixes : la taille optimale devient gigantesque. Le marché ne peut alors faire vivre que quelques entreprises, voire une seule. On parle de monopole naturel, et c'est souvent là que l'État intervient comme régulateur ou comme propriétaire.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 14 VAN TRI -->
+<article class="concept" data-id="c14">
+  <h3><span class="n">14</span>L'investissement : VAN et TRI</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Investir, c'est dépenser aujourd'hui une somme certaine contre des gains futurs incertains. Or un euro dans cinq ans ne vaut pas un euro aujourd'hui. La VAN ramène tous les flux futurs à leur valeur d'aujourd'hui pour les comparer à la mise de départ ; le TRI dit quel rendement le projet offre. Ce sont les deux outils de ton cours pour répondre à la question : pourquoi une entreprise investit-elle ?</p></div>
+  <div class="wg" data-w="van">
+    <h4>🔬 Entre un projet, puis fais varier le taux exigé</h4>
+    <p class="hint">La courbe donne la VAN du projet pour chaque taux d'actualisation. Elle coupe zéro au TRI. Le point noir est la VAN au taux exigé, celui d'un placement à risque équivalent. La liste montre la recherche du TRI par dichotomie, comme dans tes notes.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="cours">Ton cours : TRI 12 %, marché 15 %</button><button class="btn" type="button" data-pre="rentable">Projet rentable</button><button class="btn" type="button" data-pre="tardif">Gains tardifs</button><button class="btn" type="button" data-pre="hausse">Gains tardifs, taux en hausse</button></div>
+    <div class="controls" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">
+      <div class="ctl"><label>Investissement I0</label><input class="txt" type="number" min="0" step="any" data-k="i0" value="1000"></div>
+      <div class="ctl"><label>Flux année 1</label><input class="txt" type="number" step="any" data-k="c1" value="300"></div>
+      <div class="ctl"><label>Flux année 2</label><input class="txt" type="number" step="any" data-k="c2" value="300"></div>
+      <div class="ctl"><label>Flux année 3</label><input class="txt" type="number" step="any" data-k="c3" value="300"></div>
+      <div class="ctl"><label>Flux année 4</label><input class="txt" type="number" step="any" data-k="c4" value="300"></div>
+      <div class="ctl"><label>Flux année 5</label><input class="txt" type="number" step="any" data-k="c5" value="300"></div>
+    </div>
+    <div class="controls"><div class="ctl" style="grid-column:1/-1"><label>Taux exigé i (placement à risque équivalent) <span data-o="i"></span></label><input type="range" data-k="i" min="0" max="30" step="0.5" value="8"></div></div>
+    <canvas class="cv" data-c="cv" style="height:260px"></canvas>
+    <div class="readout"><span>VAN au taux exigé : <b data-o="van"></b></span><span>TRI : <b data-o="tri"></b></span><span>Somme brute des flux : <b data-o="brut"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+    <ol class="steps" data-o="steps"></ol>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Préfères-tu 100 € aujourd'hui ou 100 € dans cinq ans ? Aujourd'hui, évidemment : tu pourrais les placer et avoir plus dans cinq ans. Pour que tu acceptes d'attendre, il faut te promettre davantage. Actualiser, c'est faire ce calcul à l'envers : se demander combien vaut aujourd'hui une somme promise pour plus tard.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>En comptabilité nationale, l'investissement s'appelle la <b>FBCF</b>.</p>
+    <div class="def"><b>FBCF (formation brute de capital fixe)</b>Achat de biens de production durables, utilisés plus d'un an pour produire d'autres biens : machines, bâtiments, logiciels. Elle inclut aussi l'achat de logements neufs par les ménages.</div>
+    <div class="def"><b>Actualisation</b>Opération qui ramène une somme future à sa valeur d'aujourd'hui en la divisant par (1 + i) une fois par année d'attente.</div>
+    <div class="def"><b>VAN (valeur actuelle nette)</b>Somme des flux de trésorerie futurs actualisés, moins l'investissement initial. Positive, elle signifie que le projet rapporte plus que le placement de référence au taux i.</div>
+    <div class="def"><b>TRI (taux de rendement interne)</b>Taux d'actualisation pour lequel la VAN est nulle : le rendement annuel propre au projet.</div>
+    <div class="fblock">VAN = [ somme pour t = 1 à N de CF_t / (1 + i)^t ] − I0
+CF_t : flux de trésorerie de l'année t ; I0 : investissement initial
+étape 1 : on investit si VAN > 0 (à VAN = 0, on est indifférent)
+étape 2 : TRI tel que 0 = somme de CF_t / (1 + TRI)^t − I0
+étape 3 : on investit si TRI > taux d'un placement à risque équivalent</div>
+    <p>L'équation du TRI n'a pas de solution algébrique au-delà de quelques années : on la résout numériquement. La dichotomie de tes notes marche parce que la VAN décroît avec le taux : on part d'un intervalle [a ; b] où la VAN change de signe, on teste le milieu, on garde la moitié où le signe change. Chaque itération divise l'incertitude par deux : après 20 itérations sur [0 ; 100 %], l'erreur est inférieure à 0,0001 %.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Les taux d'intérêt montent de 2 points. Que deviennent les VAN des projets, et pourquoi les projets aux gains lointains sont-ils les plus touchés ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Toutes les VAN baissent, car chaque flux est divisé par un facteur plus grand. Mais le facteur est (1 + i) puissance t : plus le flux est lointain, plus la hausse du taux pèse. Compare les préréglages « Gains tardifs » et « Gains tardifs, taux en hausse ». C'est le canal par lequel une hausse des taux freine l'investissement et donc la croissance.</div></details></div>
+    <div class="q"><p>Le projet A a la plus grande VAN, le projet B le plus grand TRI. Comment ces deux critères peuvent-ils se contredire, et lequel suivre si tu ne peux en financer qu'un ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le TRI est un rendement en pourcentage, la VAN une richesse créée en euros. Un petit projet très rentable peut créer moins de richesse qu'un grand projet un peu moins rentable. Si les projets s'excluent, la VAN mesure directement ce que l'entreprise gagne ; le TRI sert surtout à comparer au coût de l'argent.</div></details></div>
+    <div class="q"><p>Ton cours dit que l'État ne peut pas obliger les entreprises à investir. Sur quels termes de la formule de la VAN peut-il quand même agir ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Sur le taux i, en réduisant les risques (stabilité politique, sociale, géopolitique, règles prévisibles), ce qui baisse la prime de risque exigée. Sur les flux CF, en soutenant la demande ou par des subventions. Sur I0, par des crédits d'impôt. Et il peut investir lui-même : la FBCF publique (routes, réseaux, recherche) fait partie de l'investissement du pays.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 15 PIB DEMANDE -->
+<article class="concept" data-id="c15">
+  <h3><span class="n">15</span>Le PIB par la demande : le matelas et le turbo</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Le PIB se calcule de trois façons qui donnent le même résultat. L'approche par la demande dit qui achète la production : ménages, administrations, entreprises qui investissent, étrangers. Elle explique une phrase clé de ton cours : la consommation assure la base, mais ce sont les variations de l'investissement qui font les pics et les creux de la croissance.</p></div>
+  <div class="wg" data-w="contrib">
+    <h4>🔬 Fais croître chaque composante, regarde sa contribution</h4>
+    <p class="hint">Poids dans le PIB en ordre de grandeur pour la France : consommation des ménages 53 %, des administrations 24 %, FBCF 24 %, exportations 33 %, importations 34,5 %. La contribution d'une composante est son poids multiplié par sa croissance. Les importations comptent en négatif.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="matelas">Consommation seule</button><button class="btn" type="button" data-pre="turbo">Turbo de l'investissement</button><button class="btn" type="button" data-pre="fuite">Relance qui fuit en importations</button><button class="btn" type="button" data-pre="rec">Récession (illustratif)</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Consommation des ménages <span data-o="gC"></span></label><input type="range" data-k="gC" min="-5" max="8" step="0.1" value="1.5"></div>
+      <div class="ctl"><label>Consommation des APU <span data-o="gA"></span></label><input type="range" data-k="gA" min="-3" max="6" step="0.1" value="0"></div>
+      <div class="ctl"><label>FBCF <span data-o="gI"></span></label><input type="range" data-k="gI" min="-15" max="15" step="0.5" value="0"></div>
+      <div class="ctl"><label>Exportations <span data-o="gX"></span></label><input type="range" data-k="gX" min="-15" max="15" step="0.5" value="0"></div>
+      <div class="ctl"><label>Importations <span data-o="gM"></span></label><input type="range" data-k="gM" min="-15" max="15" step="0.5" value="0"></div>
+      <div class="ctl"><label>Variation des stocks (en points) <span data-o="dS"></span></label><input type="range" data-k="dS" min="-1.5" max="1.5" step="0.1" value="0"></div>
+    </div>
+    <canvas class="cv" data-c="cv" style="height:250px"></canvas>
+    <div class="readout"><span>Croissance du PIB : <b data-o="g"></b></span><span>dont consommation des ménages : <b data-o="cc"></b></span></div>
+    <div class="readout" data-o="verdict"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Une voiture équipée d'un moteur et d'un turbo. La consommation est le moteur : il tourne régulièrement, sans à-coups, et la voiture avance toujours un peu. L'investissement est le turbo : quand il s'enclenche, la voiture accélère fort ; quand il se coupe, elle ralentit d'un coup. Ce sont les à-coups du turbo qu'on voit sur le graphique de la croissance.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <p>Ton cours renvoie aux trois équations du PIB, page 12 du polycopié. Elles mesurent la même chose sous trois angles : ce qui est produit, ce qui est acheté, ce qui est distribué.</p>
+    <div class="fblock">production : PIB = Σ VA + impôts sur les produits − subventions sur les produits
+demande :    PIB = C ménages + C APU + FBCF + variation des stocks + (X − M)
+revenus :    PIB = rémunération des salariés + excédent brut d'exploitation et revenu mixte
+                   + impôts sur la production et les importations − subventions</div>
+    <p>L'approche par la demande découle de l'<b>équilibre ressources-emplois</b>.</p>
+    <div class="def"><b>Équilibre ressources-emplois</b>Tout ce qui est disponible dans le pays (production intérieure et importations) est forcément utilisé : consommé, investi, stocké ou exporté. PIB + M = C + FBCF + variation des stocks + X.</div>
+    <div class="def"><b>Variation des stocks</b>Différence entre les stocks de fin et de début d'année : ce qui a été produit mais pas encore vendu (ou vendu sur des stocks anciens).</div>
+    <div class="def"><b>Consommation des administrations publiques</b>Valeur des services non marchands fournis à la population (école, santé, police), comptés à leur coût. Elle ne comprend pas les transferts comme le RSA, déjà comptés quand les ménages dépensent.</div>
+    <div class="def"><b>Contribution à la croissance</b>Part de la croissance du PIB due à une composante : son poids dans le PIB multiplié par son propre taux de croissance, exprimé en points.</div>
+    <div class="fblock">contribution = poids dans le PIB × taux de croissance de la composante
+croissance du PIB = somme des contributions
+exemple : consommation 53 % du PIB qui croît de 1,5 %  →  0,53 × 1,5 ≈ 0,8 point</div>
+    <p>C'est le sens de ta phrase : avec une croissance habituelle de 1 à 1,5 %, la consommation n'apporte que 0,5 à 0,8 point. Ce n'est pas une loi, mais un ordre de grandeur : une consommation qui croîtrait de 4 % apporterait 2 points. L'investissement, deux fois plus petit, varie beaucoup plus fortement dans les deux sens : c'est lui qui fait passer la croissance au-dessus de 1 %, ou sous zéro.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Une relance de la consommation fait grimper les achats de téléviseurs fabriqués en Asie. Pourquoi le PIB français en profite-t-il peu ? Lie ta réponse au multiplicateur du concept 6.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">La consommation augmente, mais les importations aussi, et elles se retranchent : la production française progresse peu. Dans le multiplicateur, chaque euro dépensé en importations « fuit » hors du circuit national, comme l'épargne. Le multiplicateur réel d'une économie ouverte est donc bien plus faible que 1 / (1 − c). Essaie le préréglage « Relance qui fuit en importations ».</div></details></div>
+    <div class="q"><p>Une hausse des stocks fait monter le PIB. Est-ce une bonne nouvelle ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Pas forcément. Elle peut traduire des entreprises qui anticipent une forte demande, ou au contraire des invendus qui s'accumulent, comme au début de la crise de 1929. Dans le second cas, les entreprises vont réduire leur production : la hausse du PIB d'aujourd'hui annonce une baisse demain.</div></details></div>
+    <div class="q"><p>Pourquoi l'investissement est-il beaucoup plus instable que la consommation ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Une grande partie de la consommation est incompressible : se nourrir, se loger, se chauffer. C'est le matelas. L'investissement, lui, se reporte facilement et dépend des anticipations : si l'avenir paraît incertain, les VAN calculées baissent et les projets sont gelés tous en même temps. C'est le turbo.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 16 ETAT CAPITAL -->
+<article class="concept" data-id="c16">
+  <h3><span class="n">16</span>L'État : son rôle, le capital et les privatisations</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>L'État n'est pas un acteur comme les autres : il fixe les règles, produit des services gratuits, prélève et redistribue, et il peut aussi être actionnaire d'entreprises. Savoir à partir de quelle part du capital il contrôle une entreprise, et ce que change une privatisation pour chacun, est un sujet de copie classique.</p></div>
+  <div class="wg" data-w="capital">
+    <h4>🔬 Choisis la part du capital détenue par l'État</h4>
+    <p class="hint">Les repères verticaux sont les seuils du droit des sociétés anonymes : un tiers, la moitié, deux tiers des voix. Sous la jauge : ce que l'État peut faire, et comment l'entreprise est classée selon tes notes et selon l'Insee.</p>
+    <div class="presets"><button class="btn" type="button" data-pre="p15">15 %</button><button class="btn" type="button" data-pre="p34">34 %</button><button class="btn" type="button" data-pre="p51">51 %</button><button class="btn" type="button" data-pre="p70">70 %</button><button class="btn" type="button" data-pre="p100">100 %</button></div>
+    <div class="zg"><div class="zfill" data-o="fill"></div><i class="ln" style="left:33.333%"></i><i class="ln" style="left:50%"></i><i class="ln" style="left:66.667%"></i><span class="mk" style="left:33.333%">⅓</span><span class="mk" style="left:50%">½</span><span class="mk" style="left:66.667%">⅔</span></div>
+    <div class="controls"><div class="ctl" style="grid-column:1/-1"><label>Part du capital et des droits de vote détenue par l'État <span data-o="s"></span></label><input type="range" data-k="s" min="0" max="100" step="0.5" value="40"></div></div>
+    <div class="card2" data-o="card"></div>
+    <h4 style="margin-top:18px">Une privatisation, partie par partie</h4>
+    <div class="chips" data-o="chips"></div>
+    <div class="card2" data-o="party"></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Un club dont les décisions courantes se votent à la majorité, et le changement du règlement aux deux tiers. Avec plus d'un tiers des voix, tu ne peux rien imposer, mais tu peux empêcher qu'on change le règlement sans toi. Avec plus de la moitié, tu décides du quotidien. Avec deux tiers, tu peux réécrire le règlement seul.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>État</b>Ensemble des institutions qui exercent le pouvoir sur un territoire et une population : dans une démocratie, pouvoirs exécutif (Président, gouvernement), législatif (Assemblée, Sénat) et judiciaire, séparés ; avec les administrations centrales et locales et les services publics.</div>
+    <div class="def"><b>Fonctions régaliennes</b>Missions qui définissent la souveraineté : défense extérieure, sécurité intérieure (police), justice, et historiquement la monnaie. Dans la zone euro, la monnaie est désormais confiée à la Banque centrale européenne.</div>
+    <p>Au-delà du régalien, l'économiste Musgrave distingue <b>trois fonctions économiques de l'État</b>.</p>
+    <div class="def"><b>Trois fonctions économiques de l'État</b>Allocation : produire ce que le marché fournit mal (routes, éducation). Redistribution : corriger les inégalités par les impôts et les transferts. Stabilisation : lisser les crises par le budget, comme le propose Keynes.</div>
+    <div class="def"><b>Nationalisation</b>Transfert de la propriété d'une entreprise privée à l'État, en général par rachat de ses actions.</div>
+    <div class="def"><b>Privatisation</b>Vente par l'État de tout ou partie des actions d'une entreprise publique à des actionnaires privés.</div>
+    <div class="def"><b>Entreprise publique</b>Selon l'Insee, entreprise sur laquelle l'État exerce une influence dominante, directement ou indirectement, parce qu'il détient la majorité du capital ou des droits de vote.</div>
+    <div class="fblock">Assemblée générale ordinaire (comptes, dirigeants) : majorité des voix, plus de 50 %
+Assemblée générale extraordinaire (statuts, fusion, capital) : deux tiers des voix
+minorité de blocage : plus d'un tiers des voix (peut bloquer l'AGE)</div>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Vendre une entreprise rapporte de l'argent à l'État une seule fois. Dans quel cas est-ce une bonne affaire pour les finances publiques ? Utilise la VAN du concept 14.</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">L'État encaisse le prix de vente mais renonce à tous les dividendes futurs. C'est une bonne affaire si le prix dépasse la valeur actualisée de ces dividendes, au taux auquel l'État emprunte. Si l'État vend pour boucher un déficit d'une seule année, il échange une rente durable contre une recette ponctuelle.</div></details></div>
+    <div class="q"><p>Pourquoi une minorité de blocage peut-elle suffire à l'État pour protéger un intérêt stratégique, sans dépenser de quoi acheter la majorité ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Les décisions qui menacent un intérêt stratégique (fusion, déménagement du siège, changement d'objet social) modifient les statuts et passent en assemblée extraordinaire, aux deux tiers. Avec un peu plus d'un tiers, l'État peut les bloquer, tout en laissant la gestion courante aux actionnaires privés.</div></details></div>
+    <div class="q"><p>Ton cours précise « au sens d'un pays démocratique ». Qu'est-ce qui change dans le rôle économique de l'État quand les trois pouvoirs ne sont plus séparés ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Sans justice indépendante, la propriété et les contrats ne sont plus garantis : l'État peut exproprier ou changer les règles sans recours. Le risque perçu par les investisseurs augmente, donc le taux exigé du concept 14 aussi, et l'investissement recule. La séparation des pouvoirs est aussi une condition économique.</div></details></div>
+  </div></details>
+  <label class="seen"><input type="checkbox"> Concept revu</label>
+</article>
+
+<!-- 17 BUDGET SPREAD -->
+<article class="concept" data-id="c17">
+  <h3><span class="n">17</span>Le budget de l'État, le déficit et le coût de la dette</h3>
+  <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Quand l'État dépense plus qu'il ne prélève, il emprunte sur les marchés. Le taux qu'on lui demande dépend de la confiance des prêteurs, et l'écart avec l'Allemagne mesure cette confiance. Quelques dixièmes de point sur des centaines de milliards d'euros empruntés chaque année représentent des milliards d'intérêts en plus.</p></div>
+  <div class="wg" data-w="budget">
+    <h4>🔬 Solde budgétaire, puis écart de taux avec l'Allemagne</h4>
+    <p class="hint">En haut, un budget fictif en milliards d'euros. En bas, le taux français est le taux allemand plus l'écart. Les barres montrent les intérêts payés en plus chaque année par rapport à un emprunt au taux allemand, si l'écart dure : chaque nouvelle émission s'ajoute aux précédentes.</p>
+    <div class="controls" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+      <div class="ctl"><label>Recettes (Md€)</label><input class="txt" type="number" step="any" data-k="rec" value="100"></div>
+      <div class="ctl"><label>Dépenses (Md€)</label><input class="txt" type="number" step="any" data-k="dep" value="105"></div>
+    </div>
+    <div class="readout" data-o="solde"></div>
+    <div class="presets" style="margin-top:14px"><button class="btn" type="button" data-pre="notes">Tes notes : 4,10 % et 85 pb</button><button class="btn" type="button" data-pre="oct26">Pic d'octobre 2026 (≈ 170 pb)</button><button class="btn" type="button" data-pre="calme">Écart faible (≈ 40 pb)</button></div>
+    <div class="controls">
+      <div class="ctl"><label>Taux allemand à 10 ans <span data-o="bund"></span></label><input type="range" data-k="bund" min="0" max="5" step="0.05" value="3.25"></div>
+      <div class="ctl"><label>Écart (spread) <span data-o="spr"></span></label><input type="range" data-k="spr" min="0" max="250" step="5" value="85"></div>
+      <div class="ctl"><label>Montant emprunté par an <span data-o="mt"></span></label><input type="range" data-k="mt" min="100" max="400" step="10" value="340"></div>
+      <div class="ctl"><label>Durée de l'écart <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="10" step="1" value="5"></div>
+    </div>
+    <canvas class="cv" data-c="cv" style="height:220px"></canvas>
+    <div class="readout"><span>Taux français : <b data-o="oat"></b></span><span>Surcoût la 1re année : <b data-o="y1"></b></span><span>Surcoût cumulé : <b data-o="cum"></b></span></div>
+  </div>
+  <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+    <p>Deux amis empruntent à la même banque pour la même durée. Celui dont les comptes inspirent moins confiance paie un taux plus élevé. L'écart entre leurs deux taux ne dit rien de la banque : il dit ce qu'elle pense du risque de prêter au second plutôt qu'au premier.</p>
+  </div></details>
+  <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+    <div class="def"><b>Budget de l'État</b>Document voté chaque année par le Parlement (la loi de finances), qui prévoit et autorise l'ensemble des recettes et des dépenses de l'État pour l'année.</div>
+    <div class="def"><b>Solde budgétaire</b>Recettes moins dépenses. Positif : budget excédentaire ; nul : à l'équilibre ; négatif : déficitaire.</div>
+    <div class="def"><b>Solde primaire</b>Solde budgétaire hors intérêts de la dette : il dit si l'État couvre ses dépenses courantes, indépendamment du poids des emprunts passés.</div>
+    <p>Pour financer le déficit et rembourser les emprunts arrivés à échéance, l'État émet des <b>OAT</b>.</p>
+    <div class="def"><b>OAT (obligation assimilable du Trésor)</b>Titre de dette à moyen ou long terme émis par l'État français : l'acheteur prête une somme et reçoit des intérêts chaque année, puis le capital à l'échéance.</div>
+    <div class="def"><b>Point de base</b>Un centième de point de pourcentage : 85 points de base = 0,85 point.</div>
+    <div class="def"><b>Spread OAT-Bund</b>Écart entre le taux de l'OAT à 10 ans et celui du Bund, l'emprunt d'État allemand à 10 ans, considéré comme la référence la plus sûre de la zone euro. Il mesure la prime de risque que les prêteurs exigent pour prêter à la France.</div>
+    <div class="fblock">solde budgétaire = recettes − dépenses
+taux OAT = taux Bund + spread
+notes : 4,10 % − 0,85 % = 3,25 %
+surcoût annuel d'une émission ≈ montant emprunté × spread
+340 Md€ × 0,85 % ≈ 2,9 Md€ d'intérêts en plus, chaque année de vie de l'emprunt</div>
+    <p>Le choix entre un État libéral, qui dépense peu, et un État interventionniste ou keynésien, au budget plus lourd, est politique ; il fixe ensuite le niveau des impôts et l'ampleur des emprunts. C'est le prolongement du concept 5.</p>
+  </div></details>
+  <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+    <div class="q"><p>Si l'écart avec l'Allemagne double brutalement, la charge d'intérêts de l'État double-t-elle aussitôt ? Pourquoi pas ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Non : les emprunts déjà émis gardent leur taux jusqu'à leur échéance. Seules les nouvelles émissions paient le nouveau taux, et la dette se renouvelle progressivement, sur plusieurs années. Les barres de l'outil le montrent : le surcoût s'empile année après année. C'est une bombe lente, pas une explosion.</div></details></div>
+    <div class="q"><p>Pourquoi l'écart avec l'Allemagne est-il un meilleur thermomètre de la confiance que le taux français seul ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le taux français monte aussi quand tous les taux montent, par exemple quand la BCE relève ses taux ou que l'inflation remonte : cela ne dit rien de la France. L'écart retire cet effet commun, puisque les deux pays partagent la même monnaie et la même banque centrale. Il isole ce que les prêteurs pensent du risque propre à la France.</div></details></div>
+    <div class="q"><p>Un État en déficit chaque année depuis 50 ans est-il forcément mal géré ? Que répondrait un keynésien, que répondrait un libéral ?</p>
+      <details><summary>Éléments de réponse</summary><div class="ans">Le keynésien rappelle qu'un déficit est utile en crise et que la dette se juge rapportée au PIB : si la croissance nominale dépasse le taux d'intérêt, le ratio peut rester stable malgré des déficits modestes. Le libéral répond qu'un déficit permanent, même en période de croissance, montre que la relance n'est jamais suivie du remboursement, et que la dette finit par coûter cher quand les taux remontent, comme en 2026.</div></details></div>
   </div></details>
   <label class="seen"><input type="checkbox"> Concept revu</label>
 </article>
@@ -828,11 +1085,216 @@ temps de doublement ≈ 70 / g (en %) : 5 % → 14 ans ; 1 % → 70 ans</div>
 
 <section class="panel" id="exos"><div class="wrap">
   <h2>Exercices</h2>
-  <p class="lead">Difficulté croissante, 10 points. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
+  <p class="lead">Dix-neuf exercices, 20 points : les dix premiers portent sur le premier chapitre, les suivants sur les ménages, l’entreprise, l’investissement et l’État. Les énoncés ne donnent pas les formules : identifie d'abord le bon outil. Entre ta valeur finale, lis la correction, puis note-toi : juste, bonne méthode avec erreur de calcul (moitié des points), ou méthode fausse.</p>
   <div id="exList"></div>
-  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 10</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
+  <div class="scorebox"><span>Score</span><span class="big" id="exScore">0 / 20</span><button class="btn" id="exJson">Générer le JSON</button><button class="btn" id="exReset">Recommencer</button></div>
   <div id="jsonZone" style="display:none"><textarea id="jsonOut" readonly></textarea><button class="btn" id="jsonCopy" style="margin-top:8px">Copier</button></div>
 </div></section>
+
+<section class="panel" id="annexes"><div class="wrap">
+  <h2>Annexes</h2>
+  <p class="lead">Les dossiers d'annexes étudiés en cours, un par carte. Chaque annexe reprend le plan, les chiffres et les citations à retenir, avec la source de chaque information. Les annexes suivantes viendront s'ajouter à la liste.</p>
+  <div class="aidx">
+    <button type="button" class="aitem on" data-goto="annexes#annexe-7"><span class="k">Annexe 7 · oral du 16 novembre 2026</span><b>La concurrence : ententes, sanctions et limites</b><span class="k">3 articles des Echos</span></button>
+    <div class="aitem ph"><span class="k">Annexe suivante</span><b>À ajouter</b><span class="k">Place réservée</span></div>
+  </div>
+
+<!-- ===================== ANNEXE 7 ===================== -->
+<div id="annexe-7">
+  <div class="chap"><span class="k">Annexe 7</span><h3>La concurrence : un idéal à protéger ?</h3><p>Présentation orale de 7 minutes à deux, le 16 novembre 2026.</p></div>
+
+  <article class="acard">
+    <h3><span class="n">0</span>Le dossier en un coup d'œil</h3>
+    <div class="prose">
+      <p><b>Les trois questions de l'annexe</b></p>
+      <div class="fblock">1) Pourquoi le marché de concurrence est-il la référence en économie ?
+2) Quels objectifs économiques recherchent les entreprises en cas d'entente ?
+3) Pourquoi les autorités de la concurrence sanctionnent-elles ces situations ?
+   Quelle est la limite à ces sanctions selon vous ?</div>
+      <p><b>Problématique retenue :</b> pourquoi la concurrence est-elle un idéal à protéger, et les autorités ont-elles réellement les moyens de la faire respecter ?</p>
+      <p><b>Les trois articles (Les Echos)</b></p>
+      <ul class="srcl">
+        <li><b>Art. 1</b> · « Gallimard dans le viseur de l'antitrust suisse », Nicolas Richaud, 22 sept. 2022 : le cas Payot et les prix des livres en Suisse.</li>
+        <li><b>Art. 2</b> · « La politique de concurrence est aussi une politique de compétitivité en faveur des entreprises », Thomas Pontiroli et Frédéric Schaeffer, 10 juil. 2025 : entretien avec Benoît Cœuré.</li>
+        <li><b>Art. 3</b> · « L'Autorité de la concurrence n'a jamais autant infligé d'amendes », Alain Ruello, 10 juil. 2025 : le bilan record de 2024.</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div><span class="k">Intro · A</span><b>Le « racket » des éditeurs français en Suisse</b></div>
+      <div><span class="k">I · Q1 · A</span><b>La concurrence, une référence</b></div>
+      <div><span class="k">II · Q2 · A</span><b>S'entendre pour échapper à la concurrence</b></div>
+      <div><span class="k">III · Q3 · B</span><b>À quoi servent les sanctions, et leur limite</b></div>
+      <div><span class="k">Conclusion · B</span><b>Un idéal utile, une protection limitée</b></div>
+    </div>
+  </article>
+
+  <!-- Intro + I -->
+  <article class="acard">
+    <h3><span class="n">I</span>Le cas Payot et la concurrence comme référence</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>On part d'un cas concret de l'article 1 : un libraire suisse qui paie ses livres bien plus cher que son concurrent. Pour dire que c'est « anormal », il faut une situation de référence. C'est le rôle du marché concurrentiel : un étalon qui sert à juger les marchés réels.</p></div>
+    <div class="wg">
+      <h4>Même livre, deux prix d'achat</h4>
+      <p class="hint">Base 100 = tarif français. La FNAC Suisse achète au tarif français, Payot paie 40 à 45 % de plus. Source : art. 1.</p>
+      <div class="svgbox">
+        <svg viewBox="0 0 560 210" role="img" aria-label="Prix d'achat d'un même livre : FNAC Suisse 100, Payot 140 à 145">
+          <line x1="40" y1="180" x2="520" y2="180" style="stroke:var(--line);stroke-width:1.5"/>
+          <rect x="110" y="80" width="110" height="100" rx="3" style="fill:var(--odd)"/>
+          <rect x="320" y="35" width="110" height="145" rx="3" style="fill:var(--neg)"/>
+          <text x="165" y="70" text-anchor="middle" style="font:600 16px var(--ui);fill:var(--ink)">100</text>
+          <text x="375" y="25" text-anchor="middle" style="font:600 16px var(--ui);fill:var(--neg)">140 à 145</text>
+          <text x="165" y="200" text-anchor="middle" style="font:13px var(--ui);fill:var(--ink)">FNAC Suisse</text>
+          <text x="375" y="200" text-anchor="middle" style="font:13px var(--ui);fill:var(--ink)">Payot</text>
+        </svg>
+      </div>
+      <div class="readout"><span>Livres vendus en Suisse romande venant de France : <b>≈ 80 %</b></span><span>Surcoût payé par Payot : <b>+40 à 45 %</b></span></div>
+    </div>
+    <div class="prose">
+      <p><b>Accroche</b> (art. 1) : « Les prix d'achat que nous imposent les principaux diffuseurs français sont supérieurs de 40 % à 45 % par rapport à leurs tarifs appliqués en France. C'est du racket » (Pascal Vandenberghe, patron des librairies Payot).</p>
+      <div class="def"><b>Concurrence (Larousse)</b>« Structure d'un marché qui se caractérise par une pluralité d'entreprises en compétition les unes par rapport aux autres pour bénéficier de la préférence des consommateurs. »</div>
+      <p><b>Ce que suppose la concurrence, et les limites relevées dans l'annexe</b></p>
+      <table class="gtable"><thead><tr><th>Ce que suppose la concurrence</th><th>Limite identifiée dans l'annexe</th></tr></thead><tbody>
+        <tr><td>Beaucoup de vendeurs, aucun ne domine le prix</td><td>Livres : quelques « poids lourds » français (Madrigall, Hachette, Editis, Média-Participations) · IA : « de très grands acteurs déjà en place » <span class="why2">art. 1 et art. 2</span></td></tr>
+        <tr><td>Tout nouveau venu peut entrer sur le marché</td><td>« La complexité de la norme est un obstacle à la concurrence » <span class="why2">art. 2</span></td></tr>
+        <tr><td>Les salariés vont où ils sont le mieux payés</td><td>Non-débauchage : « restreint la liberté de mouvement des salariés » <span class="why2">art. 3</span></td></tr>
+      </tbody></table>
+      <p style="margin-top:12px"><b>La loi du prix unique</b> (cours) : si les produits sont identiques et que les acheteurs peuvent changer de vendeur, ils vont chez le moins cher ; les prix convergent et le vendeur trop cher perd son marché. Chez Payot, l'écart se maintient parce qu'il ne peut pas acheter ailleurs.</p>
+    </div>
+    <div class="wg">
+      <h4>La concurrence, moteur de croissance (art. 2)</h4>
+      <div class="flow"><div>Concurrence</div><i>→</i><div>Innovation</div><i>→</i><div>Pouvoir d'achat</div><i>→</i><div class="hot">Croissance</div></div>
+      <p class="hint" style="margin-top:10px">« Sans concurrence, pas d'innovation. Sans pouvoir d'achat, pas de croissance, et sans croissance, pas de réformes économiques. » Benoît Cœuré, président de l'Autorité de la concurrence. La chaîne est notre mise en forme de cette phrase.</p>
+    </div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Un marché avec un seul marchand de glaces sur la plage : il fixe le prix qu'il veut. Qu'un deuxième s'installe à côté, et chacun doit baisser son prix ou améliorer ses glaces pour garder ses clients. Payot, lui, est sur une plage où le marchand de glaces lui interdit d'aller acheter ailleurs.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <p>La concurrence pure et parfaite est un idéal au double sens du terme : un <b>modèle théorique</b> qui sert d'étalon, et un <b>objectif souhaitable</b> que les autorités protègent.</p>
+      <div class="def"><b>Modèle théorique</b>Représentation simplifiée qui n'existe presque jamais telle quelle, comme le gaz parfait en physique, mais qui sert à mesurer les écarts de la réalité.</div>
+      <div class="def"><b>Objectif souhaitable</b>Situation que l'on cherche à atteindre parce qu'elle profite aux consommateurs (prix bas) et aux entreprises clientes (coûts plus bas).</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi parler de « distorsion de concurrence » suppose-t-il déjà une référence ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Une distorsion est un écart par rapport à une situation normale. Ici, la situation normale est le marché concurrentiel, où le même livre s'achèterait au même prix. La loi suisse le dit aussi : les importations doivent se faire « aux conditions usuelles du marché (d'origine) » (art. 1).</div></details></div>
+      <div class="q"><p>Si la concurrence profite à tous, pourquoi certaines entreprises cherchent-elles à y échapper ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Parce qu'elle fait baisser leurs prix et donc leurs profits. Ce qui profite aux clients coûte aux vendeurs déjà installés : ils ont intérêt à retrouver un pouvoir de marché, ce qui mène aux ententes (partie II).</div></details></div>
+    </div></details>
+  </article>
+
+  <!-- II -->
+  <article class="acard">
+    <h3><span class="n">II</span>Les ententes : agir ensemble comme un monopole</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>Une entente permet à des entreprises qui devraient se faire concurrence de retrouver un pouvoir de marché : vendre plus cher, produire moins, garder pour elles le gain qui serait revenu aux clients.</p></div>
+    <div class="prose">
+      <div class="def"><b>Entente</b>Accord entre entreprises qui devraient se faire concurrence, pour fixer les prix, se partager les clients ou limiter la production. Horizontale entre concurrents, verticale entre un fabricant et ses distributeurs. Interdite par le droit de la concurrence.</div>
+      <div class="def"><b>Pouvoir de marché</b>Capacité à fixer un prix au-dessus du prix de concurrence sans perdre ses clients.</div>
+    </div>
+    <div class="ttwrap"><table class="gtable"><thead><tr><th>Affaire</th><th>Ce qu'elles ont fait</th><th>Objectif</th></tr></thead><tbody>
+      <tr><td><b>Électroménager</b><span class="why2">10 fabricants, 2 distributeurs · art. 3</span></td><td>Prix « maintenus artificiellement élevés », commerce en ligne freiné (2007-2014)</td><td>Vendre plus cher, bloquer un nouveau canal de vente</td></tr>
+      <tr><td><b>Matériel électrique</b><span class="why2">Schneider, Legrand, Rexel, Sonepar · art. 3</span></td><td>Prix de revente imposés aux distributeurs</td><td>Empêcher les distributeurs de baisser leurs prix</td></tr>
+      <tr><td><b>Non-débauchage</b><span class="why2">4 entreprises d'informatique et d'ingénierie · art. 3</span></td><td>Promesse de ne pas embaucher les salariés des autres</td><td>Limiter les hausses de salaires</td></tr>
+      <tr><td><b>Livres en Suisse</b><span class="why2">diffuseurs français · art. 1 et Livres Hebdo</span></td><td>« Cartel d'importation » sanctionné en 2013, surcoût de 40 à 45 %</td><td>Cloisonner les pays pour vendre plus cher</td></tr>
+    </tbody></table></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Les trois boulangeries du quartier se mettent d'accord pour vendre la baguette au même prix élevé et ne jamais embaucher l'apprenti d'une autre. Les clients paient plus cher, l'apprenti ne peut plus négocier son salaire en changeant de boulangerie.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="def"><b>Fixation du prix de revente</b>Le fabricant impose au distributeur son prix de vente au client final. Les distributeurs ne peuvent plus se concurrencer par les prix : le prix reste haut, et la marge de chacun est garantie.</div>
+      <div class="def"><b>Accord de non-débauchage</b>Des entreprises s'engagent à ne pas recruter les salariés des autres, souvent en secret. C'est une entente sur le marché du travail : les employeurs y sont les acheteurs, le salaire est le prix. Différent d'une clause de non-concurrence, individuelle, limitée et payée, qui est légale.</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Dans le non-débauchage, les entreprises ne vendent rien plus cher. Quelle concurrence est supprimée, et entre qui ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">La concurrence entre employeurs pour attirer les salariés. Sur le marché du travail, les entreprises achètent du travail et le salaire est le prix : en s'entendant, elles l'achètent moins cher. Victimes : les salariés, qui perdent leurs « capacités à négocier une meilleure rémunération » (art. 3).</div></details></div>
+    </div></details>
+  </article>
+
+  <!-- III -->
+  <article class="acard">
+    <h3><span class="n">III</span>À quoi servent les sanctions, et leur limite</h3>
+    <div class="why prose"><span class="part-t">🎯 Pourquoi</span><p>L'Autorité de la concurrence, « institution indépendante chargée d'arbitrer les questions de concurrence » présidée par Benoît Cœuré (art. 3), sanctionne pour trois raisons : protéger les victimes, soutenir la compétitivité des entreprises, dissuader. Mais une amende n'a de sens que si tricher coûte plus cher que ça ne rapporte.</p></div>
+    <div class="wg">
+      <h4>Les amendes de l'Autorité de la concurrence</h4>
+      <p class="hint">Montants annuels cités dans l'article 3, en milliards d'euros. 2024 est un record, porté par trois affaires.</p>
+      <div class="svgbox">
+        <svg viewBox="0 0 660 230" role="img" aria-label="Amendes : 1,13 Md€ en 2015, 0,168 Md€ en 2023, 1,4 Md€ en 2024 dont électroménager 611 M€, matériel électrique 470 M€, Google 250 M€">
+          <line x1="50" y1="190" x2="580" y2="190" style="stroke:var(--line);stroke-width:1.5"/>
+          <rect x="80" y="64.4" width="90" height="125.6" rx="3" style="fill:var(--off)"/>
+          <rect x="230" y="171.3" width="90" height="18.7" rx="3" style="fill:var(--off)"/>
+          <rect x="380" y="122.1" width="90" height="67.9" rx="3" style="fill:var(--neg)"/>
+          <rect x="380" y="69.9" width="90" height="52.2" rx="0" style="fill:var(--even)"/>
+          <rect x="380" y="42.1" width="90" height="27.8" rx="0" style="fill:var(--ca)"/>
+          <rect x="380" y="34.4" width="90" height="7.7" rx="0" style="fill:var(--muted)"/>
+          <text x="125" y="56" text-anchor="middle" style="font:600 14px var(--ui);fill:var(--ink)">1,13 Md€</text>
+          <text x="275" y="163" text-anchor="middle" style="font:600 14px var(--ui);fill:var(--ink)">168 M€</text>
+          <text x="425" y="26" text-anchor="middle" style="font:600 14px var(--ui);fill:var(--ink)">1,4 Md€</text>
+          <text x="125" y="210" text-anchor="middle" style="font:13px var(--ui);fill:var(--ink)">2015 (ancien record)</text>
+          <text x="275" y="210" text-anchor="middle" style="font:13px var(--ui);fill:var(--ink)">2023</text>
+          <text x="425" y="210" text-anchor="middle" style="font:13px var(--ui);fill:var(--ink)">2024</text>
+          <text x="478" y="160" style="font:12px var(--ui);fill:var(--neg)">électroménager 611 M€</text>
+          <text x="478" y="100" style="font:12px var(--ui);fill:var(--even)">matériel électrique 470 M€</text>
+          <text x="478" y="60" style="font:12px var(--ui);fill:var(--ca)">Google 250 M€</text>
+          <text x="478" y="40" style="font:12px var(--ui);fill:var(--muted)">autres</text>
+        </svg>
+      </div>
+    </div>
+    <div class="ttwrap"><table class="gtable"><thead><tr><th>Fonction</th><th>Ce que dit l'annexe</th></tr></thead><tbody>
+      <tr><td><b>1. Protéger les victimes</b></td><td>Électroménager 611 M€ : les consommateurs · Matériel électrique 470 M€ : « des PME tout autant que des ménages » · Non-débauchage : les salariés · Livres en Suisse : 16,5 M CHF en 2013 (Comco), les libraires suisses <span class="why2">art. 2 et 3, Livres Hebdo</span></td></tr>
+      <tr><td><b>2. Soutenir la compétitivité</b></td><td>« La politique de concurrence, c'est aussi une politique de compétitivité en faveur de nos entreprises » ; « une grande partie de nos décisions conduit à baisser les coûts pour les entreprises » ; 22,2 Md€ de gains pour l'économie de 2011 à 2024 (méthode OCDE) <span class="why2">art. 2 et 3</span></td></tr>
+      <tr><td><b>3. Dissuader</b></td><td>1,4 Md€ d'amendes en 2024, record (168 M€ en 2023) ; amendes versées au budget de l'État, mais « Nous ne sommes pas payés pour maximiser les montants d'amendes » <span class="why2">art. 3</span></td></tr>
+    </tbody></table></div>
+    <div class="wg" data-w="entente">
+      <h4>🔬 La limite : une entente peut rester rentable</h4>
+      <p class="hint">Exemple fictif : l'annexe donne les amendes, jamais ce que les ententes ont rapporté. Règle le gain annuel, la durée de l'entente, la probabilité d'être sanctionné et l'amende. Le coût attendu est la probabilité multipliée par l'amende.</p>
+      <div class="presets"><button class="btn" type="button" data-pre="expo">Exemple de l'oral</button><button class="btn" type="button" data-pre="rare">Rarement prise</button><button class="btn" type="button" data-pre="dissu">Amende dissuasive</button></div>
+      <canvas class="cv" data-c="cv" style="height:230px"></canvas>
+      <div class="controls">
+        <div class="ctl"><label>Gain de l'entente par an <span data-o="g"></span></label><input type="range" data-k="g" min="0.05" max="1" step="0.05" value="0.6"></div>
+        <div class="ctl"><label>Durée de l'entente <span data-o="n"></span></label><input type="range" data-k="n" min="1" max="15" step="1" value="5"></div>
+        <div class="ctl"><label>Probabilité d'être sanctionné <span data-o="p"></span></label><input type="range" data-k="p" min="5" max="100" step="5" value="100"></div>
+        <div class="ctl"><label>Montant de l'amende <span data-o="a"></span></label><input type="range" data-k="a" min="0.1" max="5" step="0.1" value="0.6"></div>
+      </div>
+      <div class="readout"><span>Gain total : <b data-o="gt"></b></span><span>Coût attendu : <b data-o="ca"></b></span><span>Bilan pour l'entreprise : <b data-o="bil"></b></span></div>
+      <div class="readout" data-o="verdict"></div>
+    </div>
+    <div class="prose">
+      <p><b>Notre thèse (la limite « selon nous »)</b> : la sanction arrive tard (électroménager : entente de 2007 à 2014, sanctionnée dans le bilan 2024, art. 3) et peut rester inférieure au gain. Et son effet s'arrête là où s'arrête le pouvoir de l'autorité :</p>
+    </div>
+    <div class="ttwrap"><table class="gtable"><thead><tr><th>Limite de périmètre</th><th>Ce que dit l'annexe</th></tr></thead><tbody>
+      <tr><td><b>Les frontières</b></td><td>Pas de prix unique du livre en Suisse, problème dénoncé depuis 2003 ; en Belgique, c'est une loi de 2021, pas une sanction, qui a réglé le problème <span class="why2">art. 1</span></td></tr>
+      <tr><td><b>Les géants de la tech et de l'IA</b></td><td>Seuils de notification « exprimés en termes de chiffre d'affaires » : les « killer acquisitions » de start-up passent sous les radars <span class="why2">art. 2</span></td></tr>
+      <tr><td><b>La géopolitique</b></td><td>Apple condamné à 150 M€ « en pleine guerre commerciale avec les États-Unis » ; « nous ne pouvons faire abstraction du contexte géopolitique » <span class="why2">art. 2</span></td></tr>
+      <tr><td><b>Trop de normes</b></td><td>Elles « bénéficient d'abord aux acteurs qui ont les moyens de les appliquer », voire de les influencer par « un lobbying actif à Bruxelles » <span class="why2">art. 2</span></td></tr>
+    </tbody></table></div>
+    <details class="fold"><summary>🧒 L'analogie</summary><div class="body prose">
+      <p>Une amende de stationnement de 35 € dans une rue où le parking coûte 50 € par jour : si tu n'as qu'une chance sur trois d'être verbalisé, tu as intérêt à te garer illégalement. Pour qu'une sanction dissuade, il faut que le risque multiplié par l'amende dépasse ce qu'on gagne à tricher.</p>
+    </div></details>
+    <details class="fold"><summary>🎓 Version ingénieur</summary><div class="body prose">
+      <div class="def"><b>Dissuasion</b>Une sanction dissuade quand son coût attendu (probabilité d'être sanctionné × amende) dépasse le gain tiré de l'infraction. Notion de cours, pas dans l'annexe.</div>
+      <div class="fblock">coût attendu = probabilité d'être sanctionné × amende
+dissuasion si : coût attendu > gain annuel × durée de l'entente</div>
+      <div class="def"><b>Killer acquisition</b>Rachat d'une jeune entreprise pour supprimer un futur concurrent ou s'approprier sa technologie (art. 2, terme venu de l'industrie pharmaceutique).</div>
+      <div class="def"><b>Seuil de notification</b>Chiffre d'affaires au-delà duquel une fusion doit être déclarée à l'autorité. Une start-up rachetée a souvent un chiffre d'affaires trop faible pour être contrôlée.</div>
+      <div class="def"><b>Régulation ex ante / ex post</b>Fixer des règles à l'avance (le DMA européen) ou sanctionner après coup (approche américaine), selon l'art. 2.</div>
+    </div></details>
+    <details class="fold"><summary>✅ Questions de vérification</summary><div class="body">
+      <div class="q"><p>Pourquoi une amende record peut-elle ne dissuader personne ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Si le gain cumulé de l'entente dépasse l'amende, ou si la probabilité d'être sanctionné est faible, le calcul coût-bénéfice reste positif. L'amende arrive en plus des années après : pendant ce temps, l'entente rapporte. Essaie le préréglage « Rarement prise ».</div></details></div>
+      <div class="q"><p>Sanctionner Apple à 150 M€ pendant une guerre commerciale : en quoi est-ce une limite de périmètre ?</p>
+        <details><summary>Éléments de réponse</summary><div class="ans">Une autorité nationale qui sanctionne une entreprise mondiale doit tenir compte des rapports de force entre pays : la sanction devient aussi un geste politique. Et comme ces groupes sont mondiaux, elle doit se coordonner avec les autres autorités (réseau européen, OCDE) pour être efficace.</div></details></div>
+    </div></details>
+  </article>
+
+  <!-- Conclusion -->
+  <article class="acard">
+    <h3><span class="n">✓</span>Conclusion et ouverture</h3>
+    <div class="prose">
+      <p><b>Synthèse</b> : la concurrence est un idéal utile, que les entreprises déjà installées ont intérêt à contourner (l'inverse pour les nouveaux venus). La sanction est nécessaire, mais elle s'arrête là où s'arrête le pouvoir de l'autorité.</p>
+      <p><b>Ouverture</b> : en 2024, la Comco a jugé abusifs les prix imposés par Madrigall et l'a obligé à vendre à Payot aux conditions françaises ; Madrigall a fait appel devant le Tribunal administratif fédéral (Livres Hebdo). L'histoire du « racket » n'est pas finie. Autre ouverture possible : l'IA, avec la sanction contre Google, « première décision d'une autorité de la concurrence qui touche à l'IA » (art. 3).</p>
+    </div>
+  </article>
+</div>
+<!-- ===================== FIN ANNEXE 7 ===================== -->
+</div></section>
+
 </main>
 <script>
 
@@ -907,26 +1369,8 @@ function initWidgets(){
     widgets.push(W);
   });
 }
-function initPreds(){
-  S.pred=S.pred||{};
-  document.querySelectorAll(".pred[data-pred]").forEach(function(box){
-    const id=box.dataset.pred, ok=box.dataset.ok, wg=box.closest(".wg"), res=box.querySelector(".pres"), ta=box.querySelector("textarea"), exp=box.querySelector("template.pexp").innerHTML;
-    function show(){
-      const st=S.pred[id]; box.querySelectorAll("[data-pv]").forEach(function(b){ b.setAttribute("aria-pressed",st&&st.v===b.dataset.pv?"true":"false"); });
-      if(!st){ wg.classList.add("locked"); res.hidden=true; return; }
-      wg.classList.remove("locked"); ta.value=st.j||"";
-      const lab=box.querySelector('[data-pv="'+st.v+'"]').textContent;
-      res.hidden=false; res.innerHTML="Ta prédiction : <b>"+lab+"</b>. Manipule maintenant l'outil pour la tester, puis explique ce que tu observes.<details><summary>Voir la réponse</summary>"+(st.v===ok?'<p class="verdict-ok">Ton intuition était juste.</p>':'<p class="verdict-no">Ton intuition ne correspond pas au modèle : regarde pourquoi.</p>')+exp+"</details>";
-      const r=document.createElement("button"); r.type="button"; r.className="redo"; r.textContent="refaire la prédiction"; r.addEventListener("click",function(){ delete S.pred[id]; save(); ta.value=""; show(); }); res.appendChild(r);
-      draw(widgets.find(function(W){ return W.root===wg; })||{root:wg,type:null});
-    }
-    box.querySelectorAll("[data-pv]").forEach(function(b){ b.addEventListener("click",function(){ S.pred[id]={v:b.dataset.pv,j:ta.value}; save(); show(); }); });
-    ta.addEventListener("input",function(){ if(S.pred[id]){ S.pred[id].j=ta.value; save(); } });
-    show();
-  });
-}
 function visible(W){ return W.root.offsetParent!==null; }
-function draw(W){ if(W.type&&IMPL[W.type]&&visible(W)) IMPL[W.type].draw(W); }
+function draw(W){ if(visible(W)) IMPL[W.type].draw(W); }
 function drawAll(){ widgets.forEach(draw); drawHero(); }
 function medName(n){ const L=[[1,"air"],[1.33,"eau"],[1.5,"verre"],[1.66,"verre flint"],[2.42,"diamant"]]; for(const m of L) if(Math.abs(n-m[0])<0.015) return " ("+m[1]+")"; return ""; }
 
@@ -951,42 +1395,36 @@ $("heroG").addEventListener("input",drawHero);
 
 /* ---------- 1. frontière des possibilités de production ---------- */
 IMPL.fpp={
-  presets:{base:{L:60,K:50,tech:1,tg:"both",x:50},pop:{L:90,K:50,tech:1,tg:"both",x:50},cap:{L:60,K:100,tech:1,tg:"both",x:50},tech:{L:60,K:50,tech:1.6,tg:"A",x:50},tout:{L:60,K:50,tech:1,tg:"both",x:95}},
+  presets:{base:{L:60,K:50,tech:1,x:50},pop:{L:90,K:50,tech:1,x:50},tech:{L:60,K:50,tech:1.6,x:50},tout:{L:60,K:50,tech:1,x:95}},
   draw:function(W){
-    const L=W.v("L"),K=W.v("K"),t=W.v("tech"),tg=W.v("tg"),x=W.v("x")/100;
+    const L=W.v("L"),K=W.v("K"),t=W.v("tech"),x=W.v("x")/100;
     W.o.L.textContent=L; W.o.K.textContent=K; W.o.tech.textContent="× "+fr(t,1); W.o.x.textContent=fr(x*100,0)+" %";
-    const tA=tg==="B"?1:t, tB=tg==="A"?1:t;
-    const A=function(L,K,tA,x){ return 20*tA*Math.pow(K/50,0.2)*Math.pow(L*x/10,0.7); };
-    const B=function(L,K,tB,x){ return 10*tB*Math.pow(K/50,0.4)*Math.pow(L*(1-x)/10,0.7); };
+    const f=function(L,K,t){ return t*Math.pow(K/50,0.3); };
+    const A=function(L,K,t,x){ return f(L,K,t)*20*Math.pow(L*x/10,0.7); };
+    const B=function(L,K,t,x){ return f(L,K,t)*10*Math.pow(L*(1-x)/10,0.7); };
     const g=chart(W.c.cv,[0,180],[0,90],{xt:[0,30,60,90,120,150,180],yt:[0,15,30,45,60,75,90],xl:"nourriture (tonnes)",yl:"machines (unités)"});
-    const xs=lin(0,1,120), c=g.ctx, cl=function(v,m){ return Math.min(m,v); };
+    const xs=lin(0,1,120), c=g.ctx;
+    // courbe de référence
     c.save(); c.strokeStyle=css("--off"); c.lineWidth=1.5; c.setLineDash([5,4]); c.beginPath();
-    xs.forEach(function(u,i){ const px=g.X(cl(A(60,50,1,u),180)), py=g.Y(cl(B(60,50,1,u),90)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    xs.forEach(function(u,i){ const px=g.X(A(60,50,1,u)), py=g.Y(B(60,50,1,u)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    // zone atteignable
     c.save(); c.fillStyle=css("--pos"); c.globalAlpha=0.12; c.beginPath(); c.moveTo(g.X(0),g.Y(0));
-    xs.forEach(function(u){ c.lineTo(g.X(cl(A(L,K,tA,u),180)),g.Y(cl(B(L,K,tB,u),90))); }); c.closePath(); c.fill(); c.restore();
+    xs.forEach(function(u){ c.lineTo(g.X(Math.min(180,A(L,K,t,u))),g.Y(Math.min(90,B(L,K,t,u)))); }); c.closePath(); c.fill(); c.restore();
     c.save(); c.strokeStyle=css("--pos"); c.lineWidth=2.5; c.beginPath();
-    xs.forEach(function(u,i){ const px=g.X(cl(A(L,K,tA,u),180)), py=g.Y(cl(B(L,K,tB,u),90)); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    xs.forEach(function(u,i){ const px=g.X(Math.min(180,A(L,K,t,u))), py=g.Y(Math.min(90,B(L,K,t,u))); if(i) c.lineTo(px,py); else c.moveTo(px,py); }); c.stroke(); c.restore();
+    // besoins
     const nA=150,nB=75;
     c.fillStyle=css("--neg"); c.beginPath(); c.arc(g.X(nA),g.Y(nB),6,0,7); c.fill();
     c.font="12px "+css("--ui"); c.textAlign="right"; c.fillText("besoins",g.X(nA)-10,g.Y(nB)+4);
-    const a=A(L,K,tA,x), b=B(L,K,tB,x), Bmax=B(L,K,tB,0);
-    // coût marginal = −dB/dA = (B/(1−x)) / (A/x)
-    const oc= x<=0.001?0: x>=0.999?Infinity: (b*x)/(a*(1-x));
-    const om= a>0.01?(Bmax-b)/a:0;
-    if(isFinite(oc)&&x>0.001){ // tangente au point choisi
-      c.save(); c.strokeStyle=css("--ink"); c.globalAlpha=0.6; c.setLineDash([4,3]); c.lineWidth=1.4; c.beginPath();
-      const d=28; c.moveTo(g.X(cl(a-d,180)),g.Y(cl(b+oc*d,90))); c.lineTo(g.X(cl(a+d,180)),g.Y(Math.max(0,cl(b-oc*d,90)))); c.stroke(); c.restore();
-    }
-    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(cl(a,180)),g.Y(cl(b,90)),6,0,7); c.fill();
-    c.textAlign="left"; c.fillText("ton choix",g.X(cl(a,180))+9,g.Y(cl(b,90))-8);
+    // point choisi
+    const a=A(L,K,t,x), b=B(L,K,t,x);
+    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(Math.min(a,180)),g.Y(Math.min(b,90)),6,0,7); c.fill();
+    c.textAlign="left"; c.fillText("ton choix",g.X(Math.min(a,180))+9,g.Y(Math.min(b,90))-8);
+    const oc= x<=0.001?0: x>=0.999?Infinity: 0.5*Math.pow(x/(1-x),0.3);
     W.o.a.textContent=fr(a,1)+" t"; W.o.b.textContent=fr(b,1);
     W.o.oc.textContent=isFinite(oc)?fr(oc,2)+" machine"+(oc>=2?"s":""):"toutes";
-    W.o.om.textContent=x<=0.001?"—":fr(om,2)+" machine"+(om>=2?"s":"");
-    const ok=a>=nA&&b>=nB, Ar=A(L,K,tA,1)/A(60,50,1,1), Br=B(L,K,tB,0)/B(60,50,1,0);
-    let mv;
-    if(Math.abs(Ar-1)<0.005&&Math.abs(Br-1)<0.005) mv="La frontière n’a pas bougé : en changeant la répartition, tu te déplaces <i>le long</i> de la frontière.";
-    else mv="La frontière s’est déplacée : nourriture maximale "+pc((Ar-1)*100,0)+", machines maximales "+pc((Br-1)*100,0)+(Math.abs(Ar-Br)>0.02?" : le déplacement n’est pas le même pour les deux biens.":".");
-    W.o.verdict.innerHTML=mv+" "+(ok?'<span class="verdict-ok">Les besoins seraient couverts… jusqu’à ce qu’ils grandissent encore.</span>':'<span class="verdict-no">Les besoins restent hors d’atteinte : il faut choisir. C’est la rareté.</span>');
+    const ok=a>=nA&&b>=nB;
+    W.o.verdict.innerHTML=ok?'<span class="verdict-ok">Les besoins seraient couverts… jusqu’à ce qu’ils grandissent encore.</span>':'<span class="verdict-no">Les besoins restent hors d’atteinte : il faut choisir. C’est la rareté.</span>';
   }
 };
 
@@ -1013,39 +1451,7 @@ IMPL.util={
     panel(mid+6,w-8,qd,ud,css("--cb"),"Diamants : utilité de chaque pierre",10);
     const Te=100*(1-Math.pow(0.8,qe))/0.2, Td=40*(1-Math.pow(0.9,qd))/0.1, me=ue(qe), md=ud(qd);
     W.o.te.textContent=fr(Te,0); W.o.td.textContent=fr(Td,0); W.o.me.textContent=fr(me,me<1?2:1); W.o.md.textContent=fr(md,1);
-    W.o.verdict.innerHTML= md>me?"Le dernier diamant est plus désiré que le dernier litre d’eau, alors que l’eau apporte "+(Te>Td?"bien plus":"autant")+" d’utilité totale. On est prêt à payer plus cher un diamant de plus : c’est la demande. Le prix lui-même se fixe sur le marché, avec l’offre (outil suivant).":"Ici l’eau est rare : son dernier litre est plus désiré que le dernier diamant. La disposition à payer suit l’utilité marginale, pas l’utilité totale.";
-  }
-};
-
-/* ---------- 2 bis. marché : offre et demande ---------- */
-IMPL.march={
-  presets:{ville:{good:"eau",a:100,qa:35,c0:1},desert:{good:"eau",a:100,qa:2,c0:1},diam:{good:"diam",a:70,qa:2,c0:20},cartel:{good:"diam",a:70,qa:1,c0:20}},
-  draw:function(W){
-    const good=W.v("good"), a=W.v("a"), qa=W.v("qa"), c0=W.v("c0"), b=good==="eau"?0.12:0.35;
-    W.o.a.textContent=fr(a,0); W.o.qa.textContent=qa+(good==="eau"?" unités d'eau":" pierres"); W.o.c0.textContent=fr(c0,0);
-    const D=function(q){ return a*Math.exp(-b*q); }, Sp=function(q){ return c0+100*Math.pow(q/qa,10); };
-    const XM=qa>=12?40:qa>=5?20:10;
-    let lo=0, hi=XM, q=0, p;
-    if(D(0)<=Sp(0)){ q=0; p=NaN; } else { for(let k=0;k<60;k++){ const m=(lo+hi)/2; if(D(m)>Sp(m)) lo=m; else hi=m; } q=(lo+hi)/2; p=D(q); }
-    const g=chart(W.c.cv,[0,XM],[0,100],{xt:lin(0,XM,XM===40?4:5),yt:[0,25,50,75,100],xl:"quantité",yl:"prix, utilité marginale"});
-    const c=g.ctx, xs=lin(0,XM,200);
-    if(q>0){
-      c.save(); c.fillStyle=css("--odd"); c.globalAlpha=0.15; c.beginPath(); c.moveTo(g.X(0),g.Y(0));
-      lin(0,q,80).forEach(function(u){ c.lineTo(g.X(u),g.Y(D(u))); }); c.lineTo(g.X(q),g.Y(0)); c.closePath(); c.fill(); c.restore();
-      c.save(); c.strokeStyle=css("--ink"); c.globalAlpha=0.55; c.lineWidth=1; c.setLineDash([3,3]); c.strokeRect(g.X(0),g.Y(p),g.X(q)-g.X(0),g.Y(0)-g.Y(p));
-      c.beginPath(); for(let u=0;u<q;u+=Math.max(0.5,q/12)){ c.moveTo(g.X(u),g.Y(0)); c.lineTo(g.X(Math.min(q,u+Math.max(0.5,q/12))),g.Y(p)); } c.stroke(); c.restore();
-    }
-    curve(g,xs,D,css("--odd"),2.5);
-    curve(g,xs,function(u){ const v=Sp(u); return v>100?NaN:v; },css("--even"),2.5);
-    if(q>0){ c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(q),g.Y(p),6,0,7); c.fill(); c.textAlign="left"; c.font="12px "+css("--ui"); c.fillText("équilibre",g.X(q)+9,g.Y(p)-8); }
-    c.font="11px "+css("--ui"); c.fillStyle=css("--odd"); c.textAlign="left"; const xd=q<XM*0.4?XM*0.7:XM*0.2; c.fillText("demande",g.X(xd)+4,g.Y(D(xd))-8); c.fillStyle=css("--even"); const ys=Math.min(95,Math.max(Sp(0)+8,12)); c.fillText("offre",g.X(Math.min(XM*0.9,qa))+6,g.Y(ys));
-    const ut=a/b*(1-Math.exp(-b*q));
-    W.o.p.textContent=q>0?fr(p,1):"pas d'échange"; W.o.q.textContent=fr(q,1); W.o.ut.textContent=fr(ut,0); W.o.dep.textContent=q>0?fr(p*q,0):"0";
-    let v;
-    if(!(q>0)) v='<span class="verdict-no">Le coût dépasse ce que quiconque est prêt à payer pour la première unité : rien n’est échangé.</span>';
-    else if(p-c0>0.3*p) v="La quantité disponible limite les échanges : le prix se fixe sur l’utilité marginale de la dernière unité disponible. "+(p<10?"L’offre est abondante, ce dernier achat compte peu : prix bas, même si l’utilité totale est grande.":"L’offre est rare face au besoin : la dernière unité est très désirée, le prix est élevé.");
-    else v="Le coût de production limite les échanges : on achète tant que l’utilité marginale dépasse ce coût, et le prix s’établit juste au-dessus.";
-    W.o.verdict.innerHTML=v+" Utilité totale "+fr(ut,0)+" pour une dépense de "+fr(p*q||0,0)+" : la valeur d’usage et le prix sont deux grandeurs différentes.";
+    W.o.verdict.innerHTML= md>me?"Le dernier diamant est plus désiré que le dernier litre d’eau : le diamant est plus cher, alors que l’eau apporte "+(Te>Td?"bien plus":"autant")+" d’utilité totale.":"Ici l’eau est rare : son dernier litre vaut plus que le dernier diamant. Le prix suit la rareté, pas l’utilité totale.";
   }
 };
 
@@ -1167,29 +1573,6 @@ IMPL.crise={
     W.o.need.textContent=fr(I0*choc,0)+" Md";
     W.o.loop.classList.toggle("on",dg>0);
     const brk=W.o.loop.querySelector("[data-brk]"), nb=W.o.loop.querySelector("[data-nobrk]"); if(brk){ brk.style.display=dg>0?"":"none"; nb.style.display=dg>0?"none":""; }
-  }
-};
-IMPL.mult={
-  init:function(W){ W.n=1;
-    W.root.querySelectorAll("[data-act]").forEach(function(b){ b.addEventListener("click",function(){ const a=b.dataset.act; W.n=a==="next"?Math.min(40,W.n+1):a==="all"?40:1; draw(W); }); });
-  },
-  draw:function(W){
-    const dg=W.v("dg"), c=W.v("c"), on=W.v("fuite"), t=on?W.v("t"):0, m=on?W.v("m"):0;
-    W.o.dg.textContent=fr(dg,0); W.o.c.textContent=fr(c,2); W.o.t.textContent=on?fr(t,2):"—"; W.o.m.textContent=on?fr(m,2):"—";
-    W.k.t.disabled=!on; W.k.m.disabled=!on;
-    const q=Math.max(0,c*(1-t)-m), k=1/(1-q), lim=dg*k, n=W.n;
-    const r=[], cum=[]; let s=0; for(let i=0;i<n;i++){ const v=dg*Math.pow(q,i); r.push(v); s=Math.min(lim,s+v); cum.push(s); }
-    const N=Math.max(12,Math.min(40,n)), ymax=Math.ceil(lim*1.1/50)*50||50;
-    const g=chart(W.c.cv,[-0.5,N-0.5],[0,ymax],{xt:lin(0,N,Math.min(N,10)).map(Math.round).filter(function(v){ return v<N; }),yt:lin(0,ymax,5),xl:"tour",yl:"ajout au PIB"});
-    const cx=g.ctx, bw=(g.X(1)-g.X(0))*0.7;
-    r.forEach(function(v,i){ cx.fillStyle=i?css("--cb"):css("--pos"); cx.fillRect(g.X(i)-bw/2,g.Y(v),bw,g.Y(0)-g.Y(v)); });
-    cx.save(); cx.strokeStyle=css("--ink"); cx.globalAlpha=0.5; cx.setLineDash([5,4]); cx.beginPath(); cx.moveTo(g.X(-0.5),g.Y(lim)); cx.lineTo(g.X(N-0.5),g.Y(lim)); cx.stroke(); cx.restore();
-    cx.fillStyle=css("--muted"); cx.textAlign="right"; cx.font="11px "+css("--ui"); cx.fillText("limite ΔG × k = "+fr(lim,1),g.X(N-0.5)-4,g.Y(lim)-5);
-    cx.save(); cx.strokeStyle=css("--ink"); cx.lineWidth=2.2; cx.beginPath(); cum.forEach(function(v,i){ if(i) cx.lineTo(g.X(i),g.Y(v)); else cx.moveTo(g.X(i),g.Y(v)); }); cx.stroke();
-    cum.forEach(function(v,i){ cx.fillStyle=css("--ink"); cx.beginPath(); cx.arc(g.X(i),g.Y(v),3,0,7); cx.fill(); }); cx.restore();
-    W.o.n.textContent=n; W.o.sum.textContent=fr(s,1)+" ("+fr(s/lim*100,0)+" % de la limite)"; W.o.lim.textContent=fr(lim,1); W.o.k.textContent=fr(k,2)+(on?"  [1 / (1 − c(1 − t) + m)]":"  [1 / (1 − c)]");
-    const qs=on?"c(1 − t) − m = "+fr(q,2):"c = "+fr(c,2);
-    W.o.list.innerHTML=r.slice(0,12).map(function(v,i){ return i===0?"Tour 0 : dépense publique ΔY₀ = ΔG = "+fr(v,1):"Tour "+i+" : consommation induite = "+fr(q,2)+(i>1?"^"+i:"")+" × "+fr(dg,0)+" = "+fr(v,1)+"   (cumul "+fr(cum[i],1)+")"; }).join("<br>")+(n>12?"<br>… "+(n-12)+" tours de plus, cumul "+fr(s,1):"")+"<br><span style='color:var(--muted)'>Part redépensée dans le pays à chaque tour : "+qs+"</span>";
   }
 };
 function loopSVG(){
@@ -1320,39 +1703,14 @@ IMPL.growth={
     r.forEach(function(g,i){ const x=X(i+1); c.fillStyle=g<0?css("--neg"):css("--pos"); c.fillRect(x-bw*0.3,Math.min(Yg(0),Yg(g)),bw*0.6,Math.abs(Yg(g)-Yg(0)));
       c.fillStyle=css("--ink"); c.textAlign="center"; c.fillText(nar?fr(g,1):pc(g,1),x,g<0?Yg(g)+13:Yg(g)-4);
       const prev=i?r[i-1]:null; let t=g<0?"recul":prev===null?"":g>prev?"accélère":g<prev?"ralentit":"stable";
-      c.fillStyle=g<0?css("--neg"):css("--muted"); c.fillText(nar?({recul:"↓",accélère:"↗",ralentit:"↘",stable:"→"}[t]||""):t,x,h-pb+28); c.fillStyle=css("--muted"); c.fillText((nar?"":(W.v("freq")==="tr"?"T":"an "))+(i+1),x,h-pb+14); lbl.push(t); });
+      c.fillStyle=g<0?css("--neg"):css("--muted"); c.fillText(nar?({recul:"↓",accélère:"↗",ralentit:"↘",stable:"→"}[t]||""):t,x,h-pb+28); c.fillStyle=css("--muted"); c.fillText((nar?"":"an ")+(i+1),x,h-pb+14); lbl.push(t); });
     c.fillStyle=css("--muted"); c.textAlign="center"; c.fillText(nar?"0":"départ",X(0),h-pb+14);
     c.save(); c.strokeStyle=css("--ink"); c.lineWidth=2.4; c.beginPath(); lvl.forEach(function(l,i){ if(i) c.lineTo(X(i),Yl(l)); else c.moveTo(X(i),Yl(l)); }); c.stroke();
     lvl.forEach(function(l,i){ c.fillStyle=css("--ink"); c.beginPath(); c.arc(X(i),Yl(l),3.5,0,7); c.fill(); }); c.restore();
     const moy=(Math.pow(lvl[5]/100,1/5)-1)*100;
-    const tr=W.v("freq")==="tr"; W.o.moyl.textContent=tr?"Taux moyen":"Taux moyen annuel";
-    W.o.fin.textContent=fr(lvl[5],1); W.o.moy.textContent=tr?pc(moy,2)+" par trimestre (≈ "+pc((Math.pow(1+moy/100,4)-1)*100,1)+" en rythme annuel)":pc(moy,2);
+    W.o.fin.textContent=fr(lvl[5],1); W.o.moy.textContent=pc(moy,2);
     const neg=r.filter(function(g){return g<0;}).length, ral=lbl.filter(function(t){return t==="ralentit";}).length;
-    let two=false; for(let i=1;i<r.length;i++) if(r[i]<0&&r[i-1]<0) two=true;
-    if(tr) W.o.verdict.innerHTML=two?'<span class="verdict-no">Deux trimestres consécutifs de baisse : récession au sens de la convention conjoncturelle.</span>':neg?'<span class="verdict-no">'+neg+' trimestre'+(neg>1?"s":"")+' de recul, mais pas deux de suite : le PIB baisse, sans récession au sens conjoncturel.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque trimestre.";
-    else W.o.verdict.innerHTML=neg?'<span class="verdict-no">'+neg+' année'+(neg>1?"s":"")+' de recul : le PIB annuel baisse vraiment, c’est une récession sur l’année.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque période.";
-  }
-};
-
-/* ---------- comparaison de taux ---------- */
-IMPL.comp={
-  draw:function(W){
-    const g1=W.v("g1"), g2=W.v("g2"), n=W.v("n"), pi=W.v("pi"), nom=W.v("nom");
-    W.o.g1.textContent=pc(g1,1); W.o.g2.textContent=pc(g2,1); W.o.n.textContent=n+" ans"; W.o.pi.textContent=fr(pi,1)+" %";
-    const v=function(g,t){ return 100*Math.pow(1+g/100,t); }, vn=function(g,t){ return 100*Math.pow((1+g/100)*(1+pi/100),t); };
-    const top=Math.max(v(g1,n),v(g2,n),nom?Math.max(vn(g1,n),vn(g2,n)):0,110), ymax=top>1000?Math.ceil(top/500)*500:Math.ceil(top/50)*50;
-    const lo=Math.min(100,v(g1,n),v(g2,n)), ymin=lo<100?Math.floor(lo/10)*10:0;
-    const g=chart(W.c.cv,[0,n],[ymin,ymax],{xt:lin(0,n,n<=20?n/5:n<=40?n/5:n/10).map(Math.round),yt:lin(ymin,ymax,5).map(Math.round),xl:"années",yl:"PIB, base 100"});
-    const xs=lin(0,n,160);
-    curve(g,xs,function(t){ return v(g1,t); },css("--cb"),2.5);
-    curve(g,xs,function(t){ return v(g2,t); },css("--pos"),2.5);
-    if(nom){ curve(g,xs,function(t){ return vn(g1,t); },css("--cb"),1.5,[5,4]); curve(g,xs,function(t){ return vn(g2,t); },css("--pos"),1.5,[5,4]); }
-    const c=g.ctx; c.font="12px "+css("--ui"); c.textAlign="right";
-    c.fillStyle=css("--cb"); c.fillText("A",g.X(n)-4,g.Y(v(g1,n))+(v(g1,n)>v(g2,n)?-6:14)); c.fillStyle=css("--pos"); c.fillText("B",g.X(n)-4,g.Y(v(g2,n))+(v(g2,n)>=v(g1,n)?-6:14));
-    if(nom){ c.fillStyle=css("--muted"); c.textAlign="left"; c.fillText("pointillés : en valeur (nominal)",g.X(0)+6,g.Y(ymax)+14); }
-    const ya=v(g1,n), yb=v(g2,n), dbl=function(g){ return g>0?fr(Math.log(2)/Math.log(1+g/100),0)+" ans (règle de 70 : "+fr(70/g,0)+")":"jamais"; };
-    W.o.ya.textContent=fr(ya,0)+(nom?" (valeur "+fr(vn(g1,n),0)+")":""); W.o.yb.textContent=fr(yb,0)+(nom?" (valeur "+fr(vn(g2,n),0)+")":"");
-    W.o.gap.textContent=pc((yb/ya-1)*100,0); W.o.da.textContent=dbl(g1); W.o.db.textContent=dbl(g2);
+    W.o.verdict.innerHTML=neg?'<span class="verdict-no">'+neg+' année'+(neg>1?"s":"")+' de recul : le niveau du PIB baisse vraiment.</span>':ral?"Le taux baisse mais reste positif : le PIB continue d’augmenter, seulement moins vite.":"Taux positifs et non décroissants : le PIB augmente à chaque période.";
   }
 };
 
@@ -1384,6 +1742,222 @@ IMPL.dec={
       c.fillStyle=css("--ink"); c.textAlign="center"; c.fillText(fr(d[1],1),g.X(i),g.Y(d[1])-4); c.fillStyle=css("--muted"); c.fillText(d[0],g.X(i),g.h-g.pb+14); });
   }
 };
+
+/* ---------- 11. IPC et pouvoir d'achat ---------- */
+const IPCW={moy:{al:1485,en:764,ma:2388,se:5195,ta:168},roul:{al:1485,en:1528,ma:2388,se:4431,ta:168}};
+const IPCN={al:"Alimentation",en:"Énergie",ma:"Manufacturés",se:"Services",ta:"Tabac"};
+const IPCC={al:"--pos",en:"--even",ma:"--ca",se:"--odd",ta:"--muted"};
+IMPL.pa={
+  presets:{calme:{prof:"moy",r:2,al:1,en:0,ma:0,se:2,ta:3},energie:{prof:"moy",r:4,al:7,en:25,ma:3,se:3,ta:0},rouleur:{prof:"roul",r:4,al:7,en:25,ma:3,se:3,ta:0},gel:{prof:"moy",r:0,al:2,en:3,ma:1,se:2.5,ta:3}},
+  draw:function(W){
+    const w=IPCW[W.v("prof")], keys=["al","en","ma","se","ta"];
+    let ipc=0; keys.forEach(function(k){ const p=W.v(k); W.o[k].textContent=pc(p,1); ipc+=w[k]*p/10000; });
+    const r=W.v("r"); W.o.r.textContent=pc(r,1);
+    W.o.bar.innerHTML=keys.map(function(k){ return '<div style="width:'+(w[k]/100)+'%;background:'+css(IPCC[k])+'" title="'+IPCN[k]+' : '+w[k]+' points">'+(w[k]>=2000?w[k]:"")+'</div>'; }).join("");
+    W.o.leg.innerHTML=keys.map(function(k){ return '<span><i style="background:'+css(IPCC[k])+'"></i>'+IPCN[k]+' '+w[k]+'</span>'; }).join("");
+    const pa=((1+r/100)/(1+ipc/100)-1)*100, apx=r-ipc;
+    W.o.ipc.textContent=pc(ipc,2); W.o.pa.textContent=pc(pa,2); W.o.apx.textContent=pc(apx,2);
+    let t= pa>0.005?'<span class="verdict-ok">Le revenu augmente plus vite que les prix : le pouvoir d’achat progresse.</span>': pa<-0.005?'<span class="verdict-no">Les prix augmentent plus vite que le revenu : le pouvoir d’achat recule, même si la fiche de paie monte.</span>':"Revenu et prix augmentent au même rythme : pouvoir d’achat stable.";
+    if(Math.abs(apx-pa)>=0.1) t+=" L’approximation par soustraction se trompe ici de "+fr(Math.abs(apx-pa),2)+" point.";
+    if(W.v("prof")==="roul") t+=" Avec le panier moyen, l’IPC serait de "+pc(keys.reduce(function(s,k){return s+IPCW.moy[k]*W.v(k)/10000;},0),2)+" : l’inflation officielle n’est pas celle de ce ménage.";
+    W.o.verdict.innerHTML=t;
+  }
+};
+
+/* ---------- 12. fonction de production ---------- */
+IMPL.prod={
+  presets:{seul:{L:1,K:10},trois:{L:3,K:10},foule:{L:18,K:10},invest:{L:18,K:25}},
+  draw:function(W){
+    const L=W.v("L"),K=W.v("K"),fm=W.v("forme");
+    W.o.L.textContent=L; W.o.K.textContent=K;
+    const f=function(l,k){ if(l<=0) return 0; return fm==="sat"? 80*Math.pow(k/10,0.4)*(1-Math.exp(-l/6)) : 12*Math.pow(k/10,0.4)*Math.pow(l,0.6); };
+    const g=chart(W.c.cv,[0,20],[0,130],{xt:[0,5,10,15,20],yt:[0,25,50,75,100,125],xl:"salariés L",yl:"production Y"});
+    const xs=lin(0,20,200);
+    if(K!==10) curve(g,xs,function(l){return f(l,10);},css("--off"),1.5,[5,4]);
+    curve(g,xs,function(l){return f(l,K);},css("--odd"),2.5);
+    const y=f(L,K), dl=1e-3, der=(f(L+dl,K)-f(L-dl,K))/(2*dl), last=y-f(L-1,K), pm=y/L;
+    const c=g.ctx;
+    c.save(); c.strokeStyle=css("--muted"); c.setLineDash([3,4]); c.lineWidth=1.2; c.beginPath(); c.moveTo(g.X(0),g.Y(0)); const xe=Math.min(20,130/pm); c.lineTo(g.X(xe),g.Y(pm*xe)); c.stroke(); c.restore();
+    c.save(); c.strokeStyle=css("--even"); c.lineWidth=2.5; c.beginPath(); c.moveTo(g.X(Math.max(0,L-3)),g.Y(y-der*Math.min(3,L))); c.lineTo(g.X(Math.min(20,L+3)),g.Y(y+der*Math.min(3,20-L))); c.stroke(); c.restore();
+    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(L),g.Y(y),5,0,7); c.fill();
+    W.o.y.textContent=fr(y,1); W.o.pm.textContent=fr(pm,2); W.o.last.textContent=fr(last,2); W.o.der.textContent=fr(der,2);
+    let t;
+    if(L===1) t="Seul, le premier salarié produit "+fr(y,1)+" unités : productivité moyenne et marginale se confondent presque.";
+    else t="Le dernier salarié ajoute "+fr(last,1)+" unités, moins que la moyenne de "+fr(pm,1)+" : il fait baisser la productivité moyenne, mais la production totale augmente.";
+    if(K>10) t+=" L’investissement a déplacé toute la courbe vers le haut : avec "+L+" salariés, on produit "+fr(y-f(L,10),1)+" unités de plus qu’avec 10 machines.";
+    else if(L>=15) t+=" Avec si peu de machines, chaque embauche rapporte peu : pour produire plus, il faut investir, pas embaucher.";
+    W.o.verdict.innerHTML=t;
+  }
+};
+
+/* ---------- 13. coût moyen ---------- */
+IMPL.cout={
+  presets:{notes:{CF:400,p:44,Q:20},haut:{CF:400,p:80,Q:38},bas:{CF:400,p:35,Q:15},fixes:{CF:900,p:60,Q:30}},
+  draw:function(W){
+    const CF=W.v("CF"),p=W.v("p"),Q=W.v("Q"),cc=4,d=1;
+    W.o.CF.textContent=fr(CF,0)+" €"; W.o.p.textContent=fr(p,0)+" €"; W.o.Q.textContent=Q;
+    const CT=function(q){return CF+cc*q+d*q*q;}, CM=function(q){return CT(q)/q;}, Cm=function(q){return cc+2*d*q;};
+    const g=chart(W.c.cv,[0,60],[0,140],{xt:[0,10,20,30,40,50,60],yt:[0,20,40,60,80,100,120,140],xl:"quantité Q",yl:"€ par unité"});
+    const qs=Math.sqrt(CF/d), c=g.ctx;
+    c.save(); c.globalAlpha=0.08; c.fillStyle=css("--good"); c.fillRect(g.X(0),g.Y(140),g.X(Math.min(qs,60))-g.X(0),g.Y(0)-g.Y(140));
+    c.fillStyle=css("--bad"); if(qs<60) c.fillRect(g.X(qs),g.Y(140),g.X(60)-g.X(qs),g.Y(0)-g.Y(140)); c.restore();
+    const xs=lin(1,60,240);
+    curve(g,xs,function(q){ const v=CM(q); return v<=140?v:NaN; },css("--odd"),2.5);
+    curve(g,xs,function(q){ const v=Cm(q); return v<=140?v:NaN; },css("--even"),2);
+    c.save(); c.strokeStyle=css("--pos"); c.lineWidth=2; c.beginPath(); c.moveTo(g.X(0),g.Y(p)); c.lineTo(g.X(60),g.Y(p)); c.stroke(); c.restore();
+    c.save(); c.strokeStyle=css("--ink"); c.setLineDash([4,4]); c.beginPath(); c.moveTo(g.X(Q),g.Y(0)); c.lineTo(g.X(Q),g.Y(140)); c.stroke(); c.restore();
+    if(qs<=60){ c.fillStyle=css("--odd"); c.beginPath(); c.arc(g.X(qs),g.Y(CM(qs)),5,0,7); c.fill(); c.font="11px "+css("--ui"); c.textAlign="center"; c.fillText("taille optimale",g.X(qs),g.Y(CM(qs))+18); }
+    c.font="11px "+css("--ui"); c.fillStyle=css("--pos"); c.textAlign="right"; c.fillText("prix",g.X(60)-2,g.Y(p)-5);
+    const cmin=CM(qs), qp=(p-cc)/(2*d), pi=p*Q-CT(Q), pimax=p*qp-CT(qp);
+    W.o.cm.textContent=fr(CM(Q),1)+" €"; W.o.cmg.textContent=fr(Cm(Q),0)+" €"; W.o.pi.textContent=fr(pi,0).replace("-","−")+" €";
+    W.o.qs.textContent=fr(qs,1)+" (coût moyen "+fr(cmin,1)+" €)";
+    W.o.qp.textContent= p>=cmin? fr(qp,1)+" (profit "+fr(pimax,0)+" €)" : "aucune : le prix est sous le coût moyen minimal";
+    let t= Q<qs-0.5?"Phase 1 : produire plus fait baisser le coût moyen (économies d’échelle). ": Q>qs+0.5?"Phase 2 : chaque unité de plus fait monter le coût moyen (déséconomies d’échelle). ":"Tu es à la taille optimale : le coût moyen est minimal. ";
+    if(p<cmin-0.01) t+='<span class="verdict-no">À ce prix, aucune quantité n’est rentable : à long terme, l’entreprise ferme ou se réorganise.</span>';
+    else if(qp>qs+0.5) t+='<span class="verdict-ok">Le profit est maximal à Q = '+fr(qp,1)+', dans la phase 2 : au-delà de la taille optimale, chaque unité rapporte encore plus qu’elle ne coûte.</span>';
+    else if(Math.abs(qp-qs)<=0.5) t+='<span class="verdict-ok">Prix égal au coût moyen minimal : profit nul au mieux, atteint à la taille optimale. C’est l’équilibre de long terme en concurrence.</span>';
+    W.o.verdict.innerHTML=t;
+  }
+};
+
+/* ---------- 14. VAN et TRI ---------- */
+function vanOf(I0,cf,r){ let s=-I0; cf.forEach(function(c,t){ s+=c/Math.pow(1+r,t+1); }); return s; }
+function niceStep(span,n){ const raw=span/n, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+IMPL.van={
+  presets:{cours:{i0:1000,c1:277.4,c2:277.4,c3:277.4,c4:277.4,c5:277.4,i:15},rentable:{i0:1000,c1:300,c2:300,c3:300,c4:300,c5:300,i:8},tardif:{i0:1000,c1:0,c2:0,c3:0,c4:0,c5:1700,i:8},hausse:{i0:1000,c1:0,c2:0,c3:0,c4:0,c5:1700,i:12}},
+  draw:function(W){
+    const I0=+W.v("i0")||0, cf=["c1","c2","c3","c4","c5"].map(function(k){ return +W.v(k)||0; }), i=W.v("i")/100;
+    W.o.i.textContent=fr(i*100,1)+" %";
+    const V=function(r){ return vanOf(I0,cf,r); };
+    const rs=lin(0,0.4,160), vals=rs.map(V);
+    let lo=Math.min(0,Math.min.apply(null,vals)), hi=Math.max(0,Math.max.apply(null,vals)); if(hi-lo<1){ hi+=1; lo-=1; }
+    const st=niceStep(hi-lo,5); lo=Math.floor(lo/st)*st; hi=Math.ceil(hi/st)*st;
+    const yt=[]; for(let v=lo; v<=hi+1e-9; v+=st) yt.push(Math.round(v));
+    const g=chart(W.c.cv,[0,40],[lo,hi],{xt:[0,10,20,30,40],xu:" %",yt:yt,xl:"taux d'actualisation",yl:"VAN"});
+    const c=g.ctx;
+    c.save(); c.strokeStyle=css("--ink"); c.globalAlpha=0.6; c.beginPath(); c.moveTo(g.X(0),g.Y(0)); c.lineTo(g.X(40),g.Y(0)); c.stroke(); c.restore();
+    curve(g,lin(0,40,160),function(x){ return V(x/100); },css("--odd"),2.5);
+    // dichotomie
+    let a=0,b=1, tri=null; const steps=[];
+    if(V(0)>0 && V(1)<0){
+      for(let k=1;k<=30;k++){ const m=(a+b)/2, vm=V(m); if(k<=8) steps.push([k,a,b,m,vm]); if(vm>0) a=m; else b=m; }
+      tri=(a+b)/2;
+    }
+    const vi=V(i);
+    c.fillStyle=css("--ink"); c.beginPath(); c.arc(g.X(i*100),g.Y(vi),5,0,7); c.fill();
+    if(tri!==null && tri<=0.4){ c.fillStyle=css("--even"); c.beginPath(); c.arc(g.X(tri*100),g.Y(0),5,0,7); c.fill(); c.font="11px "+css("--ui"); c.textAlign="center"; c.fillText("TRI",g.X(tri*100),g.Y(0)-9); }
+    W.o.van.textContent=fr(vi,1).replace("-","−");
+    W.o.tri.textContent= tri===null?(V(0)<=0?"aucun taux positif":"au-delà de 100 %"):fr(tri*100,2)+" %";
+    W.o.brut.textContent=fr(cf.reduce(function(s,x){return s+x;},0)-I0,0).replace("-","−")+" (sans actualiser)";
+    let t= vi>0?'<span class="verdict-ok">VAN positive : le projet rapporte plus qu’un placement à '+fr(i*100,1)+' %. On investit.</span>':'<span class="verdict-no">VAN négative : mieux vaut placer l’argent à '+fr(i*100,1)+' % à risque équivalent. On n’investit pas.</span>';
+    if(tri!==null) t+=" Même conclusion par le TRI : "+fr(tri*100,1)+" % "+(tri>i?">":"<")+" "+fr(i*100,1)+" %.";
+    W.o.verdict.innerHTML=t;
+    W.o.steps.innerHTML= steps.length? '<li style="border-top:0;color:var(--muted)">Dichotomie sur [0 ; 100 %] : on garde la moitié où la VAN change de signe.</li>'+steps.map(function(s){ return '<li><b>'+s[0]+'</b>[ '+fr(s[1]*100,2)+' ; '+fr(s[2]*100,2)+' ] milieu '+fr(s[3]*100,2)+' % → VAN '+fr(s[4],1).replace("-","−")+(s[4]>0?" &gt; 0, on monte":" &lt; 0, on descend")+'</li>'; }).join("")+'<li style="color:var(--muted)">… après 30 itérations : TRI = '+fr(tri*100,4)+' %</li>' : "";
+  }
+};
+
+/* ---------- 15. contributions à la croissance ---------- */
+const CW=[["gC","Conso. ménages",53,1],["gA","Conso. APU",24,1],["gI","FBCF",24,1],["gX","Exportations",33,1],["gM","Importations",34.5,-1]];
+IMPL.contrib={
+  presets:{matelas:{gC:1.5,gA:0,gI:0,gX:0,gM:0,dS:0},turbo:{gC:1.5,gA:1,gI:5,gX:0,gM:0,dS:0},fuite:{gC:3,gA:0,gI:0,gX:0,gM:4,dS:0},rec:{gC:0.3,gA:2,gI:-9,gX:-11,gM:-9,dS:-1}},
+  draw:function(W){
+    const rows=CW.map(function(r){ const g=W.v(r[0]); W.o[r[0]].textContent=pc(g,1); return [r[1],r[2]*g/100*r[3]]; });
+    const dS=W.v("dS"); W.o.dS.textContent=(dS>0?"+":"")+fr(dS,1).replace("-","−")+" pt";
+    rows.push(["Stocks",dS]);
+    const tot=rows.reduce(function(s,r){return s+r[1];},0);
+    rows.push(["PIB",tot]);
+    const F=fit(W.c.cv), c=F.ctx, w=F.w, h=F.h, lw=110, rh=(h-10)/rows.length;
+    const mx=Math.max(1,Math.max.apply(null,rows.map(function(r){return Math.abs(r[1]);})));
+    const x0=lw+(w-lw-60)/2, sc=(w-lw-60)/2/mx;
+    c.font="12px "+css("--ui");
+    c.strokeStyle=css("--line"); c.beginPath(); c.moveTo(x0,4); c.lineTo(x0,h-4); c.stroke();
+    rows.forEach(function(r,k){
+      const y=6+k*rh, bh=rh*0.62, last=k===rows.length-1;
+      c.fillStyle=css("--ink"); c.textAlign="left"; c.font=(last?"600 ":"")+"12px "+css("--ui"); c.fillText(r[0],4,y+bh*0.75);
+      c.fillStyle=css(last?"--ink":(r[1]>=0?"--pos":"--neg")); const bw=r[1]*sc;
+      c.fillRect(bw>=0?x0:x0+bw,y,Math.abs(bw),bh);
+      c.fillStyle=css("--muted"); c.textAlign=bw>=0?"left":"right"; c.font="11px "+css("--mono");
+      c.fillText((r[1]>0?"+":"")+fr(r[1],2).replace("-","−"),bw>=0?x0+bw+4:x0+bw-4,y+bh*0.75);
+    });
+    W.o.g.textContent=pc(tot,2); W.o.cc.textContent=(rows[0][1]>0?"+":"")+fr(rows[0][1],2).replace("-","−")+" point";
+    let t= tot<0?'<span class="verdict-no">Le PIB recule : récession.</span> ':"";
+    if(Math.abs(W.v("gI"))>=4) t+="La FBCF ne pèse qu’un quart du PIB, mais ses fortes variations font bouger la croissance de "+fr(Math.abs(rows[2][1]),1)+" point : c’est le turbo.";
+    else if(W.v("gC")>0 && Math.abs(tot-rows[0][1])<0.05) t+="Seule, une consommation à "+pc(W.v("gC"),1)+" ne donne que "+pc(rows[0][1],2)+" de croissance : c’est le matelas, pas le moteur des pics.";
+    if(W.v("gM")>0 && W.v("gC")>2) t+=" Les importations retirent "+fr(34.5*W.v("gM")/100,2)+" point : une partie de la relance profite à la production étrangère.";
+    W.o.verdict.innerHTML=t;
+  }
+};
+
+/* ---------- 16. capital de l'État et privatisation ---------- */
+const PARTY={
+  "État":["Apport d’argent dans les caisses de l’État (tes notes).","Nuance : la recette est ponctuelle, alors que l’État renonce aux dividendes futurs et à son pouvoir de décision. Bonne affaire seulement si le prix dépasse la valeur actualisée de ce qu’il abandonne."],
+  "Entreprise":["Objectifs différents (rentabilité pour les actionnaires), changement de propriétaire sans argent neuf, coûts de restructuration (tes notes).","Précision : l’argent de la vente va à l’État vendeur, pas à l’entreprise, sauf si la privatisation passe par une augmentation de capital. En contrepartie, elle peut lever des fonds sur les marchés plus librement."],
+  "Salariés":["Aucun changement pour les fonctionnaires déjà en poste, mais les nouveaux salariés sont embauchés sous contrat de droit privé (tes notes).","Nuance : la coexistence de deux statuts dans la même entreprise crée souvent des tensions, et les restructurations peuvent toucher l’emploi."],
+  "Clients":["Rien ne change (tes notes).","À nuancer : les prix et la qualité du service peuvent évoluer dans un sens ou dans l’autre. En situation de monopole (autoroutes, réseaux), tout dépend de la régulation qui encadre les tarifs ; en concurrence, le client peut y gagner."]
+};
+IMPL.capital={
+  presets:{p15:{s:15},p34:{s:34},p51:{s:51},p70:{s:70},p100:{s:100}},
+  init:function(W){
+    W.o.chips.innerHTML=Object.keys(PARTY).map(function(k,i){ return '<button class="chip" type="button" aria-pressed="'+(i===0)+'">'+k+'</button>'; }).join("");
+    const show=function(k){ W.o.party.innerHTML="<h5>"+k+"</h5><p>"+PARTY[k][0]+"</p><p style='color:var(--muted)'>"+PARTY[k][1]+"</p>"; };
+    W.o.chips.querySelectorAll(".chip").forEach(function(b){ b.addEventListener("click",function(){ W.o.chips.querySelectorAll(".chip").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); }); show(b.textContent); }); });
+    show("État");
+  },
+  draw:function(W){
+    const s=W.v("s"); W.o.s.textContent=fr(s,1)+" %"; W.o.fill.style.width=s+"%";
+    const pouv=[];
+    if(s===0) pouv.push("Aucun droit : l’État n’est pas actionnaire.");
+    else if(s<=100/3) pouv.push("Actionnaire minoritaire : l’État vote, touche des dividendes, mais ne peut ni imposer ni bloquer seul.");
+    if(s>100/3) pouv.push("Minorité de blocage : il peut empêcher seul toute décision d’assemblée extraordinaire (statuts, fusion, augmentation de capital).");
+    if(s>50) pouv.push("Majorité absolue : il décide seul en assemblée ordinaire (comptes, nomination des dirigeants).");
+    if(s>=200/3) pouv.push("Majorité qualifiée : il peut aussi modifier seul les statuts.");
+    if(s===100) pouv.push("100 % : entreprise entièrement publique, aucun autre actionnaire.");
+    const notes= s<33?"privée": s<=66?"mixte":"publique";
+    const insee= s>50?"publique (l’État a la majorité)":"privée (l’État n’a pas la majorité)";
+    W.o.card.innerHTML="<p>"+pouv.join("</p><p>")+"</p><p style='margin-top:8px'><b>Classement Insee :</b> "+insee+"</p>";
+  }
+};
+
+/* ---------- 17. budget et spread ---------- */
+IMPL.budget={
+  presets:{notes:{bund:3.25,spr:85},oct26:{bund:3.4,spr:170},calme:{bund:1,spr:40}},
+  draw:function(W){
+    const rec=+W.v("rec")||0, dep=+W.v("dep")||0, sol=rec-dep;
+    W.o.solde.innerHTML="<span>Solde budgétaire : <b>"+(sol>0?"+":"")+fr(sol,1).replace("-","−")+" Md€</b></span><span>"+(sol>0.0001?'<span class="verdict-ok">budget excédentaire</span>':sol<-0.0001?'<span class="verdict-no">budget déficitaire</span> : il faudra emprunter '+fr(-sol,1)+" Md€":"budget à l’équilibre")+"</span>";
+    const bund=W.v("bund"), spr=W.v("spr"), mt=W.v("mt"), n=W.v("n");
+    W.o.bund.textContent=fr(bund,2)+" %"; W.o.spr.textContent=spr+" pb"; W.o.mt.textContent=mt+" Md€"; W.o.n.textContent=n+" an"+(n>1?"s":"");
+    const ex=mt*spr/10000;
+    const yr=[]; for(let k=1;k<=10;k++) yr.push(k<=n?k*ex:0);
+    const cum=ex*n*(n+1)/2, ymax=Math.max(1,Math.ceil(10*ex/5)*5);
+    const st=niceStep(ymax,4), yt=[]; for(let v=0; v<=ymax+1e-9; v+=st) yt.push(Math.round(v*10)/10);
+    const g=chart(W.c.cv,[0.4,10.6],[0,yt[yt.length-1]],{xt:[1,2,3,4,5,6,7,8,9,10],yt:yt,yl:"Md€ d'intérêts en plus, par an",xl:"année"});
+    const c=g.ctx, bw=(g.X(1)-g.X(0))*0.6;
+    yr.forEach(function(v,k){ if(v<=0) return; c.fillStyle=css("--even"); c.fillRect(g.X(k+1)-bw/2,g.Y(v),bw,g.Y(0)-g.Y(v)); c.fillStyle=css("--ink"); c.font="10px "+css("--mono"); c.textAlign="center"; c.fillText(fr(v,1),g.X(k+1),g.Y(v)-4); });
+    W.o.oat.textContent=fr(bund+spr/100,2)+" %";
+    W.o.y1.textContent=fr(ex,2)+" Md€";
+    W.o.cum.textContent=fr(cum,1)+" Md€ en "+n+" an"+(n>1?"s":"");
+  }
+};
+
+/* ---------- annexe 7 : rentabilité d'une entente ---------- */
+IMPL.entente={
+  presets:{expo:{g:0.6,n:5,p:100,a:0.6},rare:{g:0.6,n:5,p:20,a:0.6},dissu:{g:0.6,n:5,p:50,a:5}},
+  draw:function(W){
+    const g=W.v("g"), n=W.v("n"), p=W.v("p")/100, a=W.v("a");
+    W.o.g.textContent=fr(g,2)+" Md€"; W.o.n.textContent=n+" an"+(n>1?"s":""); W.o.p.textContent=fr(p*100,0)+" %"; W.o.a.textContent=fr(a,1)+" Md€";
+    const gt=g*n, ca=p*a, bil=gt-ca;
+    const top=Math.max(gt,a,0.5)*1.18, st=niceStep(top,4), ymax=Math.ceil(top/st)*st, yt=[]; for(let v=0; v<=ymax+1e-9; v+=st) yt.push(Math.round(v*100)/100);
+    const gr=chart(W.c.cv,[0,3],[0,ymax],{xt:[],yt:yt,yl:"Md€"});
+    const c=gr.ctx, bw=(gr.X(1)-gr.X(0))*0.5;
+    const bars=[["Gain total de l'entente",gt,"--even"],["Amende si sanctionnée",a,"--off"],["Coût attendu",ca,"--odd"]];
+    bars.forEach(function(b,i){ const x=gr.X(i+0.5); c.fillStyle=css(b[2]); c.fillRect(x-bw/2,gr.Y(b[1]),bw,gr.Y(0)-gr.Y(b[1]));
+      c.fillStyle=css("--ink"); c.font="12px "+css("--ui"); c.textAlign="center"; c.fillText(fr(b[1],2)+" Md€",x,gr.Y(b[1])-5);
+      c.fillStyle=css("--muted"); c.fillText(b[0],x,gr.h-gr.pb+14); });
+    W.o.gt.textContent=fr(gt,2)+" Md€"; W.o.ca.textContent=fr(ca,2)+" Md€"; W.o.bil.textContent=(bil>0?"+":"")+fr(bil,2).replace("-","−")+" Md€";
+    W.o.verdict.innerHTML= bil>0 ? '<span class="verdict-no">L’entente reste rentable : elle rapporte '+fr(gt,2)+' Md€ pour un coût attendu de '+fr(ca,2)+' Md€. La sanction ne dissuade pas.</span>' : '<span class="verdict-ok">La sanction dissuade : le coût attendu dépasse ce que l’entente rapporte.</span>';
+  }
+};
+
 /* ---------- onglets, concepts ---------- */
 function showTab(t){
   S.tab=t;
@@ -1393,8 +1967,9 @@ function showTab(t){
   drawAll(); save();
 }
 document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ showTab(b.dataset.tab); }); });
+document.querySelectorAll("[data-goto]").forEach(function(b){ b.addEventListener("click", function(){ const t=b.dataset.goto.split("#"); showTab(t[0]); if (t[1]){ const el=$(t[1]); if (el) el.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"}); } }); });
 document.querySelectorAll("details.fold").forEach(function(d){ d.addEventListener("toggle", function(){ if (d.open) widgets.forEach(function(W){ if (d.contains(W.root)) draw(W); }); }); });
-function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; $("seenCount").textContent=n+" / 10 concepts revus"; $("seenBar").style.width=(n/10*100)+"%"; }
+function updSeen(){ const n=Object.keys(S.seen).filter(function(k){return S.seen[k];}).length; const N=document.querySelectorAll(".concept").length; $("seenCount").textContent=n+" / "+N+" concepts revus"; $("seenBar").style.width=(n/N*100)+"%"; }
 document.querySelectorAll(".concept").forEach(function(c){ const cb=c.querySelector(".seen input"), id=c.dataset.id; cb.checked=!!S.seen[id]; cb.addEventListener("change", function(){ S.seen[id]=cb.checked; updSeen(); save(); }); });
 updSeen();
 
@@ -1404,12 +1979,12 @@ const FORM = [
   ["besoins illimités  ×  facteurs de production limités  →  rareté","Le point de départ de toute l'économie."],
   ["facteurs : ressources naturelles, travail, capital technique","Tous en quantité limitée."],
   ["coût d'opportunité de A = quantité de B sacrifiée / quantité de A gagnée","Ce à quoi on renonce."],
-  ["prix ≠ valeur ;  prix d'équilibre : quantité offerte = quantité demandée","L'utilité marginale explique la demande (néoclassiques) ; à l'équilibre, prix = utilité marginale de la dernière unité. Paradoxe de l'eau et du diamant."]]},
+  ["prix ≠ valeur ;  prix ≈ utilité marginale (néoclassiques)","Paradoxe de l'eau et du diamant."]]},
  {g:"Biens", r:[
   ["consommation finale : non durable (détruit à la 1re utilisation) ou durable","Achetée par les ménages ; supporte la TVA."],
   ["bien de production : sert à produire, sans être incorporé","Capital technique (machines)."],
   ["consommation intermédiaire : incorporée (transformation) ou détruite","Farine, énergie. C'est l'usage qui classe, pas l'objet."],
-  ["service : ne se stocke pas","Produit et consommé en même temps (cas typique ; logiciels et contenus numériques font exception)."]]},
+  ["service : ne se stocke pas","Produit et consommé en même temps."]]},
  {g:"Écoles de pensée", r:[
   ["Classiques (Smith 1776) : individualisme, liberté économique, équilibre permanent","État gendarme."],
   ["Néoclassiques (1870) : utilité marginale, homo œconomicus, équilibre général","État minimal."],
@@ -1430,9 +2005,41 @@ const FORM = [
   ["(1 + g valeur) = (1 + g volume) × (1 + g prix)","On multiplie ; additionner n'est qu'une approximation pour de petits taux."],
   ["g = (PIB N+1 − PIB N) / PIB N","Taux de croissance."],
   ["PIB × (1 + g)^n ;  doublement ≈ 70 / g(%)","Croissance composée."],
-  ["récession annuelle : g annuel < 0 ;  conjoncture : 2 trimestres consécutifs de baisse","Deux niveaux temporels différents. Taux qui baisse mais reste positif = ralentissement, pas récession."],
+  ["récession : g < 0 (conjoncture : 2 trimestres de baisse)","Taux qui baisse mais reste positif = ralentissement, pas récession."],
   ["commentaire : 1) définir  2) tendance  3) analyse","Méthode du cours."]]}
 ];
+
+FORM.push(
+ {g:"Ménages et prix", r:[
+  ["revenus primaires (travail, patrimoine) + revenus de transfert","Salaires, honoraires ; loyers, dividendes, intérêts ; APL, RSA, retraites, chômage."],
+  ["hausse de l'IPC = Σ (poids × hausse du prix du poste) / 10 000","Pondérations 2026 : alimentation 1 485 points."],
+  ["PA = R / IPC","Pouvoir d'achat."],
+  ["(1 + g PA) = (1 + g R) / (1 + g prix)","Exact ; g PA ≈ g R − g prix seulement pour de petits taux."]]},
+ {g:"Entreprise et coûts", r:[
+  ["π = p × Y − CT(Y)","Profit à maximiser."],
+  ["Y = f(K, L, R) ; barre = facteur fixé","Fonction de production, court terme."],
+  ["productivité moyenne = Y / L ; marginale = dY / dL","La production croît à taux décroissant, la productivité marginale décroît."],
+  ["embaucher tant que p × productivité marginale ≥ salaire","Sinon le salarié coûte plus qu'il ne rapporte."],
+  ["CM = CT / Q ; Cm = dCT / dQ","Coût moyen, coût marginal."],
+  ["taille optimale : CM minimal, où Cm = CM","Phase 1 économies d'échelle, phase 2 déséconomies."],
+  ["profit maximal : Cm = p","Peut se situer après la taille optimale si le prix est élevé."]]},
+ {g:"Investissement", r:[
+  ["FBCF : biens de production durables + logements neufs des ménages","Louer ou acheter de l'ancien n'est pas de la FBCF."],
+  ["VAN = Σ CF_t / (1 + i)^t − I0","On investit si VAN > 0 ; i = rendement d'un placement à risque équivalent."],
+  ["0 = Σ CF_t / (1 + TRI)^t − I0","TRI, trouvé par dichotomie ; on investit si TRI > i."]]},
+ {g:"PIB par la demande", r:[
+  ["PIB = C ménages + C APU + FBCF + variation des stocks + (X − M)","Approche par la demande."],
+  ["PIB + M = C + FBCF + variation des stocks + X","Équilibre ressources-emplois."],
+  ["contribution = poids dans le PIB × croissance de la composante","Conso. ≈ 53 % du PIB : +1,5 % donne ≈ 0,8 point."],
+  ["trois approches : production, demande, revenus","Même PIB, trois angles."]]},
+ {g:"État, budget, dette", r:[
+  ["fonctions : allocation, redistribution, stabilisation","Musgrave ; plus le régalien."],
+  ["AGO : plus de 50 % ; AGE : deux tiers ; minorité de blocage : plus d'un tiers","Majorité absolue = plus de la moitié ; deux tiers = majorité qualifiée."],
+  ["entreprise publique : l'État a la majorité du capital ou des voix","Définition Insee."],
+  ["solde budgétaire = recettes − dépenses","Positif : excédent ; négatif : déficit."],
+  ["taux OAT = taux Bund + spread ; 1 point de base = 0,01 point","Notes : 4,10 − 0,85 = 3,25 %."],
+  ["surcoût annuel ≈ montant emprunté × spread","Les anciens emprunts gardent leur taux."]]}
+);
 (function(){
   const box=$("fList"); let h="";
   FORM.forEach(function(g){ h+='<div class="fgroup"><h3>'+g.g+'</h3>'; g.r.forEach(function(r){ h+='<div class="frow"><div class="fx">'+r[0]+'</div><div class="fd">'+r[1]+'</div></div>'; }); h+='</div>'; });
@@ -1448,7 +2055,7 @@ const CARDS = [
  ["r3","Rareté","Pourquoi les besoins sont-ils illimités ?","Progrès technique, publicité qui transforme les désirs en besoins, imitation."],
  ["r4","Rareté","Qu'est-ce que le coût d'opportunité ?","Ce à quoi on renonce pour obtenir quelque chose : la meilleure alternative sacrifiée."],
  ["r5","Rareté","Étymologie du mot économie ?","Oikonomia : oikos, la maison, et nomos, la règle."],
- ["v1","Valeur","Pourquoi l'eau est-elle bon marché et le diamant cher ?","Le prix se fixe à la rencontre de l'offre et de la demande. L'eau est si abondante que la dernière unité échangée a une faible utilité marginale ; l'offre de diamants est limitée face à une forte demande, leur utilité marginale reste élevée."],
+ ["v1","Valeur","Pourquoi l'eau est-elle bon marché et le diamant cher ?","Le prix suit l'utilité marginale : l'eau abondante a une faible utilité marginale, le diamant rare une forte."],
  ["v2","Valeur","Différence entre bien et service ?","Un bien se stocke, un service non : il est consommé au moment où il est produit."],
  ["b1","Biens","Qu'est-ce qu'une consommation intermédiaire ?","Un bien ou service incorporé dans un autre (transformation) ou détruit dans la production."],
  ["b2","Biens","Bien durable ou non durable ?","Non durable : détruit à la première utilisation. Durable : s'use progressivement."],
@@ -1473,11 +2080,53 @@ const CARDS = [
  ["c3","Comptabilité","Pourquoi ne pas additionner les chiffres d'affaires ?","On compterait plusieurs fois les produits intermédiaires : double comptage."],
  ["c4","Comptabilité","Volume ou valeur ?","Valeur : aux prix courants. Volume : aux prix de l'année précédente, seules les quantités changent."],
  ["c5","Comptabilité","Lien entre croissance en valeur, volume et prix ?","(1 + valeur) = (1 + volume) × (1 + prix)."],
- ["g1","Croissance","Définition d'une récession ?","Sur l'année : un PIB annuel en volume qui recule. En conjoncture : deux trimestres consécutifs de baisse du PIB (convention)."],
+ ["g1","Croissance","Définition d'une récession ?","Un taux de croissance du PIB négatif (en conjoncture : deux trimestres consécutifs)."],
  ["g2","Croissance","La croissance passe de 1,8 % à 1,2 % : le PIB baisse-t-il ?","Non, il augmente moins vite."],
  ["g3","Croissance","Temps de doublement du PIB à 2 % par an ?","Environ 35 ans (70 / 2)."],
  ["g4","Croissance","Méthode du commentaire de graphique ?","1) définir les concepts et le contexte, 2) dégager la tendance, 3) analyser."]
 ];
+CARDS.push(
+ ["m1","Ménages","Quels sont les revenus primaires des ménages ?","Revenus du travail (salaires, honoraires des indépendants) et revenus du patrimoine (loyers, dividendes, intérêts, rentes)."],
+ ["m2","Ménages","Citer des revenus de transfert.","APL, RSA, prime d'activité, retraites, allocations chômage."],
+ ["m3","Ménages","Qu'est-ce que l'IPC ?","Indice du prix d'un panier fixe de biens et services, pondéré selon la part de chaque poste dans les dépenses (sur 10 000 points)."],
+ ["m4","Ménages","Quand le pouvoir d'achat augmente-t-il ?","Quand le revenu augmente plus vite que les prix : (1 + g PA) = (1 + g R) / (1 + g prix)."],
+ ["m5","Ménages","Pourquoi l'IPC ne mesure-t-il pas l'inflation de chaque ménage ?","C'est une moyenne sur le panier moyen ; chaque ménage a son propre panier."],
+ ["f1","Entreprise","Formule du profit ?","π = p × Y − CT(Y) : chiffre d'affaires moins coût total."],
+ ["f2","Entreprise","Que signifie une barre sur K dans Y = f(K, L, R) ?","Que le capital est fixé : on raisonne à court terme."],
+ ["f3","Entreprise","Productivité moyenne et marginale ?","Moyenne : Y / L. Marginale : production supplémentaire du dernier salarié, dY / dL."],
+ ["f4","Entreprise","Pourquoi les rendements marginaux sont-ils décroissants ?","Parce qu'un facteur est fixe : chaque nouveau salarié dispose de moins de capital."],
+ ["f5","Entreprise","Jusqu'où embaucher ?","Tant que p × productivité marginale ≥ salaire."],
+ ["f6","Entreprise","Qu'est-ce que la taille optimale ?","La quantité qui minimise le coût moyen ; le coût marginal y est égal au coût moyen."],
+ ["f7","Entreprise","Économies et déséconomies d'échelle ?","Économies : le coût moyen baisse avec la quantité. Déséconomies : il remonte au-delà d'un seuil (stockage, place, coordination)."],
+ ["f8","Entreprise","Où le profit est-il maximal ?","Là où le coût marginal égale le prix ; ce peut être au-delà de la taille optimale."],
+ ["i1","Investissement","Qu'est-ce que la FBCF ?","L'achat de biens de production durables (et de logements neufs par les ménages) : l'investissement."],
+ ["i2","Investissement","Formule de la VAN ?","VAN = somme des CF_t / (1 + i)^t − I0 ; on investit si elle est positive."],
+ ["i3","Investissement","Qu'est-ce que le TRI ?","Le taux qui annule la VAN ; on investit s'il dépasse le rendement d'un placement à risque équivalent."],
+ ["i4","Investissement","Qui choisit le taux d'actualisation i ?","L'entreprise : c'est le rendement qu'elle obtiendrait ailleurs à risque équivalent, pas un taux fixé par la banque centrale."],
+ ["i5","Investissement","Acheter un appartement ancien, est-ce de la FBCF ?","Non : le bien existe déjà, il change de propriétaire. Seul le logement neuf (et les gros travaux) en est."],
+ ["d1","Demande","PIB par la demande ?","PIB = C ménages + C APU + FBCF + variation des stocks + (X − M)."],
+ ["d2","Demande","Contribution d'une composante à la croissance ?","Son poids dans le PIB multiplié par son taux de croissance."],
+ ["d3","Demande","Matelas et turbo ?","La consommation assure la base de la croissance ; l'investissement, plus volatil, fait les pics et les creux."],
+ ["d4","Demande","Pourquoi retire-t-on les importations ?","Elles sont incluses dans la consommation et la FBCF mais produites à l'étranger."],
+ ["s1","État","Les trois fonctions économiques de l'État (Musgrave) ?","Allocation, redistribution, stabilisation."],
+ ["s2","État","Majorité absolue, qualifiée, minorité de blocage ?","Plus de 50 % ; deux tiers ; plus d'un tiers."],
+ ["s3","État","Définition d'une entreprise publique ?","Entreprise où l'État a une influence dominante, en pratique la majorité du capital ou des voix (Insee)."],
+ ["s4","État","Solde budgétaire ?","Recettes moins dépenses : excédentaire, à l'équilibre ou déficitaire."],
+ ["s5","État","Qu'est-ce que le spread OAT-Bund ?","L'écart entre les taux à 10 ans français et allemand : la prime de risque exigée pour prêter à la France."],
+ ["s6","État","Combien vaut un point de base ?","Un centième de point de pourcentage : 85 pb = 0,85 point."]
+);
+CARDS.push(
+ ["x1","Annexe 7","Définition de la concurrence (Larousse) ?","Structure d'un marché où une pluralité d'entreprises sont en compétition pour bénéficier de la préférence des consommateurs."],
+ ["x2","Annexe 7","Pourquoi le marché concurrentiel est-il la référence ?","C'est un étalon : on mesure les marchés réels à leur écart avec lui (« distorsion de concurrence », « conditions usuelles du marché »). Et il fait baisser les prix, pousse à innover, soutient la croissance."],
+ ["x3","Annexe 7","Le cas Payot en deux chiffres ?","80 % des livres vendus en Suisse romande viennent de France ; Payot les paie 40 à 45 % plus cher que la FNAC Suisse."],
+ ["x4","Annexe 7","Monopole ou oligopole pour les éditeurs français en Suisse ?","Oligopole : quelques grands groupes (Madrigall, Hachette, Editis, Média-Participations), pas un seul vendeur."],
+ ["x5","Annexe 7","Que cherchent les entreprises qui s'entendent ?","Retrouver un pouvoir de marché : vendre plus cher, bloquer un nouveau canal, neutraliser la concurrence entre distributeurs, limiter les salaires, cloisonner les pays."],
+ ["x6","Annexe 7","Qu'est-ce que la fixation du prix de revente ?","Le fabricant impose au distributeur son prix de vente final : les distributeurs ne peuvent plus se concurrencer par les prix (Schneider, Legrand, Rexel, Sonepar : 470 M€)."],
+ ["x7","Annexe 7","Les trois fonctions des sanctions ?","Protéger les victimes, soutenir la compétitivité des entreprises, dissuader."],
+ ["x8","Annexe 7","Le record d'amendes de 2024 ?","1,4 Md€ (168 M€ en 2023, ancien record 1,13 Md€ en 2015), dont électroménager 611 M€, matériel électrique 470 M€, Google 250 M€."],
+ ["x9","Annexe 7","Pourquoi une amende peut-elle ne pas dissuader ?","Si probabilité d'être sanctionné × amende < gain cumulé de l'entente ; et l'amende arrive des années après (2007-2014 sanctionné en 2024)."],
+ ["x10","Annexe 7","Qu'est-ce qu'une killer acquisition ?","Le rachat d'une jeune entreprise pour supprimer un futur concurrent ; elle échappe au contrôle car les seuils de notification sont en chiffre d'affaires."]
+);
 let fcCur=null, fcFlipped=false;
 (function(){ const th=["Tous"].concat(CARDS.map(function(c){return c[1];}).filter(function(t,i,a){return a.indexOf(t)===i;})); $("fcTheme").innerHTML=th.map(function(t){return '<option>'+t+'</option>';}).join(""); $("fcTheme").addEventListener("change", function(){ fcCur=null; renderCard(); }); })();
 function pool(){ const t=$("fcTheme").value; return CARDS.filter(function(c){ return t==="Tous"||c[1]===t; }); }
@@ -1509,7 +2158,7 @@ const EX = [
   c:"<div class='fblock'>VA agriculteur = 100 − 0 = 100\nVA meunier = 250 − 100 = 150\nVA boulanger = 600 − 250 = 350\nPIB = 100 + 150 + 350 = 600 €</div><p>On retrouve le prix du bien final. Additionner les chiffres d'affaires donnerait 950 € : c'est le double comptage.</p>"},
  {id:"e3",axis:"Comptabilité nationale",pts:1,unit:"€",ans:300,tol:0,
   q:"Même chaîne, mais le boulanger paie aussi 50 € d'électricité à un fournisseur. Quelle est la valeur ajoutée du boulanger ?",
-  c:"<div class='fblock'>CI du boulanger = farine 250 + électricité 50 = 300\nVA = 600 − 300 = 300 €</div><p>L'électricité est détruite dans la production : c'est une consommation intermédiaire, même si ce n'est pas une matière première. C'est la raison de la correction de la formule de tes notes.</p>"},
+  c:"<div class='fblock'>CI du boulanger = farine 250 + électricité 50 = 300\nVA = 600 − 300 = 300 €</div><p>L'électricité est détruite dans la production : c'est une consommation intermédiaire, même si ce n'est pas une matière première.</p>"},
  {id:"e4",axis:"Analyse des données",pts:1,unit:"%",ans:10,tol:0.01,
   q:"Une économie produit 100 unités vendues 1 € en année N, puis 110 unités vendues 1,20 € en N+1. Quel est le taux de croissance en volume ?",
   c:"<div class='fblock'>volume N+1 aux prix de N = 110 × 1 = 110 €\ncroissance en volume = (110 − 100) / 100 = +10 %</div><p>En valeur, 110 × 1,2 = 132 € : +32 %. Ce chiffre mélange quantité et prix ; seul le volume dit si l'on produit plus.</p>"},
@@ -1530,9 +2179,39 @@ const EX = [
   c:"<div class='fblock'>k = 1 / (1 − c) = 1 / (1 − 0,75) = 4\nΔY = 4 × 20 = 80 Md€</div><p>Les 20 Md deviennent des revenus, dont 15 sont dépensés, dont 11,25 sont dépensés, et ainsi de suite : 20 × (1 + 0,75 + 0,75² + …) = 80. Vérifie avec l'outil du concept 6 (c = 0,75).</p>"},
  {id:"e10",axis:"Analyse des données",pts:1,unit:"",ans:9,tol:0,
   q:"L'agriculture représentait 18 % de la VA en 1949 et 2 % aujourd'hui. Par combien le PIB doit-il avoir été multiplié pour que la VA agricole actuelle égale celle de 1949 ?",
-  c:"<div class='fblock'>0,02 × m × PIB 1949 = 0,18 × PIB 1949\nm = 0,18 / 0,02 = 9</div><p>Avec un PIB multiplié par environ 7 en volume, la VA agricole actuelle vaut environ 7 × 2 / 18 ≈ 78 % de celle de 1949 : ta note de la page 7 est juste dans l'esprit (une petite part d'un gros gâteau peut peser lourd), mais les ordres de grandeur sont proches du seuil. Teste-le dans l'outil du concept 10.</p>"}
+  c:"<div class='fblock'>0,02 × m × PIB 1949 = 0,18 × PIB 1949\nm = 0,18 / 0,02 = 9</div><p>Avec un PIB multiplié par environ 7 en volume, la VA agricole actuelle vaut environ 7 × 2 / 18 ≈ 78 % de celle de 1949 : une petite part d'un gros gâteau peut peser lourd. Teste-le dans l'outil du concept 10.</p>"}
 ];
+EX.push(
+ {id:"e11",axis:"Analyse des données",pts:1,unit:"%",ans:-1.9,tol:0.03,
+  q:"Ton revenu augmente de 3 % sur l'année et les prix de 5 %. De combien varie exactement ton pouvoir d'achat ?",
+  c:"<div class='fblock'>1 + g PA = 1,03 / 1,05 = 0,98095\ng PA = −1,90 %</div><p>La soustraction donne −2 %, proche ici car les taux sont petits. L'écart grandit avec les taux.</p>"},
+ {id:"e12",axis:"Analyse des données",pts:1,unit:"%",ans:2.13,tol:0.01,
+  q:"Sur 10 000 points, l'alimentation pèse 1 485 points et l'énergie 764. Les prix alimentaires montent de 4 %, ceux de l'énergie de 10 %, et tout le reste de 1 %. Quelle est la hausse de l'IPC ?",
+  c:"<div class='fblock'>reste = 10 000 − 1 485 − 764 = 7 751 points\nIPC = (1 485 × 4 + 764 × 10 + 7 751 × 1) / 10 000\n    = (5 940 + 7 640 + 7 751) / 10 000 = 2,13 %</div><p>L'énergie ne pèse que 7,6 % du panier mais contribue ici pour plus d'un tiers de la hausse.</p>"},
+ {id:"e13",axis:"Concepts et pensée économique",pts:1,unit:"unités",ans:6,tol:0,
+  q:"Un atelier produit 10 unités avec 1 salarié, 18 avec 2 salariés et 24 avec 3 salariés, sans changer de machines. Quelle est la productivité marginale du troisième salarié ?",
+  c:"<div class='fblock'>productivité marginale du 3e = Y(3) − Y(2) = 24 − 18 = 6 unités\nsuites : 10, 8, 6 → rendements marginaux décroissants</div><p>La productivité moyenne passe de 10 à 9 puis à 8 : elle baisse, alors que la production totale augmente.</p>"},
+ {id:"e14",axis:"Concepts et pensée économique",pts:1,unit:"unités",ans:20,tol:0,
+  q:"Le coût total d'une entreprise est CT = 400 + 4 × Q + Q². Quelle quantité minimise son coût moyen ?",
+  c:"<div class='fblock'>CM = 400 / Q + 4 + Q\ndCM / dQ = −400 / Q² + 1 = 0   →   Q = 20\nCM(20) = 20 + 4 + 20 = 44 €</div><p>Vérification : Cm = 4 + 2 × 20 = 44 € = CM. Le coût marginal coupe le coût moyen en son minimum.</p>"},
+ {id:"e15",axis:"Concepts et pensée économique",pts:1.5,unit:"€",ans:384,tol:0,
+  q:"Même entreprise. Elle vend chaque unité 60 €. Quel est son profit maximal ?",
+  c:"<div class='fblock'>Cm = 4 + 2Q = 60   →   Q = 28\nCT(28) = 400 + 112 + 784 = 1 296 €\nπ = 60 × 28 − 1 296 = 384 €</div><p>Q = 28 dépasse la taille optimale (20) : le profit maximal se trouve dans la deuxième phase. À Q = 20, le profit serait 60 × 20 − 880 = 320 € seulement.</p>"},
+ {id:"e16",axis:"Analyse des données",pts:1.5,unit:"€",ans:30.8,tol:0.03,
+  q:"Un projet coûte 1 000 € aujourd'hui et rapporte 400 € par an pendant 3 ans. Le taux d'actualisation est de 8 %. Quelle est sa VAN ?",
+  c:"<div class='fblock'>400 / 1,08 = 370,37\n400 / 1,08² = 342,94\n400 / 1,08³ = 317,53\nVAN = 1 030,84 − 1 000 = 30,8 €</div><p>Les flux bruts totalisent 1 200 €, mais une fois actualisés ils ne valent que 1 031 € : le projet est rentable de justesse. Tu peux le vérifier dans l'outil du concept 14.</p>"},
+ {id:"e17",axis:"Analyse des données",pts:1,unit:"%",ans:10,tol:0.01,
+  q:"Un investissement de 100 € rapporte un seul flux de 121 € au bout de 2 ans. Quel est son TRI ?",
+  c:"<div class='fblock'>0 = 121 / (1 + TRI)² − 100\n(1 + TRI)² = 1,21   →   1 + TRI = 1,1   →   TRI = 10 %</div><p>Avec un seul flux, l'équation se résout directement. Avec plusieurs, il faut la dichotomie de tes notes.</p>"},
+ {id:"e18",axis:"Comptabilité nationale",pts:1,unit:"%",ans:1.76,tol:0.01,
+  q:"La consommation des ménages représente 53 % du PIB et croît de 1,5 % ; la FBCF représente 24 % du PIB et croît de 4 %. Les autres composantes ne bougent pas. Quelle est la croissance du PIB ?",
+  c:"<div class='fblock'>contribution de la consommation = 0,53 × 1,5 = 0,795 point\ncontribution de la FBCF = 0,24 × 4 = 0,96 point\ncroissance du PIB = 0,795 + 0,96 ≈ 1,76 %</div><p>La FBCF, deux fois plus petite, contribue davantage que la consommation : c'est le turbo du cours.</p>"},
+ {id:"e19",axis:"Analyse des données",pts:1,unit:"Md€",ans:2.89,tol:0.01,
+  q:"L'État emprunte 340 Md€ dans l'année à 4,10 %, alors que l'Allemagne emprunte à 3,25 %. Combien d'intérêts en plus paie-t-il chaque année sur cette seule émission ?",
+  c:"<div class='fblock'>spread = 4,10 − 3,25 = 0,85 point = 85 pb\nsurcoût = 340 × 0,0085 = 2,89 Md€ par an</div><p>Et ce surcoût dure toute la vie de l'emprunt : avec un écart persistant, chaque nouvelle émission ajoute la sienne.</p>"}
+);
 const GF={full:1,half:0.5,zero:0};
+const EXTOT=EX.reduce(function(s,e){return s+e.pts;},0);
 function renderEx(){
   $("exList").innerHTML=EX.map(function(e,k){
     return '<div class="ex" data-id="'+e.id+'"><div class="ex-head"><span>Exercice '+(k+1)+', '+e.axis+'</span><span>'+fr(e.pts,e.pts%1?1:0)+' pt'+(e.pts>1?'s':'')+'</span></div><div class="prose"><p>'+e.q+'</p></div><div class="ans-row"><input type="text" inputmode="decimal" aria-label="Réponse" placeholder="Ta valeur"><span>'+e.unit+'</span><button class="btn primary" data-check>Vérifier</button></div><div class="verdict" role="status"></div><div class="corr prose"><span class="part-t">Correction</span>'+e.c+'<div class="grade" role="group" aria-label="Auto-évaluation"><button class="btn" data-g="full">Juste</button><button class="btn" data-g="half">Bonne méthode, erreur de calcul</button><button class="btn" data-g="zero">Méthode fausse</button></div></div></div>';
@@ -1560,7 +2239,7 @@ function check(box,e,user){
   save();
 }
 function setGrade(box,e,g,user){ box.querySelectorAll("[data-g]").forEach(function(b){ b.setAttribute("aria-pressed",b.dataset.g===g?"true":"false"); }); S.ex[e.id]=S.ex[e.id]||{}; S.ex[e.id].g=g; if (user) save(); updScore(); }
-function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / 10"; }
+function updScore(){ let s=0; EX.forEach(function(e){ const st=S.ex[e.id]; if (st&&st.g) s+=e.pts*GF[st.g]; }); $("exScore").textContent=fr(s,s%1?1:0)+" / "+EXTOT; }
 $("exReset").addEventListener("click",function(){ if (confirm("Effacer toutes tes réponses aux exercices ?")){ S.ex={}; save(); renderEx(); $("jsonZone").style.display="none"; } });
 $("exJson").addEventListener("click",function(){
   const ax={}; EX.forEach(function(e){ ax[e.axis]=ax[e.axis]||{got:0,max:0}; ax[e.axis].max+=e.pts; const st=S.ex[e.id]; if (st&&st.g) ax[e.axis].got+=e.pts*GF[st.g]; });
@@ -1570,16 +2249,8 @@ $("exJson").addEventListener("click",function(){
 });
 $("jsonCopy").addEventListener("click",function(){ const t=$("jsonOut"); t.select(); const done=function(){ $("jsonCopy").textContent="Copié"; setTimeout(function(){ $("jsonCopy").textContent="Copier"; },1500); }; if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,function(){ document.execCommand("copy"); done(); }); else { document.execCommand("copy"); done(); } });
 
-/* ---------- export / import de la progression ---------- */
-$("progOut").addEventListener("click",function(){
-  const d=new Date(), name="economie-progression-"+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+".json";
-  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify({page:"economie",version:1,date:d.toISOString(),state:S},null,2)],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
-});
-$("progIn").addEventListener("change",function(){ const f=this.files[0]; if(!f) return; f.text().then(function(t){ let o; try{ o=JSON.parse(t); }catch(e){ alert("Fichier illisible."); return; } const st=o&&o.page==="economie"&&o.state; if(!st){ alert("Ce fichier n'est pas une progression de cette fiche."); return; } if(!confirm("Remplacer ta progression actuelle par celle du fichier ?")) return; try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} location.reload(); }); });
-
 /* ---------- démarrage ---------- */
 initWidgets();
-initPreds();
 renderEx();
 showTab(S.tab||"concepts");
 let rT=null; window.addEventListener("resize",function(){ clearTimeout(rT); rT=setTimeout(drawAll,120); });
