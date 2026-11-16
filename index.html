@@ -246,6 +246,12 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 
 <script src="supabase.js"></script>
 <script>
+/* bandeau d'erreur : si quelque chose casse, on le voit au lieu d'une appli muette */
+function showErr(m){ let b=document.getElementById("errBar"); if(!b){ b=document.createElement("div"); b.id="errBar"; b.style.cssText="position:fixed;left:8px;right:8px;bottom:72px;z-index:9999;background:#7f1d1d;color:#fff;padding:10px 12px;border-radius:10px;font:14px system-ui;box-shadow:0 4px 16px rgba(0,0,0,.4)"; b.innerHTML='<div id="errTxt"></div><div style="margin-top:6px;display:flex;gap:10px"><button type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById(\'errTxt\').textContent)" style="background:#fff2;border:0;color:#fff;padding:4px 10px;border-radius:6px">Copier</button><button type="button" onclick="this.closest(\'#errBar\').remove()" style="background:#fff2;border:0;color:#fff;padding:4px 10px;border-radius:6px">Fermer</button></div>'; document.body.appendChild(b); } const t=document.getElementById("errTxt"); t.textContent=(t.textContent?t.textContent+" | ":"")+"Erreur : "+m; }
+window.addEventListener("error",function(e){ showErr((e.message||"inconnue")+(e.filename?" ("+e.filename.split("/").pop()+":"+e.lineno+")":"")); });
+window.addEventListener("unhandledrejection",function(e){ const r=e.reason; showErr((r&&(r.message||r.code))||String(r)); });
+</script>
+<script>
 (function(){
 "use strict";
 /* ================= maquette 2025-2026 (identique en 2026-2027) ================= */
@@ -320,9 +326,23 @@ const SPECS={
    {c:"c2c9",nm:700,hue:0,n:"Stage I",coef:4,ects:2,sem:2,s2:1,m:[["c2c9-1", "Stage 1 - stage d'immersion", 4, 0, 0]]}]}
 };
 let SPEC=null, MODS=[], MAT={}, ADE_MAP=[], REV={};
+/* Tronc commun : matières communes à toutes les spécialités. Les pages de cours sont partagées ;
+   chaque matière est reconnue par son nom dans la maquette de la spécialité choisie. */
+const TC=[
+ {k:"analyse",n:"Analyse",re:/^analyse/,pages:[["Séries de Fourier","series-de-fourier.html","series-de-fourier.html"]]},
+ {k:"algebre",n:"Algèbre / Calcul scientifique",re:/^alg[eè]bre/,pages:[]},
+ {k:"anglais",n:"Anglais",re:/^anglais/,pages:[]},
+ {k:"comm",n:"Communication professionnelle",re:/^communication/,pages:[]},
+ {k:"eco",n:"Économie",re:/^[eé]conomie/,pages:[["Économie : gérer la rareté","economie.html","economie.html"]]},
+ {k:"droit",n:"Droit social et des contrats",re:/^droit/,pages:[]},
+ {k:"dd",n:"Développement durable",re:/^d[eé]veloppement durable/,pages:[]}
+];
+function normName(t){ return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim(); }
+function tcOf(code){ const x=MAT[code]; if(!x) return null; const nm=normName(x.n); for(const t of TC) if(t.re.test(nm)) return t; return null; }
+function tcCodes(t){ return Object.keys(MAT).filter(function(c){ return tcOf(c)===t; }); }
 function autoMap(){ const L=[]; MODS.forEach(function(M){ M.m.forEach(function(x){ L.push([norm(x[1]),x[0]]); }); }); L.sort(function(a,b){ return b[0].length-a[0].length; }); return L; }
 function modColor(M){ if(M&&M.hue!=null){ const lt=document.documentElement.getAttribute("data-theme")==="light"; return "hsl("+M.hue+","+(lt?"70%":"80%")+","+(lt?"42%":"62%")+")"; } return css(M.col); }
-function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; REV=SPEC.rev||{}; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); ADE_MAP=SPEC.map||autoMap().concat(SPEC.alias||[]).sort(function(a,b){ return b[0].length-a[0].length; }); const h1=document.querySelector("header h1"); if(h1) h1.textContent=SPEC.short||"Polytech"; document.title=SPEC.short||"Polytech"; }
+function applySpec(id){ SPEC=SPECS[id]||SPECS.phot3a; MODS=SPEC.mods; MAT={}; MODS.forEach(function(M){ M.m.forEach(function(x){ MAT[x[0]]={code:x[0],n:x[1],coef:x[2],tp:!!x[3],tpOnly:!!x[4],mod:M}; }); }); REV={}; Object.keys(SPEC.rev||{}).forEach(function(k){ REV[k]=(SPEC.rev[k]||[]).slice(); }); Object.keys(MAT).forEach(function(c){ const t=tcOf(c); if(!t||!t.pages.length) return; const L=REV[c]=REV[c]||[]; t.pages.forEach(function(pg){ if(!L.some(function(q){ return q[1]===pg[1]; })) L.push(pg); }); }); ADE_MAP=SPEC.map||autoMap().concat(SPEC.alias||[]).sort(function(a,b){ return b[0].length-a[0].length; }); const h1=document.querySelector("header h1"); if(h1) h1.textContent=SPEC.short||"Polytech"; document.title=SPEC.short||"Polytech"; }
 
 const SEUIL_MAT=6, SEUIL_MOD=10, SEUIL_NOTE=10;
 const RES={aise:"à l'aise",moyen:"moyen",pas:"pas à l'aise"};
@@ -942,18 +962,26 @@ function drawRadars(){
 }
 
 /* ================= rendu : cours ================= */
+function pagesHTML(L){ return L.length?L.map(function(l){ return l[2]?'<a class="pg" href="#" data-page="'+l[2]+'" data-pt="'+esc(l[0])+'">'+esc(l[0])+'<span>Ouvrir</span></a>':'<a class="pg" href="'+l[1]+'" target="_blank" rel="noopener">'+esc(l[0])+'<span>↗</span></a>'; }).join(""):'<div class="small muted" style="padding:6px 0">Pas encore de page.</div>'; }
 function renderCours(){
-  const P=priorities(), byMat={}; P.forEach(function(p){ if(!byMat[p.e.mat]) byMat[p.e.mat]=p; });
-  const t=today(), mon=addDays(t,-weekday(t));
-  let h='';
+  let h='<div class="sec" style="margin-top:4px">Tronc commun · toutes spécialités</div><div class="mats">';
+  TC.forEach(function(t){
+    const codes=tcCodes(t), first=codes[0]?MAT[codes[0]]:null, col=first?modColor(first.mod):"var(--muted)";
+    const coef=codes.reduce(function(a,c){ return a+(MAT[c].coef||0); },0);
+    const names=codes.map(function(c){ return MAT[c].n; }).filter(function(n){ return normName(n)!==normName(t.n); });
+    h+='<div class="mcard" style="--c:'+col+'"><div class="row" style="justify-content:space-between"><h4>'+esc(t.n)+'</h4>'+(codes.length?'<span class="small muted">coef '+coef+'</span>':'')+'</div>';
+    if(names.length) h+='<div class="small muted" style="margin:-4px 0 6px">'+esc(names.join(" · "))+'</div>';
+    if(!codes.length) h+='<div class="small muted" style="margin:-4px 0 6px">Pas dans la maquette de cette spécialité.</div>';
+    h+=pagesHTML(t.pages)+'</div>';
+  });
+  h+='</div><div class="sec">Spécialité · '+esc(SPEC.short)+'</div>';
   MODS.forEach(function(M){
     if(M.s2) return;
-    h+='<h2 style="font-size:1.05rem;display:flex;gap:8px;align-items:center"><span class="dot" style="color:'+modColor(M)+'"></span>'+esc(M.n)+' <span class="small muted" style="font-weight:400">coef '+M.coef+'</span></h2><div class="mats">';
-    M.m.forEach(function(x){
-      const k=x[0], L=REV[k]||[], p=byMat[k], st=matStats(k);
-      h+='<div class="mcard" style="--c:'+modColor(M)+'"><div class="row" style="justify-content:space-between"><h4>'+esc(x[1])+'</h4><span class="small muted">coef '+x[2]+'</span></div>';
-      h+=L.length?L.map(function(l){ return l[2]?'<a class="pg" href="#" data-page="'+l[2]+'" data-pt="'+esc(l[0])+'">'+esc(l[0])+'<span>Ouvrir</span></a>':'<a class="pg" href="'+l[1]+'" target="_blank" rel="noopener">'+esc(l[0])+'<span>↗</span></a>'; }).join(""):'<div class="small muted" style="padding:6px 0">Pas encore de page.</div>';
-      h+='</div>';
+    const mats=M.m.filter(function(x){ return !tcOf(x[0]); }); if(!mats.length) return;
+    h+='<h2 style="font-size:1.05rem;display:flex;gap:8px;align-items:center"><span class="dot" style="color:'+modColor(M)+'"></span>'+esc(M.n)+' <span class="small muted" style="font-weight:400">coef '+M.coef+(M.sem?' · S'+M.sem:'')+'</span></h2><div class="mats">';
+    mats.forEach(function(x){
+      const k=x[0], L=REV[k]||[];
+      h+='<div class="mcard" style="--c:'+modColor(M)+'"><div class="row" style="justify-content:space-between"><h4>'+esc(x[1])+'</h4><span class="small muted">coef '+x[2]+'</span></div>'+pagesHTML(L)+'</div>';
     });
     h+='</div>';
   });
@@ -961,7 +989,8 @@ function renderCours(){
 }
 
 /* ================= navigation et événements ================= */
-function renderAll(){ freezeToday(); renderHome(); renderPlan(); renderDev(); renderNotes(); renderTree(); renderCours(); }
+function safeRun(name,fn){ try{ fn(); }catch(e){ console.error(name,e); showErr(name+" : "+(e&&e.message||e)); } }
+function renderAll(){ safeRun("plan du jour",freezeToday); safeRun("Accueil",renderHome); safeRun("Planning",renderPlan); safeRun("Devoirs",renderDev); safeRun("Notes",renderNotes); safeRun("Compétences",renderTree); safeRun("Cours",renderCours); }
 function showTab(t){ S.ui.tab=t; persistLocal(); document.querySelectorAll("nav.tabs button").forEach(function(b){ b.setAttribute("aria-selected",b.dataset.tab===t?"true":"false"); }); document.querySelectorAll(".panel").forEach(function(p){ p.classList.toggle("active",p.id===t); }); if(t==="tree") requestAnimationFrame(drawRadars); window.scrollTo(0,0); }
 document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click",function(){ showTab(b.dataset.tab); }); });
 document.addEventListener("click",function(ev){
